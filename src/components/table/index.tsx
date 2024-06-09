@@ -5,7 +5,7 @@ import useCollection, { PropsUseCollection } from "../../hooks/useCollection";
 import TableActionsButtons from "./tableActionsButtons";
 import { Traila } from "../../interfaces/trailas";
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { update } from "../../services/firebase/firestore";
+import { create, update } from "../../services/firebase/firestore";
 import { increment, sum } from "firebase/firestore";
 import useOnSnapshot from "../../hooks/useOnSnapshot";
 
@@ -28,12 +28,19 @@ const Table = <T extends {}>({ columns: columnsProps, actionsTires, ...props }: 
 
 	console.log(data);
 
-	const updateTrailaTire = useCallback(async (id: string, countTire: number) => {
+	const updateTrailaTire = useCallback(async ({ id, name, category }: Traila, countTire: number) => {
 		try {
 			setData(d => d.map(item => ({ ...item, changingTire: (item as any).id === id })));
 
-			await update("trailas", id, { tiresChanged: increment(countTire) });
-
+			await create("tiresChangedByTraila", {
+				idTraila: id,
+				nameTraila: name,
+				categoryTraila: category,
+				created_at: new Date,
+				update_at: new Date(),
+				countTire
+			});
+			await update("trailas", id!, { tiresChanged: increment(countTire) });
 		} catch (error) {
 			console.log(error);
 			message.error("Error al actualizar el cambio de llanta", 4);
@@ -41,9 +48,7 @@ const Table = <T extends {}>({ columns: columnsProps, actionsTires, ...props }: 
 	}, []);
 
 	const columns = useMemo<ColumnsType<T>>(() => {
-		const columns = [
-			...columnsProps.map(c => ({ ...c, width: c.width || 150 })),
-		];
+		const columns = columnsProps.map(c => ({ ...c, width: c.width || 150 }));
 
 		if (actionsTires) {
 			columns.push({
@@ -73,7 +78,7 @@ const Table = <T extends {}>({ columns: columnsProps, actionsTires, ...props }: 
 								icon={<PlusOutlined />}
 								loading={changingTire}
 								disabled={data.some(item => (item as any).changingTire)}
-								onClick={() => updateTrailaTire(id!, 1)}
+								onClick={() => updateTrailaTire(t as unknown as Traila, 1)}
 							/>
 							<Button
 								shape="circle"
@@ -81,7 +86,7 @@ const Table = <T extends {}>({ columns: columnsProps, actionsTires, ...props }: 
 								icon={<MinusOutlined />}
 								disabled={data.some(item => (item as any).changingTire)}
 								loading={changingTire}
-								onClick={() => updateTrailaTire(id!, -1)}
+								onClick={() => updateTrailaTire(t as unknown as Traila, -1)}
 							/>
 						</div >
 					</div>);

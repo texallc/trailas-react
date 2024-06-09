@@ -1,7 +1,8 @@
-import { writeBatch, doc, collection as col, updateDoc } from "firebase/firestore";
+import { writeBatch, doc, collection as col, updateDoc, addDoc } from "firebase/firestore";
 import { db } from "..";
 
-// Get a new write batch
+export const create = (collection: string, data: Record<string, any>) => addDoc(col(db, collection), data);
+
 export const update = (collection: string, id: string, data: Record<string, any>) =>
   updateDoc(doc(db, collection, id), data);
 

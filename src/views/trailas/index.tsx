@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
-import { Button, message, Upload, UploadProps } from "antd";
+import { useMemo, useState } from "react";
+import { Button, Input, message, Upload, UploadProps } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { getWorkbookFromFile } from "../../utils/functions";
 import { bulkCreate, update } from "../../services/firebase/firestore";
 import { Traila } from "../../interfaces/trailas";
 import { useAuth } from "../../context/authContext";
-import { arrayUnion, limit, orderBy } from "firebase/firestore";
+import { arrayUnion, endAt, orderBy, QueryConstraint, startAt } from "firebase/firestore";
 import Table from "../../components/table";
 import { ColumnsType } from "antd/es/table";
 
@@ -14,7 +14,18 @@ const Trailas = () => {
   const { user } = useAuth();
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
   const [loading, setLoading] = useState(false);
-  const query = useMemo(() => [ orderBy("name")], [])
+  const [search, setSearch] = useState("");
+  const query = useMemo(() => {
+    const query: QueryConstraint[] = [orderBy("name")];
+
+    if (search) {
+      query.push(...[startAt(search), endAt(search + "\uf8ff")]);
+    }
+
+    return query;
+  }, [search]);
+
+  console.log(search);
 
   const propsUpload = useMemo(() => {
     const propsUpload: UploadProps = {
@@ -96,6 +107,15 @@ const Trailas = () => {
       <Upload {...propsUpload}>
         <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
       </Upload>
+      <br />
+      <Input.Search
+        placeholder="Buscar por nombre"
+        allowClear
+        onSearch={(value) => setSearch(value)}
+        style={{ width: 304 }}
+        enterButton
+      />
+      <br />
       <br />
       <Table
         collection="trailas"
