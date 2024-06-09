@@ -26,8 +26,6 @@ const { PRESENTED_IMAGE_SIMPLE } = Empty;
 const Table = <T extends {}>({ columns: columnsProps, actionsTires, ...props }: Props<T>) => {
 	const { loading, data, setData } = useOnSnapshot<T>(props);
 
-	console.log(data);
-
 	const updateTrailaTire = useCallback(async ({ id, name, category }: Traila, countTire: number) => {
 		try {
 			setData(d => d.map(item => ({ ...item, changingTire: (item as any).id === id })));

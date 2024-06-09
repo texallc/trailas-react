@@ -1,31 +1,44 @@
 import { useMemo, useState } from "react";
-import { Button, Input, message, Upload, UploadProps } from "antd";
+import { Button, Col, Input, message, Row, Select, Space, Upload, UploadProps } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { getWorkbookFromFile } from "../../utils/functions";
 import { bulkCreate, update } from "../../services/firebase/firestore";
 import { Traila } from "../../interfaces/trailas";
 import { useAuth } from "../../context/authContext";
-import { arrayUnion, endAt, orderBy, QueryConstraint, startAt } from "firebase/firestore";
+import { arrayUnion, endAt, orderBy, QueryConstraint, startAt, where } from "firebase/firestore";
 import Table from "../../components/table";
 import { ColumnsType } from "antd/es/table";
+import useCollection, { PropsUseCollection } from "../../hooks/useCollection";
 
 const Trailas = () => {
   const { user } = useAuth();
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+
+  const propsUseCollectionCategory = useMemo<PropsUseCollection>(() => {
+    return {
+      collection: "trailaCategories",
+      query: [],
+    };
+  }, []);
+  const { data: filtersCategories, loading: loadingCategories } = useCollection<{ categories: []; }>(propsUseCollectionCategory);
+
   const query = useMemo(() => {
     const query: QueryConstraint[] = [orderBy("name")];
+
+    if (category) {
+      query.push(where("category", "==", category));
+    }
 
     if (search) {
       query.push(...[startAt(search), endAt(search + "\uf8ff")]);
     }
 
     return query;
-  }, [search]);
-
-  console.log(search);
+  }, [category, search]);
 
   const propsUpload = useMemo(() => {
     const propsUpload: UploadProps = {
@@ -108,13 +121,28 @@ const Trailas = () => {
         <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
       </Upload>
       <br />
-      <Input.Search
-        placeholder="Buscar por nombre"
-        allowClear
-        onSearch={(value) => setSearch(value)}
-        style={{ width: 304 }}
-        enterButton
-      />
+      <Space.Compact style={{ width: "100%" }}>
+        <Select
+          style={{ width: "50%" }}
+          loading={loadingCategories}
+          value={category}
+          onChange={setCategory}
+          allowClear
+        >
+          {
+            filtersCategories[0]?.categories?.map(c => (
+              <Select.Option key={c}>{c}</Select.Option>
+            ))
+          }
+        </Select>
+        <Input.Search
+          placeholder="Buscar por nombre"
+          allowClear
+          onSearch={(value) => setSearch(value)}
+          style={{ width: "100%" }}
+          enterButton
+        />
+      </Space.Compact>
       <br />
       <br />
       <Table
@@ -125,7 +153,7 @@ const Trailas = () => {
         whitPropsDateFormated
         actionsTires
       />
-    </div>
+    </div >
   );
 };
 

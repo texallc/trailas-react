@@ -24,6 +24,7 @@ const useOnSnapshot = <T extends {}>({ query, extraPropsByItemArray, formatDate,
     const uns = onSnapshot(q(col(getFirestore(), collection), ...query), (_snapshot) => {
       if (!mounted) return;
 
+
       setData(
         _snapshot.docs.map(d => {
           let dataDoc = d.data();
