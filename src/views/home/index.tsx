@@ -7,7 +7,12 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
 } from 'chart.js';
+import { generateRandomColorWithBaseTone, getMonthLabels } from "../../utils/functions";
+import useOnSnapshot, { PropsUseOnSnapshot } from "../../hooks/useOnSnapshot";
+import { useMemo } from "react";
+import { Traila } from "../../interfaces/trailas";
 
 ChartJS.register(
   CategoryScale,
@@ -26,30 +31,41 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: 'Consumo de llantas por categoria año actual',
     },
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [1, 2, 4],
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: [1, 2, 4],
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
+type CH = ChartData<"bar", (number | [number, number] | null)[], unknown>;
 
 const Home = () => {
+  const propsOnSnapshot = useMemo<PropsUseOnSnapshot>(() => {
+    return { collection: "trailas", query: [] };
+  }, []);
+  const { data: trailas, loading } = useOnSnapshot<Traila>(propsOnSnapshot);
+
+  const data = useMemo<CH>(() => {
+    if (loading) return {
+      labels: [],
+      datasets: []
+    };
+
+    const categoires = [...new Set(trailas.map(c => c.category))];
+
+    const data: CH = {
+      labels: categoires,
+      datasets: [{
+        label: "",
+        data: categoires.map(category => {
+          return trailas.filter(t => t.category === category).reduce((acc, t) => acc + t.tiresChanged, 0);
+        }),
+        backgroundColor: generateRandomColorWithBaseTone(),
+      }]
+    };
+
+    return data;
+  }, [trailas, loading]);
+
   return (
     <Bar options={options} data={data} />
   );

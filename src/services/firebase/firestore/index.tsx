@@ -2,9 +2,8 @@ import { writeBatch, doc, collection as col, updateDoc } from "firebase/firestor
 import { db } from "..";
 
 // Get a new write batch
-export const update = (collection: string, id: string, data: Record<string, any>) => {
+export const update = (collection: string, id: string, data: Record<string, any>) =>
   updateDoc(doc(db, collection, id), data);
-};
 
 export const bulkCreate = (collection: string, data: Record<string, any>[]) => {
   const batch = writeBatch(db);

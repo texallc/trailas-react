@@ -1,29 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
 import { Button, message, Upload, UploadProps } from "antd";
-import { UploadOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { getWorkbookFromFile } from "../../utils/functions";
 import { bulkCreate, update } from "../../services/firebase/firestore";
 import { Traila } from "../../interfaces/trailas";
 import { useAuth } from "../../context/authContext";
-import { arrayUnion, orderBy } from "firebase/firestore";
+import { arrayUnion, limit, orderBy } from "firebase/firestore";
 import Table from "../../components/table";
 import { ColumnsType } from "antd/es/table";
-import { TrailaProvider } from '../../context/trailaContext';
 
 const Trailas = () => {
   const { user } = useAuth();
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const updateTraialTire = useCallback(async (countTire: number) => {
-    try {
-
-    } catch (error) {
-      console.log(error);
-      message.error("Error al actualizar el cambio de llanta", 4);
-    }
-  }, []);
+  const query = useMemo(() => [ orderBy("name")], [])
 
   const propsUpload = useMemo(() => {
     const propsUpload: UploadProps = {
@@ -69,8 +60,7 @@ const Trailas = () => {
 
           const categories: string[] = [...new Set(trailas.map(c => c.category))];
 
-          update("trailaCategories", "filters", { categories: arrayUnion(...categories) });
-
+          await update("trailaCategories", "filters", { categories: arrayUnion(...categories) });
           await bulkCreate("trailas", trailas);
 
           message.success("Trailas importadas correctamente!", 4);
@@ -95,64 +85,27 @@ const Trailas = () => {
     return [
       { title: "Nombre", dataIndex: "name" },
       { title: "Categoría", dataIndex: "category" },
-      {
-        title: "Cambios de llantas",
-        dataIndex: "tiresChanged",
-        render: (_, { tiresChanged, changingTire }) =>
-          <div style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-          }}>
-            {tiresChanged}
-            <div
-              style={{
-                display: "grid",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <Button
-                shape="circle"
-                type="primary"
-                icon={<PlusOutlined />}
-                loading={changingTire}
-                onClick={() => updateTraialTire(1)}
-              />
-              <Button
-                shape="circle"
-                type="primary"
-                icon={<MinusOutlined />}
-                loading={changingTire}
-                onClick={() => updateTraialTire(-1)}
-              />
-            </div >
-          </div>
-      },
       { title: "Creado por", dataIndex: "createdBy" },
       { title: "Fecha de creación", dataIndex: "createdAtFormated" },
       { title: "Fecha de modificación", dataIndex: "updatedAtFormated" }
     ];
-  }, [updateTraialTire]);
+  }, []);
 
   return (
-    <TrailaProvider>
-      <div style={{ padding: 40 }}>
-        <Upload {...propsUpload}>
-          <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
-        </Upload>
-        <br />
-        <Table
-          collection="trailas"
-          columns={columns}
-          pathEdit=""
-          query={[orderBy("name")]}
-          whitPropsDateFormated
-        />
-      </div>
-    </TrailaProvider>
-
+    <div style={{ padding: 40 }}>
+      <Upload {...propsUpload}>
+        <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
+      </Upload>
+      <br />
+      <Table
+        collection="trailas"
+        columns={columns}
+        pathEdit=""
+        query={query}
+        whitPropsDateFormated
+        actionsTires
+      />
+    </div>
   );
 };
 

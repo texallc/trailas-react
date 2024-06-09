@@ -3,6 +3,7 @@ import { RcFile } from "antd/es/upload";
 import { User, onIdTokenChanged, getAuth } from 'firebase/auth';
 import { ReactNode } from "react";
 import exceljs from "exceljs";
+import { monthNames } from "../constants";
 
 export const getCurrentToken = () => new Promise<string>((resolve, reject) => {
   const uns = onIdTokenChanged(
@@ -156,3 +157,31 @@ export const getWorkbookFromFile = (file: File) => new Promise<exceljs.Workbook>
 
   reader.onerror = () => reject("Error al obtener Workbook.");
 });
+
+
+export const getMonthLabels = () => {
+  const now = new Date();
+  const mont = now.getMonth();
+
+  return monthNames.slice(0, mont + 1);;
+};
+
+export const generateRandomColorWithBaseTone = (): string => {
+  const baseR = 53;
+  const baseG = 162;
+  const baseB = 235;
+  const alpha = 0.5;
+
+  const adjustValue = (base: number, range: number): number => {
+    const variation = Math.floor(Math.random() * (2 * range + 1)) - range;
+    return Math.min(255, Math.max(0, base + variation));
+  };
+
+  const range = 30; // You can adjust the range of variation as needed
+
+  const r = adjustValue(baseR, range);
+  const g = adjustValue(baseG, range);
+  const b = adjustValue(baseB, range);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
