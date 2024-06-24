@@ -48,21 +48,26 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
   }, [inputsProp]);
 
   const controls: Record<string, (input: CustomInput) => ReactNode> = useMemo(() => ({
-    input: ({ value, onChange, typeInput }: CustomInput) => <Input
-      type={typeInput || 'text'}
-      value={value}
-      onKeyDown={e => {
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-          e.preventDefault();
-        }
+    input: ({ value, onChange, typeInput, placeholder, disabled }: CustomInput) => {
 
-        return typeInput === "number" && ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
-      }}
-      onChange={e => onChange && onChange(e.target.value)}
-      onWheel={e => e.preventDefault()}
-      onKeyUp={e => e.preventDefault()}
-      autoComplete="new-password"
-    />,
+      return <Input
+        disabled={disabled}
+        placeholder={placeholder}
+        type={typeInput || 'text'}
+        value={value}
+        onKeyDown={e => {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+          }
+
+          return typeInput === "number" && ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+        }}
+        onChange={e => onChange && onChange(e.target.value)}
+        onWheel={e => e.preventDefault()}
+        onKeyUp={e => e.preventDefault()}
+        autoComplete="new-password"
+      />;
+    },
     phone: ({ value, onChange }: CustomInput) => <Input
       type="number"
       value={value}
@@ -71,16 +76,16 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
           e.preventDefault();
         }
 
-        return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()
+        return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
       }}
       onChange={e => onChange && onChange(e.target.value)}
       onWheel={e => e.preventDefault()}
     />,
-    select: ({ value, onChange, options }: CustomInput) => <Select value={value} onChange={onChange}>
+    select: ({ value, onChange, options, disabled }: CustomInput) => <Select disabled={disabled} value={value} onChange={onChange}>
       {options?.map((option: Option) => <Select.Option key={option.value} value={option.value}>{option.text}</Select.Option>)}
     </Select>,
     textarea: ({ value, onChange }: CustomInput) => <Input.TextArea value={value} onChange={e => onChange && onChange(e.target.value)} />,
-    checkbox: ({ value, onChange }: CustomInput) => <Checkbox checked={value} onChange={e => onChange && onChange(e.target.checked)} />,
+    checkbox: ({ value, onChange }: CustomInput) => <Checkbox value={value} onChange={e => onChange && onChange(e.target.checked)} />,
     date: ({ value, onChange }: CustomInput) => <DatePicker style={{ width: '100%' }} value={value} onChange={onChange} />,
     timeRangePicker: ({ value, onChange }) => <TimePicker.RangePicker value={value} onChange={onChange} />,
     file: ({ value, onChange, accept, maxCount, multiple, listType }: CustomInput) => {
@@ -137,11 +142,11 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
 
             switch (error.code) {
               case "auth/email-already-in-use":
-                messageError = "Otra empresa ya está utilizando el correo proporcionado."
-                break
+                messageError = "Otra empresa ya está utilizando el correo proporcionado.";
+                break;
               case "auth/invalid-email":
-                messageError = "El correo electrónico no es válido."
-                break
+                messageError = "El correo electrónico no es válido.";
+                break;
             }
 
             message.error(messageError, 4);
@@ -180,7 +185,7 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
                   </Form.Item>
                 }
               </Col>
-            )
+            );
           })
         }
       </Row>
@@ -192,7 +197,7 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
         {textSubmit || "Guardar"}
       </SaveButton>
     </Form>
-  )
-}
+  );
+};
 
 export default DynamicForm;

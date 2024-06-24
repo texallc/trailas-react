@@ -1,8 +1,8 @@
 import { TypeControl, TypeInput } from "../types";
-import { FormRule } from 'antd';
+import { FormRule, InputProps } from 'antd';
 import { UploadListType } from 'antd/lib/upload/interface';
 
-export interface CustomInput {
+export interface CustomInput extends InputProps {
   typeControl: TypeControl;
   typeInput?: TypeInput;
   value?: any;

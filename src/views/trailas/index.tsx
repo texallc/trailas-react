@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
-import { Button, Col, Input, message, Row, Select, Space, Upload, UploadProps } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { Button, Input, message, Select, Space, Upload, UploadProps } from "antd";
+import { UploadOutlined, ReloadOutlined, HistoryOutlined } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { getWorkbookFromFile } from "../../utils/functions";
 import { bulkCreate, update } from "../../services/firebase/firestore";
-import { Traila } from "../../interfaces/trailas";
+import { Traila } from "../../interfaces/traila";
 import { useAuth } from "../../context/authContext";
 import { arrayUnion, endAt, orderBy, QueryConstraint, startAt, where } from "firebase/firestore";
 import Table from "../../components/table";
 import { ColumnsType } from "antd/es/table";
 import useCollection, { PropsUseCollection } from "../../hooks/useCollection";
+import { initTires, initTraila } from "../../constants";
+import ModalHistoryChangeTires from "./ModalHistoryChangeTires";
+import ModalUpdateTrailaTires from "./ModalUpdateTrailaTires";
 
 const Trailas = () => {
   const { user } = useAuth();
@@ -17,6 +20,9 @@ const Trailas = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [traila, setTraila] = useState<Traila>(initTraila);
+  const [openUpdateTire, setOpenUpdateTire] = useState(false);
+  const [openHistory, setOpenHistory] = useState(false);
 
   const propsUseCollectionCategory = useMemo<PropsUseCollection>(() => {
     return {
@@ -24,7 +30,7 @@ const Trailas = () => {
       query: [],
     };
   }, []);
-  const { data: filtersCategories, loading: loadingCategories } = useCollection<{ categories: []; }>(propsUseCollectionCategory);
+  const { data: filtersCategories, loading: loadingCategories } = useCollection<{ categories: string[]; }>(propsUseCollectionCategory);
 
   const query = useMemo(() => {
     const query: QueryConstraint[] = [orderBy("name")];
@@ -75,9 +81,11 @@ const Trailas = () => {
                 category,
                 tiresChanged: 0,
                 createdBy: user!.uid,
+                createdByEmail: user!.email!,
                 orderImage: "",
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                ...initTires
               });
             }
           });
@@ -89,6 +97,7 @@ const Trailas = () => {
 
           message.success("Trailas importadas correctamente!", 4);
         } catch (error) {
+          message.error("Error al importar las trailas", 4);
           console.log(error);
         } finally {
           setFileList([]);
@@ -111,12 +120,48 @@ const Trailas = () => {
       { title: "Categoría", dataIndex: "category" },
       { title: "Creado por", dataIndex: "createdBy" },
       { title: "Fecha de creación", dataIndex: "createdAtFormated" },
-      { title: "Fecha de modificación", dataIndex: "updatedAtFormated" }
+      { title: "Fecha de modificación", dataIndex: "updatedAtFormated" },
+      { title: "LLantas cambiadas", dataIndex: "tiresChanged" },
+      {
+        fixed: "right",
+        width: 82,
+        title: "Cambio llantas",
+        dataIndex: "changeTires",
+        render: (_, traila) => ((
+          <Button
+            type="primary"
+            shape="circle"
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              setTraila(traila);
+              setOpenUpdateTire(true);
+            }}
+          />
+        ))
+      },
+      {
+        fixed: "right",
+        width: 86,
+        title: "Historial cambios",
+        dataIndex: "historyChanges",
+        render: (_, traila) => ((
+          <Button
+            type="primary"
+            shape="circle"
+            icon={<HistoryOutlined />}
+            onClick={() => {
+              setTraila(traila);
+              setOpenHistory(true);
+            }}
+          />
+        ))
+      }
     ];
   }, []);
 
   return (
-    <div style={{ padding: 40 }}>
+    <div>
+      <br />
       <Upload {...propsUpload}>
         <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
       </Upload>
@@ -151,7 +196,18 @@ const Trailas = () => {
         pathEdit=""
         query={query}
         whitPropsDateFormated
-        actionsTires
+      />
+      <ModalUpdateTrailaTires
+        open={openUpdateTire}
+        traila={traila}
+        onCancel={() => setOpenUpdateTire(false)}
+        onClose={() => setOpenUpdateTire(false)}
+      />
+      <ModalHistoryChangeTires
+        open={openHistory}
+        traila={traila}
+        onCancel={() => setOpenHistory(false)}
+        onClose={() => setOpenHistory(false)}
       />
     </div >
   );

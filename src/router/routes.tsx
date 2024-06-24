@@ -1,9 +1,9 @@
 import { lazy } from "react";
 import { PathRouteProps } from 'react-router-dom';
-import Trailas from "../views/trailas";
-import Home from "../views/home";
 
 const Login = lazy(() => import('../views/login'));
+const Home = lazy(() => import('../views/home'));
+const Trailas = lazy(() => import('../views/trailas'));
 
 const routes: PathRouteProps[] = [
   {
