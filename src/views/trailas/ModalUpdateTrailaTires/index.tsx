@@ -22,7 +22,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
     if (!traila.id) return;
 
     form.setFieldsValue(traila);
-  }, [traila, form]);
+  }, [traila, form, props.open]);
 
   const saveChangeTire = async (newTraila: Traila) => {
     try {
@@ -79,7 +79,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
 
       message.success("Cambio de llantas guardado correctamente!");
 
-      handleClose();
+      onClose();
     } catch (error) {
       console.log(error);
       message.error("Error al guardar el cambio de llantas.");
@@ -88,16 +88,11 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
     }
   };
 
-  const handleClose = () => {
-    form.resetFields();
-    onClose();
-  };
-
   return (
     <Modal
       {...props}
-      onCancel={handleClose}
-      onClose={handleClose}
+      onCancel={onClose}
+      onClose={onClose}
       onOk={() => form.submit()}
     >
       <h3>Cambio de llantas</h3>
