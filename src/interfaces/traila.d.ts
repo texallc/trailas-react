@@ -16,7 +16,7 @@ export interface Traila extends Tires {
   changingTire?: boolean;
 }
 
-export interface TiresChangedByTraila extends Tires {
+export interface TiresChangedByTraila extends Tires, SizeTires {
   idTraila: string;
   name: string;
   category: string;
@@ -35,4 +35,15 @@ export interface Tires {
   tire6: number;
   tire7: number;
   tire8: number;
+}
+
+export interface SizeTires {
+  sizeTire1?: string;
+  sizeTire2?: string;
+  sizeTire3?: string;
+  sizeTire4?: string;
+  sizeTire5?: string;
+  sizeTire6?: string;
+  sizeTire7?: string;
+  sizeTire8?: string;
 }

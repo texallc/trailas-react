@@ -1,12 +1,14 @@
 import { message, ModalProps } from "antd";
 import Form from "antd/es/form";
 import Modal from "../../../components/modal";
-import { Tires, TiresChangedByTraila, Traila } from "../../../interfaces/traila";
+import { SizeTires, Tires, TiresChangedByTraila, Traila } from "../../../interfaces/traila";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/authContext";
 import { create, update } from "../../../services/firebase/firestore";
 import TireChangeInputs from "./tireChangeInputs";
 import FormTraila from "../formTraila";
+import { increment } from "firebase/firestore";
+import { initTiresChangedByTraila } from "../../../constants";
 
 interface Props extends ModalProps {
   traila: Traila;
@@ -16,38 +18,46 @@ interface Props extends ModalProps {
 const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!traila.id) return;
+    if (!traila.id || loading) return;
 
-    form.setFieldsValue(traila);
-  }, [traila, form, props.open]);
+    const { tire1, tire2, tire3, tire4, tire5, tire6, tire7, tire8 } = traila;
+    const tires: Tires = { tire1, tire2, tire3, tire4, tire5, tire6, tire7, tire8 };
 
-  const saveChangeTire = async (newTraila: Traila) => {
+    const tiresChangeByTraila: TiresChangedByTraila = {
+      ...initTiresChangedByTraila,
+      name: traila.name,
+      category: traila.category,
+      ...tires,
+    };
+
+    form.setFieldsValue(tiresChangeByTraila);
+  }, [user, traila, form, props.open]);
+
+
+  const saveChangeTire = async (tiresChangeByTraila: TiresChangedByTraila) => {
     try {
       if (!traila.id || saving) return;
 
       setSaving(true);
 
-      const { tire1, tire2, tire3, tire4, tire5, tire6, tire7, tire8 } = newTraila;
+      const { tire1, tire2, tire3, tire4, tire5, tire6, tire7, tire8 } = tiresChangeByTraila;
       const newTires: Tires = { tire1, tire2, tire3, tire4, tire5, tire6, tire7, tire8 };
-      let tiresChanged = traila.tiresChanged;
-
-      let newTiresChangedByTraila: TiresChangedByTraila = {
-        name: newTraila.name,
-        category: newTraila.category,
-        createdAt: new Date(),
-        createdBy: user!.uid,
-        idTraila: traila.id,
-        createdByEmail: user!.email!,
-        ...newTires,
-      };
+      let newTiresChangedByTraila: TiresChangedByTraila = { ...tiresChangeByTraila, createdAt: new Date() };
+      let tiresChanged = 0;
 
       (Object.keys(newTiresChangedByTraila)
         .filter(key => key.includes("tire")) as (keyof Tires)[])
         .forEach(key => {
-          const oldValueTire = traila[key];
+          const keySizeTires = `sizeT${key.substring(1)}` as keyof SizeTires;
+
+          if (typeof newTiresChangedByTraila[keySizeTires] === "undefined") {
+            newTiresChangedByTraila = { ...newTiresChangedByTraila, [keySizeTires]: "" };
+          }
+
+          const oldValueTire = traila[key as keyof Traila] as number;
           const newValueTire = newTiresChangedByTraila[key];
 
           if (oldValueTire > newValueTire) {
@@ -74,8 +84,15 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
           }
         });
 
-      await update("trailas", traila.id!, { ...newTires, tiresChanged });
-      await create("tiresChangedByTraila", newTiresChangedByTraila);
+      await Promise.all([
+        update("trailas", traila.id!, { ...newTires, tiresChanged: increment(tiresChanged), updatedAt: new Date() }),
+        create("tiresChangedByTraila", {
+          ...newTiresChangedByTraila,
+          createdBy: user!.uid,
+          idTraila: traila.id,
+          createdByEmail: user!.email!
+        })
+      ]);
 
       message.success("Cambio de llantas guardado correctamente!");
 

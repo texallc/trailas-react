@@ -13,6 +13,8 @@ import { generateRandomColorWithBaseTone, getMonthLabels } from "../../utils/fun
 import useOnSnapshot, { PropsUseOnSnapshot } from "../../hooks/useOnSnapshot";
 import { useMemo } from "react";
 import { Traila } from "../../interfaces/traila";
+import ButtonDownloadExcel from "../../components/buttonDownloadExcel";
+import { Column } from "exceljs";
 
 ChartJS.register(
   CategoryScale,
@@ -50,15 +52,21 @@ const Home = () => {
       datasets: []
     };
 
+
+
     const categoires = [...new Set(trailas.map(c => c.category))];
+
+    const dataBar = categoires.map(category => {
+      return trailas.filter(t => t.category === category).reduce((acc, t) => acc + t.tiresChanged, 0);
+    });
+
+    console.log(dataBar);
 
     const data: CH = {
       labels: categoires,
       datasets: [{
         label: "",
-        data: categoires.map(category => {
-          return trailas.filter(t => t.category === category).reduce((acc, t) => acc + t.tiresChanged, 0);
-        }),
+        data: dataBar,
         backgroundColor: generateRandomColorWithBaseTone(),
       }]
     };
@@ -66,8 +74,39 @@ const Home = () => {
     return data;
   }, [trailas, loading]);
 
+  const { columnsDownload, dataDownload } = useMemo<{ columnsDownload: Partial<Column>[]; dataDownload: { [key: string]: number; }[]; }>(() => {
+    const categoires = [...new Set(trailas.map(c => c.category))];
+
+    const columnsDownload = categoires.map(category => ({
+      header: category,
+      key: category,
+      width: 24,
+    }));
+
+    const dataDownload = categoires.reduce((acc, category) => ({
+      ...acc,
+      [category]: trailas.filter(t => t.category === category).reduce((acc, t) => acc + t.tiresChanged, 0)
+    }), {});
+
+    return {
+      columnsDownload,
+      dataDownload: [dataDownload]
+    };
+  }, [trailas]);
+
   return (
-    <Bar options={options} data={data} />
+    <>
+      <br />
+      <br />
+      <ButtonDownloadExcel
+        buttonText="Descargar consumo de llantas"
+        fileName="Consumo-de-llantas-por-categoria"
+        nameWorksheet="Consumo-de-llantas-por-categoria"
+        columns={columnsDownload}
+        data={dataDownload}
+      />
+      <Bar options={options} data={data} />
+    </>
   );
 };
 

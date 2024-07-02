@@ -1,6 +1,6 @@
 import { FormRule } from "antd";
 import { TypeRute } from "../types";
-import { Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
+import { SizeTires, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
 
 
 /* export const urlImageDefaultProfile = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/imagenesPerfil%2F1467646262_522853_1467646344_noticia_normal.jpg?alt=media&token=f6e761ad-95c5-462f-bc39-0e889ac30a5c";
@@ -38,6 +38,8 @@ export const monthNames = [
 
 export const nameTires = ["Llanta 1", "Llanta 2", "Llanta 3", "Llanta 4", "Llanta 5", "Llanta 6", "Llanta 7", "Llanta 8"];
 
+export const sizeTires = ["8/32", "9/32", "10/32", "11/32", "12/32", "13/32", "14/32", "15/32", "16/32", "17/32", "18/32", "19/32", "20/32", "21/32", "22/32", "23/32", "24/32", "25/32", "26/32"];
+
 export const initTires: Tires = {
   tire1: 0,
   tire2: 0,
@@ -47,7 +49,18 @@ export const initTires: Tires = {
   tire6: 0,
   tire7: 0,
   tire8: 0,
-};
+} as const;
+
+export const initSizeTires: SizeTires = {
+  sizeTire1: undefined,
+  sizeTire2: undefined,
+  sizeTire3: undefined,
+  sizeTire4: undefined,
+  sizeTire5: undefined,
+  sizeTire6: undefined,
+  sizeTire7: undefined,
+  sizeTire8: undefined,
+} as const;
 
 export const initTraila: Traila = {
   name: "",
@@ -59,7 +72,7 @@ export const initTraila: Traila = {
   createdBy: "",
   createdByEmail: "",
   ...initTires
-};
+} as const;
 
 export const initTiresChangedByTraila: TiresChangedByTraila = {
   idTraila: "",
@@ -69,4 +82,5 @@ export const initTiresChangedByTraila: TiresChangedByTraila = {
   createdByEmail: "",
   createdAt: new Date(),
   ...initTires,
-};
+  ...initSizeTires
+} as const;

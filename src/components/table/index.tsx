@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Empty, Table as TableAnt } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { PropsUseCollection } from "../../hooks/useCollection";
@@ -9,6 +9,7 @@ interface Props<T> extends PropsUseCollection {
 	columns: ColumnsType<T>;
 	placeholderSearch?: string;
 	pathEdit: string;
+	onLoadData?: (data: T[]) => void;
 }
 
 export interface Get<T> {
@@ -18,8 +19,14 @@ export interface Get<T> {
 
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
-const Table = <T extends {}>({ columns: columnsProps, ...props }: Props<T>) => {
+const Table = <T extends {}>({ columns: columnsProps, onLoadData, ...props }: Props<T>) => {
 	const { loading, data } = useOnSnapshot<T>(props);
+
+	useEffect(() => {
+		if (loading) return;
+
+		onLoadData?.(data);
+	}, [loading, data]);
 
 	const columns = useMemo<ColumnsType<T>>(() => {
 		const columns = columnsProps.map(c => ({ ...c, width: c.width || 150 }));

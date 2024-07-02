@@ -4,6 +4,7 @@ import { User, onIdTokenChanged, getAuth } from 'firebase/auth';
 import { ReactNode } from "react";
 import exceljs from "exceljs";
 import { monthNames } from "../constants";
+import { DownloadExcel } from "../interfaces/functions";
 
 export const getCurrentToken = () => new Promise<string>((resolve, reject) => {
   const uns = onIdTokenChanged(
@@ -184,4 +185,42 @@ export const generateRandomColorWithBaseTone = (): string => {
   const b = adjustValue(baseB, range);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+export const getArrayChunk = <T>(array: Array<T>, size: number) => Array.from({ length: Math.ceil(array.length / size) }, (v, i) =>
+  array.slice(i * size, i * size + size)
+);
+
+export const deleteUndefinedProperties = <T extends {}>(obj: T) => {
+  Object.keys(obj).forEach(key => {
+    const k = key as keyof T;
+
+    if (obj[k] === undefined) {
+      delete obj[k];
+    }
+  });
+
+  return obj;
+};
+
+export const downLoadExcel = async ({ fileName, nameWorksheet, columns, data }: DownloadExcel) => {
+  try {
+    const workbook = new exceljs.Workbook();
+
+    const worksheet = workbook.addWorksheet(nameWorksheet);
+    worksheet.columns = columns;
+    worksheet.addRows(data);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const url = window.URL.createObjectURL(new Blob([buffer]));
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.setAttribute("download", `${fileName}.xlsx`);
+    a.click();
+    a.remove();
+  } catch (error) {
+    message.error("Error al descargar el Excel");
+    throw handleError(error);
+  }
 };
