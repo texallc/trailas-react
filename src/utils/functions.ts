@@ -24,7 +24,7 @@ export const getCurrentToken = () => new Promise<string>((resolve, reject) => {
   );
 });
 
-export const sleep = (time: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
+export const sleep = (time: number) => new Promise<void>((resolve) => setTimeout(resolve, time));
 
 export const validFiles = (fileList: RcFile[], accept: string, showMessageError?: boolean) => {
   for (let index = 0; index < fileList.length; index++) {
@@ -223,4 +223,19 @@ export const downLoadExcel = async ({ fileName, nameWorksheet, columns, data }: 
     message.error("Error al descargar el Excel");
     throw handleError(error);
   }
+};
+
+export const once = <T extends (...args: any[]) => any>(fn: T): T => {
+  let called = false;
+  let result: ReturnType<T> | undefined;
+
+  const wrappedFn: (...args: Parameters<T>) => ReturnType<T> = (...args) => {
+    if (!called) {
+      result = fn(...args);
+      called = true;
+    }
+    return result as ReturnType<T>;
+  };
+
+  return wrappedFn as T;
 };

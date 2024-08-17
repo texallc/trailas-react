@@ -5,11 +5,10 @@ import { Input, Select, Space } from "antd";
 interface Props {
   category: string;
   setCategory: Dispatch<SetStateAction<string>>;
-  search: string;
   setSearch: Dispatch<SetStateAction<string>>;
 }
 
-const FiltersTrailas = ({ category, setCategory, search, setSearch }: Props) => {
+const FiltersTrailas = ({ category, setCategory, setSearch }: Props) => {
   const propsUseCollectionCategory = useMemo<PropsUseCollection>(() => {
     return {
       collection: "trailaCategories",

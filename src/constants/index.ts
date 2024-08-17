@@ -1,6 +1,6 @@
 import { FormRule } from "antd";
-import { TypeRute } from "../types";
-import { SizeTires, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
+import { TypeRoute } from "../types";
+import { SizeTires, SizeTiresUpload, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
 
 
 /* export const urlImageDefaultProfile = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/imagenesPerfil%2F1467646262_522853_1467646344_noticia_normal.jpg?alt=media&token=f6e761ad-95c5-462f-bc39-0e889ac30a5c";
@@ -26,7 +26,7 @@ export const rulePassword: FormRule = {
   min: 6,
   message: 'La contraseña tiene que ser de 6 dígitos o más.'
 } as const;
-export const titleForm: Record<TypeRute, string> = {
+export const titleForm: Record<TypeRoute, string> = {
   create: "Registrar",
   update: "Editar"
 } as const;
@@ -62,11 +62,21 @@ export const initSizeTires: SizeTires = {
   sizeTire8: undefined,
 } as const;
 
+export const initSizeTiresUpload: SizeTiresUpload = {
+  sizeTire1: "",
+  sizeTire2: "",
+  sizeTire3: "",
+  sizeTire4: "",
+  sizeTire5: "",
+  sizeTire6: "",
+  sizeTire7: "",
+  sizeTire8: "",
+} as const;
+
 export const initTraila: Traila = {
   name: "",
   category: "",
   tiresChanged: 0,
-  orderImage: [],
   updatedAt: new Date(),
   createdAt: new Date(),
   createdBy: "",
@@ -80,7 +90,18 @@ export const initTiresChangedByTraila: TiresChangedByTraila = {
   category: "",
   createdBy: "",
   createdByEmail: "",
-  createdAt: new Date(),
+  repairOrders: [],
   ...initTires,
   ...initSizeTires
+} as const;
+
+export const sideTiresUploadChange: Record<string, keyof Tires> = {
+  "EJE 1 A_ Chofer": "tire1",
+  "EJE 1 _B Chofer": "tire2",
+  "EJE 1 _B Pasajero": "tire3",
+  "EJE 1 A_ Pasajero": "tire4",
+  "EJE 2 A_ Chofer": "tire5",
+  "EJE 2 _B Chofer": "tire6",
+  "EJE 2 _B Pasajero": "tire7",
+  "EJE 2 A_ Pasajero": "tire8",
 } as const;

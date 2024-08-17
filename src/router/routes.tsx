@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { PathRouteProps } from 'react-router-dom';
+import SnapshotProvider from "../context/snapshotContext";
 
 const Login = lazy(() => import('../views/login'));
 const Home = lazy(() => import('../views/home'));
@@ -16,7 +17,9 @@ const routes: PathRouteProps[] = [
   },
   {
     path: '/trailas',
-    element: <Trailas />
+    element: <SnapshotProvider>
+      <Trailas />
+    </SnapshotProvider>
   },
   {
     path: '*',

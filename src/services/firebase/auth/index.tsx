@@ -7,7 +7,7 @@ export const signInWithEmail = (email: string, password: string) => signInWithEm
 
 export const getCurrentUser = () => new Promise<User>((resolve, reject) => {
   const uns = onIdTokenChanged(
-    getAuth(),
+    auth,
     (user) => {
       uns();
 
@@ -25,7 +25,7 @@ export const getCurrentUser = () => new Promise<User>((resolve, reject) => {
 export const getCurrentToken = () => new Promise<string>((resolve, reject) => {
   const uns = onIdTokenChanged(
     auth,
-    async (user: User | null) => {
+    async (user) => {
       uns();
 
       if (!user) {

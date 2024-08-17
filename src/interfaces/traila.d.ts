@@ -1,5 +1,6 @@
 import { UploadFile } from "antd";
-import { Timestamp } from "firebase/firestore";
+import { UploadChangeParam } from "antd/es/upload";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export interface Traila extends Tires {
   readonly id?: string;
@@ -12,18 +13,25 @@ export interface Traila extends Tires {
   updatedAtFormated?: string;
   createdBy: string;
   createdByEmail: string;
-  orderImage: string | UploadFile<any>[];
-  changingTire?: boolean;
+  aligned?: boolean;
+  aligning?: boolean;
+}
+
+export interface UploadTiresChangedByTraila {
+  name: string;
+  side: string;
+  size: string;
 }
 
 export interface TiresChangedByTraila extends Tires, SizeTires {
   idTraila: string;
   name: string;
   category: string;
-  createdAt: Date | Timestamp;
+  createdAt?: Date | Timestamp;
   createdAtFormated?: string;
   createdBy: string;
   createdByEmail: string;
+  repairOrders: string[] | UploadChangeParam<UploadFile<any>>;
 }
 
 export interface Tires {
@@ -46,4 +54,15 @@ export interface SizeTires {
   sizeTire6?: string;
   sizeTire7?: string;
   sizeTire8?: string;
+}
+
+export interface SizeTiresUpload {
+  sizeTire1: string;
+  sizeTire2: string;
+  sizeTire3: string;
+  sizeTire4: string;
+  sizeTire5: string;
+  sizeTire6: string;
+  sizeTire7: string;
+  sizeTire8: string;
 }

@@ -52,15 +52,11 @@ const Home = () => {
       datasets: []
     };
 
-
-
     const categoires = [...new Set(trailas.map(c => c.category))];
 
     const dataBar = categoires.map(category => {
       return trailas.filter(t => t.category === category).reduce((acc, t) => acc + t.tiresChanged, 0);
     });
-
-    console.log(dataBar);
 
     const data: CH = {
       labels: categoires,

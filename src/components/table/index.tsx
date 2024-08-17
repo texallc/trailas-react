@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { Empty, Table as TableAnt } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { PropsUseCollection } from "../../hooks/useCollection";
-import TableActionsButtons from "./tableActionsButtons";
 import useOnSnapshot from "../../hooks/useOnSnapshot";
 
 interface Props<T> extends PropsUseCollection {

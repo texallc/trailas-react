@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Button, Col, Row, } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Col, message, Row, Switch, } from "antd";
 import { ReloadOutlined, HistoryOutlined } from '@ant-design/icons';
 import { Traila } from "../../interfaces/traila";
 import { endAt, orderBy, QueryConstraint, startAt, where } from "firebase/firestore";
@@ -11,6 +11,10 @@ import ModalUpdateTrailaTires from "./modalUpdateTrailaTires";
 import ButtonUploadTrailas from "./buttonUploadTrailas";
 import FiltersTrailas from "./filtersTrailas";
 import ButtonDownloadExcel from "../../components/buttonDownloadExcel";
+import ButtonUploadChangeTires from "./buttonUploadChangeTires";
+import { update } from "../../services/firebase/firestore";
+import { useOnSnapshot } from "../../context/snapshotContext";
+import TableContext from "../../components/tableContext";
 
 const Trailas = () => {
   const [search, setSearch] = useState("");
@@ -18,9 +22,9 @@ const Trailas = () => {
   const [traila, setTraila] = useState<Traila>(initTraila);
   const [openUpdateTire, setOpenUpdateTire] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
-  const [trailas, setTrailas] = useState<Traila[]>([]);
+  const { data: trailas, setData: setTrailas, setSnapshotProps } = useOnSnapshot<Traila>();
 
-  const query = useMemo(() => {
+  useEffect(() => {
     const query: QueryConstraint[] = [orderBy("name")];
 
     if (category) {
@@ -31,14 +35,30 @@ const Trailas = () => {
       query.push(...[startAt(search), endAt(search + "\uf8ff")]);
     }
 
-    return query;
+    setSnapshotProps({
+      collection: "trailas",
+      query
+    });
   }, [category, search]);
+
+  const onChangeAlignment = useCallback(async (value: boolean, id: string) => {
+    setTrailas(prevTrailas => prevTrailas.map(traila => traila.id === id ? { ...traila, aligning: true } : traila));
+
+    try {
+      await update("trailas", id, { aligned: value });
+    } catch (error) {
+      console.log(error);
+      message.error("Error al cambiar el estado de la alineación.");
+    } finally {
+      setTrailas(prevTrailas => prevTrailas.map(traila => traila.id === id ? { ...traila, aligning: false } : traila));
+    }
+  }, []);
 
   const columns = useMemo<ColumnsType<Traila>>(() => {
     return [
       { title: "Nombre", dataIndex: "name" },
       { title: "Categoría", dataIndex: "category" },
-      { title: "Creado por", dataIndex: "createdBy" },
+      { title: "Creado por", dataIndex: "createdByEmail" },
       {
         title: "Fecha de creación",
         dataIndex: "createdAtFormated",
@@ -50,10 +70,21 @@ const Trailas = () => {
         sorter: (a, b) => a.updatedAtFormated!.localeCompare(b.updatedAtFormated!)
       },
       {
-        title: "LLantas cambiadas",
+        title: "Llantas cambiadas",
         dataIndex: "tiresChanged",
         defaultSortOrder: 'descend',
         sorter: (a, b) => a.tiresChanged - b.tiresChanged
+      },
+      {
+        title: "Alineada",
+        dataIndex: "aligned",
+        render: (_, traila) => ((
+          <Switch
+            defaultChecked={traila.aligned}
+            loading={traila.aligning}
+            onChange={value => onChangeAlignment(value, traila.id!)}
+          />
+        ))
       },
       {
         fixed: "right",
@@ -90,7 +121,9 @@ const Trailas = () => {
         ))
       }
     ];
-  }, []);
+  }, [onChangeAlignment]);
+
+  //falta ajustar bien las columans para dejar algunas fijas
 
   return (
     <div>
@@ -98,6 +131,9 @@ const Trailas = () => {
       <Row gutter={10}>
         <Col>
           <ButtonUploadTrailas />
+        </Col>
+        <Col>
+          <ButtonUploadChangeTires />
         </Col>
         <Col>
           <ButtonDownloadExcel
@@ -117,7 +153,7 @@ const Trailas = () => {
               },
               {
                 header: "Creado por",
-                key: "createdBy",
+                key: "createdByEmail",
                 width: 32
               },
               {
@@ -144,17 +180,13 @@ const Trailas = () => {
       <FiltersTrailas
         category={category}
         setCategory={setCategory}
-        search={search}
         setSearch={setSearch}
       />
       <br />
       <br />
-      <Table
-        collection="trailas"
+      <TableContext
         columns={columns}
         pathEdit=""
-        query={query}
-        whitPropsDateFormated
         onLoadData={setTrailas}
       />
       <ModalUpdateTrailaTires
@@ -169,7 +201,7 @@ const Trailas = () => {
         onCancel={() => setOpenHistory(false)}
         onClose={() => setOpenHistory(false)}
       />
-    </div >
+    </div>
   );
 };
 

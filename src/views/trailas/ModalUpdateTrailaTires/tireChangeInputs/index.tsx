@@ -4,12 +4,12 @@ import { initSizeTires, initTires, nameTires, sizeTires } from "../../../../cons
 import { getArrayChunk } from "../../../../utils/functions";
 import { DefaultOptionType } from "antd/es/select";
 
-const TireChangeInputs = () => {
-  const tireKeys = Object.keys(initTires);
-  const sizeTireKeys = Object.keys(initSizeTires);
-  const chunkTireKeys = getArrayChunk(tireKeys, 4);
-  const optionsSizeTires: DefaultOptionType[] = sizeTires.map(sizeTire => ({ title: sizeTire, value: sizeTire }));
+const tireKeys = Object.keys(initTires);
+const sizeTireKeys = Object.keys(initSizeTires);
+const chunkTireKeys = getArrayChunk(tireKeys, 4);
+const optionsSizeTires: DefaultOptionType[] = sizeTires.map(sizeTire => ({ title: sizeTire, value: sizeTire }));
 
+const TireChangeInputs = () => {
   return (
     <div>
       {

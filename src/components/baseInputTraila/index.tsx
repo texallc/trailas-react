@@ -5,12 +5,9 @@ interface Props extends FormProps {
   children?: React.ReactNode;
 }
 
-const FormTraila = ({ children, ...formProps }: Props) => {
+const BaseInputTraila = ({ children, ...formProps }: Props) => {
   return (
-    <Form
-      {...formProps}
-      layout="vertical"
-    >
+    <>
       <FormItem
         label="Nombre"
         name="name"
@@ -32,8 +29,8 @@ const FormTraila = ({ children, ...formProps }: Props) => {
         />
       </FormItem>
       {children}
-    </Form>
+    </>
   );
 };
 
-export default FormTraila;
+export default BaseInputTraila;

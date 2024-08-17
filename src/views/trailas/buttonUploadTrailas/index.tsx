@@ -51,7 +51,6 @@ const ButtonUploadTrailas = () => {
                 tiresChanged: 0,
                 createdBy: user!.uid,
                 createdByEmail: user!.email!,
-                orderImage: "",
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 ...initTires
@@ -64,9 +63,9 @@ const ButtonUploadTrailas = () => {
           await update("trailaCategories", "filters", { categories: arrayUnion(...categories) });
           await bulkCreate("trailas", trailas);
 
-          message.success("Trailas importadas correctamente!", 4);
+          message.success("Trailas cargadas correctamente!", 4);
         } catch (error) {
-          message.error("Error al importar las trailas", 4);
+          message.error("Error al cargar las trailas", 4);
           console.log(error);
         } finally {
           setFileList([]);
@@ -85,7 +84,7 @@ const ButtonUploadTrailas = () => {
 
   return (
     <Upload {...propsUpload}>
-      <Button loading={loading} icon={<UploadOutlined />}>Importar trailas</Button>
+      <Button loading={loading} icon={<UploadOutlined />}>Cargar trailas</Button>
     </Upload>
   );
 };

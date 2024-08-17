@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Modal, ModalProps, Form } from "antd";
 import { orderBy, QueryConstraint, where } from "firebase/firestore";
-import FormTraila from "../formTraila";
+import FormTraila from "../../../components/baseInputTraila";
 import { TiresChangedByTraila, Traila } from "../../../interfaces/traila";
 import Table from "../../../components/table";
 import { ColumnsType } from "antd/es/table";
 import ButtonDownloadExcel from "../../../components/buttonDownloadExcel";
+import { Link } from "react-router-dom";
 
 interface Props extends ModalProps {
   traila: Traila;
@@ -20,10 +21,34 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
 
     return [where("idTraila", "==", traila.id), orderBy("createdAt", "desc")];
   }, [traila]);
+
   const columns = useMemo<ColumnsType<TiresChangedByTraila>>(() => {
     return [
       { title: "Creado por", dataIndex: "createdByEmail" },
       { title: "Fecha de cambio", dataIndex: "createdAtFormated" },
+      {
+        title: "Ordenes de reparación",
+        dataIndex: "repairOrders",
+        render: (_, { repairOrders }) => (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            {
+              (repairOrders as string[]).map((order, index) => (
+                <Link
+                  target="_blank"
+                  to={order}
+                  key={order}>
+                  {`Orden ${index + 1}`}
+                </Link>
+              ))
+            }
+          </div>
+        )
+      },
       {
         title: "Llanta 1",
         dataIndex: "tire1",
@@ -259,9 +284,7 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
       />
       <br />
       <br />
-      <FormTraila
-        form={form}
-      />
+      <FormTraila />
       <Table
         collection="tiresChangedByTraila"
         columns={columns}
