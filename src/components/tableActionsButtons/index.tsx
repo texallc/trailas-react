@@ -1,17 +1,16 @@
-import { FC } from 'react';
 import { Button, message, Space, Modal } from 'antd';
 import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import DeleteButton from '../../deleteButton';
+/* import DeleteButton from '../../deleteButton'; */
 
-interface Props {
-  record: any;
+interface Props<T> {
+  record: T;
   onDeleted: () => void;
-  fun: () => Promise<any>;
+  fun: () => Promise<unknown>;
   pathEdit: string;
 }
 
-const dialogDelete = (fun: () => Promise<any>) =>
+const dialogDelete = (fun: () => Promise<unknown>) =>
   new Promise<void>((resolve) => Modal.confirm({
     title: 'Eliminar',
     icon: <ExclamationCircleOutlined />,
@@ -30,7 +29,7 @@ const dialogDelete = (fun: () => Promise<any>) =>
     },
   }));
 
-const TableActionsButtons: FC<Props> = ({ record, onDeleted, fun, pathEdit }) => {
+const TableActionsButtons = <T extends { id: string; }>({ record, onDeleted, fun, pathEdit }: Props<T>) => {
   const navigate = useNavigate();
 
   const del = async () => {
@@ -38,17 +37,29 @@ const TableActionsButtons: FC<Props> = ({ record, onDeleted, fun, pathEdit }) =>
     onDeleted();
   };
 
+  const onEdit = () => {
+    if (pathEdit) {
+      navigate(pathEdit, { state: record });
+
+      return;
+    }
+
+    navigate({
+      search: `?editar=${record.id}`
+    });
+  };
+
   return (
     <Space>
       <Button
         icon={<EditOutlined />}
         shape="circle"
-        onClick={() => navigate(pathEdit, { state: record })}
+        onClick={() => onEdit()}
         size="middle"
         style={{ color: '#fff', backgroundColor: '#ec9822 ' }}
         type='default'
       />
-      <DeleteButton onClick={del} />
+      {/*   <DeleteButton onClick={del} /> */}
     </Space>
   );
 };

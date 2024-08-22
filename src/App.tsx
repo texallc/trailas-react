@@ -6,7 +6,7 @@ const App = () => {
     <AuthProvider>
       <MyRouter />
     </AuthProvider>
-  )
-}
+  );
+};
 
 export default App;

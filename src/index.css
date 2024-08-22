@@ -5,7 +5,7 @@
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-	background: transparent;
+  background: transparent;
 }
 
 body {
@@ -27,10 +27,10 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
   margin: 0 !important;
-} 
+}
 
 input[type=number] {
-  -moz-appearance:textfield !important;
+  -moz-appearance: textfield !important;
 }
 
 .ant-input {
@@ -83,4 +83,8 @@ input[type=number] {
 
 .ant-table-tbody {
   background-color: white;
+}
+
+.ant-switch-checked {
+  background-color: var(--secondary) !important;
 }

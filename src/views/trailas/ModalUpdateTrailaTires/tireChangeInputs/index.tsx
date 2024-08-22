@@ -28,9 +28,8 @@ const TireChangeInputs = () => {
                     name={sizeTireKeys[indexRow * 4 + index]}
                   >
                     <Select
-                      optionFilterProp="label"
-                      placeholder="Medida"
                       options={optionsSizeTires}
+                      showSearch
                     />
                   </FormItem>
                 </Col>

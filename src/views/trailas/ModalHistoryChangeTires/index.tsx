@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Modal, ModalProps, Form } from "antd";
 import { orderBy, QueryConstraint, where } from "firebase/firestore";
-import FormTraila from "../../../components/baseInputTraila";
+import BaseInputsTraila from "../../../components/baseInputsTraila";
 import { TiresChangedByTraila, Traila } from "../../../interfaces/traila";
 import Table from "../../../components/table";
 import { ColumnsType } from "antd/es/table";
@@ -14,7 +14,7 @@ interface Props extends ModalProps {
 }
 
 const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<Traila>();
   const [tiresChangedByTraila, setTiresChangedByTraila] = useState<TiresChangedByTraila[]>([]);
   const query = useMemo<QueryConstraint[]>(() => {
     if (!traila.id) return [];
@@ -183,7 +183,7 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
   useEffect(() => {
     if (!traila.id) return;
 
-    form.setFieldsValue({ name: traila.name, category: traila.category });
+    form.setFieldsValue(traila);
   }, [traila, form]);
 
   return (
@@ -284,7 +284,13 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
       />
       <br />
       <br />
-      <FormTraila />
+      <Form
+        form={form}
+        layout="vertical"
+        clearOnDestroy
+      >
+        <BaseInputsTraila disableInputs />
+      </Form>
       <Table
         collection="tiresChangedByTraila"
         columns={columns}

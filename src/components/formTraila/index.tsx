@@ -1,5 +1,5 @@
 import { Form, FormProps, Input } from "antd";
-import BaseInputTraila from "../baseInputTraila";
+import BaseInputsTraila from "../baseInputsTraila";
 
 interface Props extends FormProps {
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ const FormTraila = ({ children, ...formProps }: Props) => {
       {...formProps}
       layout="vertical"
     >
-      <BaseInputTraila />
+      <BaseInputsTraila />
       {children}
     </Form>
   );

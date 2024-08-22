@@ -1,7 +1,8 @@
 import { FormRule } from "antd";
 import { TypeRoute } from "../types";
 import { SizeTires, SizeTiresUpload, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
-
+import { SizesTires } from "../types/traila";
+import { Column } from "exceljs";
 
 /* export const urlImageDefaultProfile = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/imagenesPerfil%2F1467646262_522853_1467646344_noticia_normal.jpg?alt=media&token=f6e761ad-95c5-462f-bc39-0e889ac30a5c";
 export const baseUrlStorage = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/";
@@ -62,6 +63,7 @@ export const initSizeTires: SizeTires = {
   sizeTire8: undefined,
 } as const;
 
+
 export const initSizeTiresUpload: SizeTiresUpload = {
   sizeTire1: "",
   sizeTire2: "",
@@ -105,3 +107,38 @@ export const sideTiresUploadChange: Record<string, keyof Tires> = {
   "EJE 2 _B Pasajero": "tire7",
   "EJE 2 A_ Pasajero": "tire8",
 } as const;
+
+export const dataSizesTire: SizesTires[] = ["255/70 R 22.5", "275/70 R 22.5"];
+
+export const columnsExcelTrailas: Partial<Column>[] = [
+  {
+    header: "Nombre",
+    key: "name",
+    width: 32
+  },
+  {
+    header: "Categoría",
+    key: "category",
+    width: 32
+  },
+  {
+    header: "Creado por",
+    key: "createdByEmail",
+    width: 32
+  },
+  {
+    header: "Fecha de creación",
+    key: "createdAtFormated",
+    width: 32
+  },
+  {
+    header: "Fecha de modificación",
+    key: "updatedAtFormated",
+    width: 32
+  },
+  {
+    header: "LLantas cambiadas",
+    key: "tiresChanged",
+    width: 32
+  }
+];

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import useCollection, { PropsUseCollection } from "../../../hooks/useCollection";
 import { Input, Select, Space } from "antd";
 
@@ -6,9 +6,10 @@ interface Props {
   category: string;
   setCategory: Dispatch<SetStateAction<string>>;
   setSearch: Dispatch<SetStateAction<string>>;
+  onLoadCategories: (categories: string[]) => void;
 }
 
-const FiltersTrailas = ({ category, setCategory, setSearch }: Props) => {
+const FiltersTrailas = ({ category, setCategory, setSearch, onLoadCategories }: Props) => {
   const propsUseCollectionCategory = useMemo<PropsUseCollection>(() => {
     return {
       collection: "trailaCategories",
@@ -16,6 +17,12 @@ const FiltersTrailas = ({ category, setCategory, setSearch }: Props) => {
     };
   }, []);
   const { data: filtersCategories, loading: loadingCategories } = useCollection<{ categories: string[]; }>(propsUseCollectionCategory);
+
+  useEffect(() => {
+    if (!filtersCategories.length) return;
+
+    onLoadCategories(filtersCategories[0].categories);
+  }, [filtersCategories, onLoadCategories]);
 
   return (
     <Space.Compact style={{ width: "100%" }}>

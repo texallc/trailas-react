@@ -3,9 +3,8 @@ import { Button, Col, message, Row, Switch, } from "antd";
 import { ReloadOutlined, HistoryOutlined } from '@ant-design/icons';
 import { Traila } from "../../interfaces/traila";
 import { endAt, orderBy, QueryConstraint, startAt, where } from "firebase/firestore";
-import Table from "../../components/table";
 import { ColumnsType } from "antd/es/table";
-import { initTraila } from "../../constants";
+import { columnsExcelTrailas, initTraila } from "../../constants";
 import ModalHistoryChangeTires from "./modalHistoryChangeTires";
 import ModalUpdateTrailaTires from "./modalUpdateTrailaTires";
 import ButtonUploadTrailas from "./buttonUploadTrailas";
@@ -15,6 +14,8 @@ import ButtonUploadChangeTires from "./buttonUploadChangeTires";
 import { update } from "../../services/firebase/firestore";
 import { useOnSnapshot } from "../../context/snapshotContext";
 import TableContext from "../../components/tableContext";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import ModalUpdateTraila from "./modalUpdateTraila";
 
 const Trailas = () => {
   const [search, setSearch] = useState("");
@@ -22,7 +23,11 @@ const Trailas = () => {
   const [traila, setTraila] = useState<Traila>(initTraila);
   const [openUpdateTire, setOpenUpdateTire] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
+  const [idEdit, setIdEdit] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
   const { data: trailas, setData: setTrailas, setSnapshotProps } = useOnSnapshot<Traila>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const query: QueryConstraint[] = [orderBy("name")];
@@ -37,9 +42,16 @@ const Trailas = () => {
 
     setSnapshotProps({
       collection: "trailas",
-      query
+      query,
+      whitPropsDateFormated: true,
     });
   }, [category, search]);
+
+  useEffect(() => {
+    const idEdit = searchParams.get("editar");
+
+    setIdEdit(idEdit || "");
+  }, [searchParams]);
 
   const onChangeAlignment = useCallback(async (value: boolean, id: string) => {
     setTrailas(prevTrailas => prevTrailas.map(traila => traila.id === id ? { ...traila, aligning: true } : traila));
@@ -123,7 +135,9 @@ const Trailas = () => {
     ];
   }, [onChangeAlignment]);
 
-  //falta ajustar bien las columans para dejar algunas fijas
+  const onCloseUpdateTraila = () => {
+    navigate("/trailas");
+  };
 
   return (
     <div>
@@ -140,38 +154,7 @@ const Trailas = () => {
             buttonText="Descargar trailas"
             fileName="Trailas"
             nameWorksheet="Trailas"
-            columns={[
-              {
-                header: "Nombre",
-                key: "name",
-                width: 32
-              },
-              {
-                header: "Categoría",
-                key: "category",
-                width: 32
-              },
-              {
-                header: "Creado por",
-                key: "createdByEmail",
-                width: 32
-              },
-              {
-                header: "Fecha de creación",
-                key: "createdAtFormated",
-                width: 32
-              },
-              {
-                header: "Fecha de modificación",
-                key: "updatedAtFormated",
-                width: 32
-              },
-              {
-                header: "LLantas cambiadas",
-                key: "tiresChanged",
-                width: 32
-              }
-            ]}
+            columns={columnsExcelTrailas}
             data={trailas}
           />
         </Col>
@@ -181,6 +164,7 @@ const Trailas = () => {
         category={category}
         setCategory={setCategory}
         setSearch={setSearch}
+        onLoadCategories={(categories) => setCategories(categories)}
       />
       <br />
       <br />
@@ -188,6 +172,7 @@ const Trailas = () => {
         columns={columns}
         pathEdit=""
         onLoadData={setTrailas}
+        showActionsButtons
       />
       <ModalUpdateTrailaTires
         open={openUpdateTire}
@@ -200,6 +185,13 @@ const Trailas = () => {
         traila={traila}
         onCancel={() => setOpenHistory(false)}
         onClose={() => setOpenHistory(false)}
+      />
+      <ModalUpdateTraila
+        open={Boolean(idEdit)}
+        traila={trailas.find(t => t.id === idEdit)}
+        onCancel={() => onCloseUpdateTraila()}
+        onClose={() => onCloseUpdateTraila()}
+        categories={categories}
       />
     </div>
   );

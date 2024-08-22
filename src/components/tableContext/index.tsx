@@ -2,12 +2,14 @@ import { useEffect, useMemo } from 'react';
 import { Empty, Table as TableAnt } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useOnSnapshot } from "../../context/snapshotContext";
+import TableActionsButtons from "../tableActionsButtons";
 
 interface Props<T> {
   columns: ColumnsType<T>;
   placeholderSearch?: string;
   pathEdit: string;
   onLoadData?: (data: T[]) => void;
+  showActionsButtons?: boolean;
 }
 
 export interface Get<T> {
@@ -17,7 +19,7 @@ export interface Get<T> {
 
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
-const TableContext = <T extends {}>({ columns: columnsProps, onLoadData }: Props<T>) => {
+const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showActionsButtons }: Props<T>) => {
   const { loading, data } = useOnSnapshot<T>();
 
   useEffect(() => {
@@ -29,25 +31,27 @@ const TableContext = <T extends {}>({ columns: columnsProps, onLoadData }: Props
   const columns = useMemo<ColumnsType<T>>(() => {
     const columns = columnsProps.map(c => ({ ...c, width: c.width || 150 }));
 
-    /* columns.push({
-      title: 'Acciones',
-      key: 'actions',
-      fixed: 'right',
-      width: 100,
-      render: (_, record: T) => {
-        const r = record as T & { id: string; };
+    if (showActionsButtons) {
+      columns.push({
+        title: 'Acciones',
+        key: 'actions',
+        fixed: 'right',
+        width: 100,
+        render: (_, record: T) => {
+          const r = record as T & { id: string; };
 
-        return (
-          <TableActionsButtons
-            record={record}
-            onDeleted={() => { }}
-            fun={async () => { }}
-            pathEdit={""}
-          />
-        );
-      },
-    });
- */
+          return (
+            <TableActionsButtons
+              record={r}
+              onDeleted={() => { }}
+              fun={async () => { }}
+              pathEdit={""}
+            />
+          );
+        },
+      });
+    }
+
     return columns;
   }, [columnsProps, data]);
 

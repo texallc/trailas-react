@@ -10,7 +10,7 @@ import { increment } from "firebase/firestore";
 import { initSizeTires, initTiresChangedByTraila } from "../../../constants";
 import ButtonUploadOrderRepair from "../../../components/buttonUploadOrderRepair";
 import { UploadChangeParam } from "antd/es/upload";
-import BaseInputTraila from "../../../components/baseInputTraila";
+import BaseInputsTraila from "../../../components/baseInputsTraila";
 
 interface Props extends ModalProps {
   traila: Traila;
@@ -43,13 +43,13 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
       ...tires,
       name: traila.name,
       category: traila.category,
+      sizesTires: traila.sizesTires,
     };
 
     setTiresChangeByTraila(_tiresChangeByTraila);
     setFileList([]);
     form.setFieldsValue(_tiresChangeByTraila);
   }, [user, traila, form, props.open]);
-
 
   const saveChangeTire = async (_tiresChangeByTraila: TiresChangedByTraila) => {
     try {
@@ -155,7 +155,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
       )}
     >
       <h3>Cambio de llantas</h3>
-      <BaseInputTraila />
+      <BaseInputsTraila disableInputs />
       <ButtonUploadOrderRepair
         fileList={fileList}
         setFileList={setFileList}
