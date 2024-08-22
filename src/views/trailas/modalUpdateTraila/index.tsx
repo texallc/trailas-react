@@ -21,7 +21,7 @@ const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => 
   useEffect(() => {
     if (!traila || !traila.id || loading) return;
 
-    form.setFieldsValue(traila);
+    form.setFieldsValue({ ...traila, sizesTires: traila.sizesTires || "" });
   }, [user, traila, form, props.open]);
 
   const saveTraila = async (traila: Traila) => {
@@ -29,12 +29,10 @@ const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => 
 
     setSaving(true);
 
-    console.log({ ...traila, sizesTires: traila.sizesTires || "" });
-
     try {
-      await update("trailas", traila.id!, { ...traila, sizesTires: traila.sizesTires || "" });
+      await update("trailas", traila.id!, traila);
 
-      message.success("Traila actualizada correctamente.");
+      message.success("Traila actualizada correctamente!.", 4);
 
       onClose();
     } catch (error) {
@@ -64,7 +62,7 @@ const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => 
         </Form>
       )}
     >
-      <h3>Cambio de llantas</h3>
+      <h3>Editar traila</h3>
       <BaseInputsTraila categories={categories} />
     </Modal>
   );

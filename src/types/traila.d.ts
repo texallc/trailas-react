@@ -1,1 +1,1 @@
-export type SizesTires = "275/70 R 22.5" | "255/70 R 22.5";
+export type SizesTires = "" | "275/70 R 22.5" | "255/70 R 22.5";

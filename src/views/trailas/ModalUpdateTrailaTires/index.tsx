@@ -125,7 +125,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
         })
       ]);
 
-      message.success("Cambio de llantas guardado correctamente!");
+      message.success("Cambio de llantas guardado correctamente!", 4);
       onClose();
     } catch (error) {
       console.log(error);
