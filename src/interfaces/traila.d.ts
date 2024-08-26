@@ -26,6 +26,7 @@ export interface UploadTiresChangedByTraila {
 }
 
 export interface TiresChangedByTraila extends Tires, SizeTires {
+  id?: string;
   idTraila: string;
   name: string;
   category: string;
@@ -36,6 +37,7 @@ export interface TiresChangedByTraila extends Tires, SizeTires {
   createdByEmail: string;
   repairOrders: string[] | UploadChangeParam<UploadFile<any>>;
   sizesTires?: SizesTires;
+  notes?: string;
 }
 
 export interface Tires {

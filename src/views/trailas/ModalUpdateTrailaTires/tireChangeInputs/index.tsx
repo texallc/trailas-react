@@ -1,4 +1,4 @@
-import { Col, Divider, InputNumber, Row, Select } from "antd";
+import { Col, Divider, Input, InputNumber, Row, Select } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import { initSizeTires, initTires, nameTires, sizeTires } from "../../../../constants";
 import { getArrayChunk } from "../../../../utils/functions";
@@ -39,6 +39,12 @@ const TireChangeInputs = () => {
           </Row>
         ))
       }
+      <FormItem
+        name="notes"
+        label="Notas"
+      >
+        <Input.TextArea rows={4} />
+      </FormItem>
     </div>
   );
 };

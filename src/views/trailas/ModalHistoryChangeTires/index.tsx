@@ -26,6 +26,7 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
     return [
       { title: "Creado por", dataIndex: "createdByEmail" },
       { title: "Fecha de cambio", dataIndex: "createdAtFormated" },
+      { title: "Notas", dataIndex: "notes" },
       {
         title: "Ordenes de reparación",
         dataIndex: "repairOrders",

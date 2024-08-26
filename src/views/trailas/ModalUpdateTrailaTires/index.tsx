@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/authContext";
 import { create, update, uploadFiles } from "../../../services/firebase/firestore";
 import TireChangeInputs from "./tireChangeInputs";
-import { increment } from "firebase/firestore";
+import { collection, doc, increment, runTransaction } from "firebase/firestore";
 import { initSizeTires, initTiresChangedByTraila } from "../../../constants";
 import ButtonUploadOrderRepair from "../../../components/buttonUploadOrderRepair";
 import { UploadChangeParam } from "antd/es/upload";
 import BaseInputsTraila from "../../../components/baseInputsTraila";
+import { db } from "../../../services/firebase";
 
 interface Props extends ModalProps {
   traila: Traila;
@@ -48,7 +49,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
 
     setTiresChangeByTraila(_tiresChangeByTraila);
     setFileList([]);
-    form.setFieldsValue(_tiresChangeByTraila);
+    form.setFieldsValue({ ..._tiresChangeByTraila, notes: "" });
   }, [user, traila, form, props.open]);
 
   const saveChangeTire = async (_tiresChangeByTraila: TiresChangedByTraila) => {
@@ -113,17 +114,28 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
         urlRepairOrders = await uploadFiles("repairOrders", uploadChangeParam.fileList.map(f => f.originFileObj!));
       }
 
-      await Promise.all([
-        update("trailas", traila.id!, { ...newTires, tiresChanged: increment(tiresChanged), updatedAt: new Date() }),
-        create("tiresChangedByTraila", {
+      delete newTiresChangedByTraila.id;
+      delete newTiresChangedByTraila.sizesTires;
+
+      await runTransaction(db, async (transaction) => {
+        transaction.update(
+          doc(db, "trailas", traila.id!),
+          {
+            ...newTires,
+            tiresChanged: increment(tiresChanged),
+            updatedAt: new Date()
+          }
+        );
+
+        transaction.set(doc(collection(db, "tiresChangedByTraila")), {
           ...newTiresChangedByTraila,
           createdBy: user!.uid,
           idTraila: traila.id,
           createdByEmail: user!.email!,
           repairOrders: urlRepairOrders,
           createdAt: new Date()
-        })
-      ]);
+        });
+      });
 
       message.success("Cambio de llantas guardado correctamente!", 4);
       onClose();
