@@ -5,6 +5,7 @@ import Modal from "../../../components/modal";
 import { ruleEmail, ruleName, rulePhone } from "../../../constants";
 import { create, findOneOrNull, update } from "../../../services/firebase/firestore";
 import { or, where } from "firebase/firestore";
+import { useAuth } from "../../../context/authContext";
 
 interface Props extends ModalProps {
   onClose: () => void;
@@ -12,6 +13,7 @@ interface Props extends ModalProps {
 }
 
 const ModalCreateDriver = ({ onClose, driver, ...props }: Props) => {
+  const { user } = useAuth();
   const [form] = Form.useForm<Driver>();
   const [saving, setSaving] = useState(false);
 
@@ -50,7 +52,16 @@ const ModalCreateDriver = ({ onClose, driver, ...props }: Props) => {
       if (id) {
         await update("drivers", id, { ...driver, updatedAt: new Date() });
       } else {
-        await create("drivers", { ...driver, createdAt: new Date(), updatedAt: new Date() });
+        await create(
+          "drivers",
+          {
+            ...driver,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdBy: user!.uid,
+            createdByEmail: user!.email!,
+          }
+        );
       }
 
       message.success("Chofer guardado correctamente.");

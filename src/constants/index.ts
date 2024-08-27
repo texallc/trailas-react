@@ -93,6 +93,7 @@ export const initTraila: Traila = {
   createdAt: new Date(),
   createdBy: "",
   createdByEmail: "",
+  driver: "",
   ...initTires
 } as const;
 
@@ -112,7 +113,9 @@ export const initDriver: Driver = {
   name: "",
   phone: "",
   email: "",
-  age: undefined
+  age: undefined,
+  createdBy: "",
+  createdByEmail: "",
 } as const;
 
 export const sideTiresUploadChange: Record<string, keyof Tires> = {

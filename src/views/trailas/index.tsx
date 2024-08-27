@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Col, message, Row, Switch, } from "antd";
 import { ReloadOutlined, HistoryOutlined } from '@ant-design/icons';
-import { Traila } from "../../interfaces/traila";
+import { Traila, TrailaFilters } from "../../interfaces/traila";
 import { endAt, orderBy, QueryConstraint, startAt, where } from "firebase/firestore";
 import { ColumnsType } from "antd/es/table";
 import { columnsExcelTrailas, initTraila } from "../../constants";
@@ -18,26 +18,40 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ModalUpdateTraila from "./modalUpdateTraila";
 
 const Trailas = () => {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
+  const [filters, setFilters] = useState<TrailaFilters>({
+    name: "",
+    category: "",
+    driver: "",
+    sizesTires: ""
+  });
   const [traila, setTraila] = useState<Traila>(initTraila);
   const [openUpdateTire, setOpenUpdateTire] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const [idEdit, setIdEdit] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
+  const [drivers, setDrivers] = useState<string[]>([]);
   const { data: trailas, setData: setTrailas, setSnapshotProps } = useOnSnapshot<Traila>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const { category, sizesTires, driver, name } = filters;
     const query: QueryConstraint[] = [orderBy("name")];
 
     if (category) {
       query.push(where("category", "==", category));
     }
 
-    if (search) {
-      query.push(...[startAt(search), endAt(search + "\uf8ff")]);
+    if (sizesTires) {
+      query.push(where("sizesTires", "==", sizesTires));
+    }
+
+    if (driver) {
+      query.push(where("driver", "==", driver));
+    }
+
+    if (name) {
+      query.push(...[startAt(name), endAt(name + "\uf8ff")]);
     }
 
     setSnapshotProps({
@@ -45,7 +59,7 @@ const Trailas = () => {
       query,
       whitPropsDateFormated: true,
     });
-  }, [category, search]);
+  }, [filters]);
 
   useEffect(() => {
     const idEdit = searchParams.get("editar");
@@ -70,6 +84,8 @@ const Trailas = () => {
     return [
       { title: "Nombre", dataIndex: "name" },
       { title: "Categoría", dataIndex: "category" },
+      { title: "Tipo de llanta", dataIndex: "sizesTires" },
+      { title: "Chofer", dataIndex: "driver" },
       { title: "Creado por", dataIndex: "createdByEmail" },
       {
         title: "Fecha de creación",
@@ -140,6 +156,16 @@ const Trailas = () => {
     navigate("/trailas");
   };
 
+  const onCloseUpdateTrailaTires = () => {
+    setTraila(initTraila);
+    setOpenUpdateTire(false);
+  };
+
+  const onCloseHistoryChangeTires = () => {
+    setTraila(initTraila);
+    setOpenHistory(false);
+  };
+
   return (
     <div>
       <br />
@@ -162,10 +188,9 @@ const Trailas = () => {
       </Row>
       <br />
       <FiltersTrailas
-        category={category}
-        setCategory={setCategory}
-        setSearch={setSearch}
-        onLoadCategories={(categories) => setCategories(categories)}
+        setFilters={setFilters}
+        onLoadCategories={setCategories}
+        onLoadDrivers={setDrivers}
       />
       <br />
       <br />
@@ -178,14 +203,14 @@ const Trailas = () => {
       <ModalUpdateTrailaTires
         open={openUpdateTire}
         traila={traila}
-        onCancel={() => setOpenUpdateTire(false)}
-        onClose={() => setOpenUpdateTire(false)}
+        onCancel={() => onCloseUpdateTrailaTires()}
+        onClose={() => onCloseUpdateTrailaTires()}
       />
       <ModalHistoryChangeTires
         open={openHistory}
         traila={traila}
-        onCancel={() => setOpenHistory(false)}
-        onClose={() => setOpenHistory(false)}
+        onCancel={() => onCloseHistoryChangeTires()}
+        onClose={() => onCloseHistoryChangeTires()}
       />
       <ModalUpdateTraila
         open={Boolean(idEdit)}
@@ -193,6 +218,7 @@ const Trailas = () => {
         onCancel={() => onCloseUpdateTraila()}
         onClose={() => onCloseUpdateTraila()}
         categories={categories}
+        drivers={drivers}
       />
     </div>
   );

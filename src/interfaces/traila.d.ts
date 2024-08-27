@@ -17,6 +17,14 @@ export interface Traila extends Tires {
   aligned?: boolean;
   aligning?: boolean;
   sizesTires?: SizesTires;
+  driver?: string;
+}
+
+export interface TrailaFilters {
+  name: string;
+  category: string;
+  driver: string,
+  sizesTires: string;
 }
 
 export interface UploadTiresChangedByTraila {

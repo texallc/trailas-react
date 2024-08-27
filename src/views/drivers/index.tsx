@@ -47,6 +47,7 @@ const Drivers = () => {
       { title: "Telefono", dataIndex: "phone" },
       { title: "Correo", dataIndex: "email" },
       { title: "Edad", dataIndex: "age" },
+      { title: "Creado por", dataIndex: "createdByEmail" },
       {
         title: "Fecha de creación",
         dataIndex: "createdAtFormated",

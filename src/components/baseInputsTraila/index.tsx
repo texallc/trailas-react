@@ -8,11 +8,13 @@ interface Props extends FormProps {
   children?: ReactNode;
   disableInputs?: boolean;
   categories?: string[];
+  drivers?: string[];
 }
 
-const BaseInputsTraila = ({ children, disableInputs, categories }: Props) => {
+const BaseInputsTraila = ({ children, disableInputs, categories, drivers }: Props) => {
   const optionsDataSizesTire: DefaultOptionType[] = dataSizesTire.map(sizesTire => ({ title: sizesTire, value: sizesTire }));
   const optionsCategories: DefaultOptionType[] = categories?.map(category => ({ title: category, value: category })) || [];
+  const optionsDrivers: DefaultOptionType[] = drivers?.map(driver => ({ title: driver, value: driver })) || [];
 
   return (
     <>
@@ -46,6 +48,15 @@ const BaseInputsTraila = ({ children, disableInputs, categories }: Props) => {
         <Select
           options={optionsDataSizesTire}
           disabled={disableInputs}
+        />
+      </FormItem>
+      <FormItem
+        label="Chofer"
+        name="driver"
+      >
+        <Select
+          disabled={disableInputs}
+          options={optionsDrivers}
         />
       </FormItem>
       {children}

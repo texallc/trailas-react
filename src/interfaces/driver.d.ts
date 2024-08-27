@@ -4,6 +4,8 @@ interface Driver {
   phone: string;
   email: string;
   age?: number;
+  createdBy: string;
+  createdByEmail: string;
   createdAtFormated?: string;
   updatedAtFormated?: string;
 }

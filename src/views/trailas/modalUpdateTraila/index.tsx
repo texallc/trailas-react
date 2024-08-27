@@ -11,9 +11,10 @@ interface Props extends ModalProps {
   traila?: Traila;
   onClose: () => void;
   categories: string[];
+  drivers: string[];
 }
 
-const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => {
+const ModalUpdateTraila = ({ traila, onClose, categories, drivers, ...props }: Props) => {
   const [form] = Form.useForm<Traila>();
   const { user, loading } = useAuth();
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,7 @@ const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => 
     setSaving(true);
 
     try {
-      await update("trailas", traila.id!, traila);
+      await update("trailas", traila.id!, { ...traila, updatedAt: new Date() });
 
       message.success("Traila actualizada correctamente!.", 4);
 
@@ -63,7 +64,7 @@ const ModalUpdateTraila = ({ traila, onClose, categories, ...props }: Props) => 
       )}
     >
       <h3>Editar traila</h3>
-      <BaseInputsTraila categories={categories} />
+      <BaseInputsTraila categories={categories} drivers={drivers} />
     </Modal>
   );
 };
