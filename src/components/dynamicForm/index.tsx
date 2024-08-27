@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { CustomInput, Option } from '../../interfaces';
 import { Input, Row, Col, Select, Form, Checkbox, DatePicker, TimePicker, FormRule, Upload, UploadFile, message } from 'antd';
-import { rulePhoneInput, ruleMaxLength, ruleEmail } from '../../constants';
+import { rulePhone, ruleMaxLength, ruleEmail } from '../../constants';
 import { FormInstance, FormLayout } from "antd/es/form/Form";
 import { UploadChangeParam, UploadProps } from "antd/es/upload";
 import SaveButton from "../saveButton";
@@ -34,7 +34,7 @@ const DynamicForm: FC<Props> = ({ inputs: inputsProp, layout, form, onFinish, lo
       }
 
       if (typeControl === "phone" && required && (value as number)?.toString().length !== 10) {
-        _rules.push(rulePhoneInput);
+        _rules.push(rulePhone);
       }
 
       if (typeInput === "email") {

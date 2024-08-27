@@ -1,16 +1,17 @@
 import { Button, message, Space, Modal } from 'antd';
 import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-/* import DeleteButton from '../../deleteButton'; */
+import DeleteButton from "../deleteButton";
+import { delDoc } from "../../services/firebase/firestore";
 
 interface Props<T> {
+  path: string;
   record: T;
   onDeleted: () => void;
-  fun: () => Promise<unknown>;
   pathEdit: string;
 }
 
-const dialogDelete = (fun: () => Promise<unknown>) =>
+const dialogDelete = (path: string, id: string) =>
   new Promise<void>((resolve) => Modal.confirm({
     title: 'Eliminar',
     icon: <ExclamationCircleOutlined />,
@@ -19,7 +20,7 @@ const dialogDelete = (fun: () => Promise<unknown>) =>
     cancelText: 'Cancelar',
     onOk: async () => {
       try {
-        await fun();
+        await delDoc(path, id);
         message.success("Registro eliminado con exito!");
         resolve();
       } catch (error) {
@@ -29,11 +30,11 @@ const dialogDelete = (fun: () => Promise<unknown>) =>
     },
   }));
 
-const TableActionsButtons = <T extends { id: string; }>({ record, onDeleted, fun, pathEdit }: Props<T>) => {
+const TableActionsButtons = <T extends { id: string; }>({ record, onDeleted, pathEdit, path }: Props<T>) => {
   const navigate = useNavigate();
 
   const del = async () => {
-    await dialogDelete(fun);
+    await dialogDelete(path, record.id);
     onDeleted();
   };
 
@@ -59,7 +60,7 @@ const TableActionsButtons = <T extends { id: string; }>({ record, onDeleted, fun
         style={{ color: '#fff', backgroundColor: '#ec9822 ' }}
         type='default'
       />
-      {/*   <DeleteButton onClick={del} /> */}
+      <DeleteButton onClick={del} />
     </Space>
   );
 };

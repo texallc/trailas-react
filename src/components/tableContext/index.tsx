@@ -20,7 +20,7 @@ export interface Get<T> {
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
 const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showActionsButtons }: Props<T>) => {
-  const { loading, data } = useOnSnapshot<T>();
+  const { loading, data, snapshotProps } = useOnSnapshot<T>();
 
   useEffect(() => {
     if (loading) return;
@@ -44,8 +44,8 @@ const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showAct
             <TableActionsButtons
               record={r}
               onDeleted={() => { }}
-              fun={async () => { }}
               pathEdit={""}
+              path={snapshotProps.collection}
             />
           );
         },

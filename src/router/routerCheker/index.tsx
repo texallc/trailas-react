@@ -6,7 +6,7 @@ import MenuComponent from '../../components/menu';
 import Breadcrumb from '../../components/breadcrumb';
 import FullLoader from "../../components/fullLoader";
 
-const RoterChecker = () => {
+const RouterChecker = () => {
   const { user, loading } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -36,4 +36,4 @@ const RoterChecker = () => {
   );
 };
 
-export default RoterChecker;
+export default RouterChecker;

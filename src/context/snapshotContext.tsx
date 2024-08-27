@@ -18,13 +18,18 @@ interface Snapshot<T> {
   data: Array<T>;
   setData: Dispatch<SetStateAction<Array<T>>>;
   setSnapshotProps: Dispatch<SetStateAction<PropsUseOnSnapshot>>;
+  snapshotProps: PropsUseOnSnapshot;
 }
 
 const createSnapshotContext = once(<T extends {}>() => createContext({
   data: [],
   loading: true,
   setData: () => { },
-  setSnapshotProps: () => { }
+  setSnapshotProps: () => { },
+  snapshotProps: {
+    collection: "",
+    query: [],
+  }
 } as Snapshot<T>));
 
 export const useOnSnapshot = <T extends {}>() => useContext(createSnapshotContext<T>());
@@ -42,6 +47,8 @@ const SnapshotProvider = <T extends {}>({ children }: { children: ReactNode; }) 
 
   useEffect(() => {
     if (wait || !collection) return;
+
+    setLoading(true);
 
     const uns = onSnapshot(q(col(getFirestore(), collection), ...query), (_snapshot) => {
       setData(
@@ -69,15 +76,17 @@ const SnapshotProvider = <T extends {}>({ children }: { children: ReactNode; }) 
           return { ...dataDoc, id: d.id } as unknown as T;
         }) as Array<T>
       );
+
       setLoading(false);
     });
 
     return () => {
       uns();
+      setData([]);
     };
   }, [collection, query, extraPropsByItemArray, formatDate, wait]);
 
-  return <Context.Provider value={{ loading, data, setData, setSnapshotProps }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ loading, data, setData, snapshotProps, setSnapshotProps }}>{children}</Context.Provider>;
 };
 
 export default SnapshotProvider;

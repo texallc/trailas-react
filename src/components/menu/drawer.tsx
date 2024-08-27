@@ -15,8 +15,10 @@ const Drawer: FC<Props> = ({ open, onClose }) => {
 
   return (
     <DrawerAnt
-      headerStyle={{ backgroundColor: '#CF9F29', color: "white" }}
-      bodyStyle={{ backgroundColor: '#C8C8C8', color: "white" }}
+      styles={{
+        header: { backgroundColor: '#CF9F29', color: "white" },
+        body: { backgroundColor: '#C8C8C8', color: "white" }
+      }}
       width="80%"
       placement="right"
       onClose={onClose}

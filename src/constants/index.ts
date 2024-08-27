@@ -8,10 +8,20 @@ import { Column } from "exceljs";
 export const baseUrlStorage = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/";
 export const baseUrlStorageGCP = "https://storage.googleapis.com/delivery-hmo.appspot.com/images/";
  */
-export const rulePhoneInput: FormRule = {
+
+export const ruleName: FormRule = {
+  required: true,
+  message: 'El nombre es requerido.',
+  validator: (rule, value?: string) => {
+    return !value?.length ? Promise.reject(rule.message) : Promise.resolve();
+  },
+} as const;
+
+export const rulePhone: FormRule = {
   required: true,
   message: 'El número telefónico tiene que ser de 10 dígitos.',
   validator: (rule, value?: string) => value?.length !== 10 ? Promise.reject(rule.message) : Promise.resolve(),
+  type: "number"
 } as const;
 export const ruleMaxLength: FormRule = {
   max: 300,
@@ -95,6 +105,14 @@ export const initTiresChangedByTraila: TiresChangedByTraila = {
   repairOrders: [],
   ...initTires,
   ...initSizeTires
+} as const;
+
+export const initDriver: Driver = {
+  id: "",
+  name: "",
+  phone: "",
+  email: "",
+  age: undefined
 } as const;
 
 export const sideTiresUploadChange: Record<string, keyof Tires> = {

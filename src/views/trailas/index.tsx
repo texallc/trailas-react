@@ -136,6 +136,7 @@ const Trailas = () => {
   }, [onChangeAlignment]);
 
   const onCloseUpdateTraila = () => {
+    setTraila(initTraila);
     navigate("/trailas");
   };
 

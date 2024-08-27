@@ -1,4 +1,4 @@
-import { HomeOutlined, SettingOutlined, LogoutOutlined, AuditOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { message } from "antd";
 import { getAuth } from "firebase/auth";
@@ -20,6 +20,12 @@ const menuItems = [
     title: '',
     label: <Link to="/trailas">Trailas</Link>,
     icon: <MdLocalShipping style={styleIcon} />
+  },
+  {
+    key: "/choferes",
+    title: '',
+    label: <Link to="/choferes">Choferes</Link>,
+    icon: <UserOutlined style={styleIcon} />
   },
   {
     key: '/configuracion',

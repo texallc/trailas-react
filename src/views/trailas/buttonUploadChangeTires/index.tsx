@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button, message, Upload, UploadProps } from "antd";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { UploadOutlined } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import { SizeTires, SizeTiresUpload, Tires, TiresChangedByTraila, Traila, Upload
 import { FieldValue, increment, where } from "firebase/firestore";
 import { bulkCreate, bulkUpdate, getCollectionDocs } from "../../../services/firebase/firestore";
 import { useAuth } from "../../../context/authContext";
-import { initSizeTires, initSizeTiresUpload, initTires, sideTiresUploadChange } from "../../../constants";
+import { initSizeTiresUpload, initTires, sideTiresUploadChange } from "../../../constants";
 
 interface UpdateTrailaByUpload {
   id: string;
@@ -18,16 +18,6 @@ interface UpdateTrailaByUpload {
 }
 
 const ButtonUploadChangeTires = () => {
-  /* useEffect(() => {
-    const resetCountTiresAllTrailas = async () => {
-      const trailas = await getCollectionDocs("trailas", []);
-
-      await bulkUpdate("trailas", trailas.docs.map(doc => ({ tiresChanged: 0, id: doc.id, tire1: 0, tire2: 0, tire3: 0, tire4: 0, tire5: 0, tire6: 0, tire7: 0, tire8: 0 })));
-    };
-
-    resetCountTiresAllTrailas();
-  }, []); */
-
   const { user } = useAuth();
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
   const [loading, setLoading] = useState(false);
