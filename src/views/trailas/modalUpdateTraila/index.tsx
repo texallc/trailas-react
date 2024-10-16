@@ -31,6 +31,10 @@ const ModalUpdateTraila = ({ traila, onClose, categories, drivers, ...props }: P
     setSaving(true);
 
     try {
+      if (typeof traila.driver === "undefined") {
+        delete traila.driver;
+      }
+
       await update("trailas", traila.id!, { ...traila, updatedAt: new Date() });
 
       message.success("Traila actualizada correctamente!.", 4);

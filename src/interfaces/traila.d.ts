@@ -46,6 +46,7 @@ export interface TiresChangedByTraila extends Tires, SizeTires {
   repairOrders: string[] | UploadChangeParam<UploadFile<any>>;
   sizesTires?: SizesTires;
   notes?: string;
+  driver?: string;
 }
 
 export interface Tires {

@@ -117,6 +117,10 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
       delete newTiresChangedByTraila.id;
       delete newTiresChangedByTraila.sizesTires;
 
+      if (typeof newTiresChangedByTraila.driver === "undefined") {
+        delete newTiresChangedByTraila.driver;
+      }
+
       await runTransaction(db, async (transaction) => {
         transaction.update(
           doc(db, "trailas", traila.id!),
