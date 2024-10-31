@@ -113,11 +113,15 @@ export const fileToBase64 = (file: File) => new Promise((resolve, reject) => {
 export const handleError = (error: any) => {
   console.log(error);
 
+  if (typeof error === "string") {
+    throw new Error(error);
+  }
+
   if (error instanceof Error) {
     throw new Error(error.message);
   }
 
-  throw new Error(error as string);
+  throw new Error(JSON.stringify(error));
 };
 
 export const confirmDialog = <T>(content: ReactNode, fun: () => Promise<T>, textSuccess?: string) =>
