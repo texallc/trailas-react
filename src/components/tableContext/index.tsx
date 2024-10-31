@@ -12,11 +12,6 @@ interface Props<T> {
   showActionsButtons?: boolean;
 }
 
-export interface Get<T> {
-  total: number;
-  list: Array<T>;
-}
-
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
 const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showActionsButtons }: Props<T>) => {

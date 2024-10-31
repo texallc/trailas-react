@@ -1,0 +1,33 @@
+import { handleError } from "../../utils/functions";
+import { getCurrentToken } from "../firebase/auth";
+
+const baseUrl = "http://localhost:3001";
+
+const getHeaders = (token: string) => ({
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  Authorization: "Bearer " + token
+});
+
+export const get = async<T extends {}>(url: string, abortController: AbortController) => {
+  try {
+    const token = await getCurrentToken();
+    const response = await fetch(
+      baseUrl + url,
+      {
+        method: 'GET',
+        headers: getHeaders(token),
+        signal: abortController?.signal
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw handleError(error);
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    throw handleError(error);
+  }
+};

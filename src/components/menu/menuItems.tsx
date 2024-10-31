@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { message } from "antd";
 import { getAuth } from "firebase/auth";
 import { MdLocalShipping } from 'react-icons/md';
+import { GrUserPolice } from "react-icons/gr";
 
 const styleIcon = {
   fontSize: 20
@@ -25,6 +26,12 @@ const menuItems = [
     key: "/choferes",
     title: '',
     label: <Link to="/choferes">Choferes</Link>,
+    icon: <GrUserPolice style={styleIcon} />
+  },
+  {
+    key: "/usuarios",
+    title: '',
+    label: <Link to="/usuarios?pagina=1&limite=10">Usuarios</Link>,
     icon: <UserOutlined style={styleIcon} />
   },
   {

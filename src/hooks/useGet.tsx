@@ -1,23 +1,27 @@
-/* import { useEffect, useState } from 'react';
-import { get } from "../services";
+import { useEffect, useState } from 'react';
 import { message } from 'antd';
 import useAbortController from './useAbortController';
+import { get } from "../services/http";
 
-const useGet = <T extends {}>(url: string, wait?: boolean, mergeResponse?: boolean) => {
+export interface PropsUseGet {
+	url: string;
+	wait?: boolean;
+	mergeResponse?: boolean;
+}
+
+const useGet = <T extends {}>({ url, wait, mergeResponse }: PropsUseGet) => {
 	const abortController = useAbortController();
 	const [loading, setLoading] = useState(true);
 	const [response, setResponse] = useState<T>();
 
 	useEffect(() => {
-		if (wait || !url || abortController.current) return;
+		if (wait || !url) return;
 
 		const init = async () => {
 			setLoading(true);
 
-			abortController.current = new AbortController();
-
 			try {
-				const _response = await get<T>(url, abortController.current);
+				const _response = await get<T>(url, abortController.current!);
 
 				setResponse(r =>
 					mergeResponse
@@ -36,16 +40,14 @@ const useGet = <T extends {}>(url: string, wait?: boolean, mergeResponse?: boole
 					message.error(error, 4);
 				}
 			} finally {
-				abortController.current = undefined;
 				setLoading(false);
 			}
-		}
+		};
 
 		init();
 	}, [url, wait, mergeResponse, abortController]);
 
 	return { loading, response, setResponse };
-}
+};
 
 export default useGet;
- */

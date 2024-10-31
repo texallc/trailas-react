@@ -11,11 +11,6 @@ interface Props<T> extends PropsUseCollection {
 	onLoadData?: (data: T[]) => void;
 }
 
-export interface Get<T> {
-	total: number;
-	list: Array<T>;
-}
-
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
 const Table = <T extends {}>({ columns: columnsProps, onLoadData, ...props }: Props<T>) => {

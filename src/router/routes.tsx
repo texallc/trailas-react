@@ -6,6 +6,8 @@ const Login = lazy(() => import('../views/login'));
 const Home = lazy(() => import('../views/home'));
 const Trailas = lazy(() => import('../views/trailas'));
 const Drivers = lazy(() => import('../views/drivers'));
+const Users = lazy(() => import('../views/users'));
+
 
 const routes: PathRouteProps[] = [
   {
@@ -27,6 +29,10 @@ const routes: PathRouteProps[] = [
     element: <SnapshotProvider>
       <Drivers />
     </SnapshotProvider>
+  },
+  {
+    path: '/usuarios',
+    element: <Users />
   },
   {
     path: '*',

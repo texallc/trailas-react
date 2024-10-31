@@ -4,14 +4,14 @@ import Modal from "../../../components/modal";
 import { SizeTires, Tires, TiresChangedByTraila, Traila } from "../../../interfaces/traila";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/authContext";
-import { create, update, uploadFiles } from "../../../services/firebase/firestore";
-import TireChangeInputs from "./tireChangeInputs";
+import { uploadFiles } from "../../../services/firebase/firestore";
 import { collection, doc, increment, runTransaction } from "firebase/firestore";
 import { initSizeTires, initTiresChangedByTraila } from "../../../constants";
 import ButtonUploadOrderRepair from "../../../components/buttonUploadOrderRepair";
 import { UploadChangeParam } from "antd/es/upload";
 import BaseInputsTraila from "../../../components/baseInputsTraila";
 import { db } from "../../../services/firebase";
+import TireChangeInputs from "./tireChangeInputs";
 
 interface Props extends ModalProps {
   traila: Traila;
