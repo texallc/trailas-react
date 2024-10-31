@@ -1,14 +1,14 @@
 
 import { Empty, Table } from "antd";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import useGet from "../../hooks/useGet";
 import { Get } from "../../interfaces";
 import { TableProps } from "../../interfaces/components/serverTable";
 import Filters from "./filters";
 import FormControlProvider from "../../context/formControl";
 
-const ServerTable = <T extends { id: string; }>({ url, columns, filters }: TableProps<T>) => {
+const ServerTable = <T extends { id: number; }>({ url, columns, filters }: TableProps<T>) => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

@@ -1,8 +1,9 @@
 import ServerTable from "../../components/tableServer";
+import { User } from "../../interfaces/models/user";
 
 const Users = () => {
   return (
-    <ServerTable
+    <ServerTable<User>
       columns={[
         {
           title: "Nombre",
@@ -18,6 +19,26 @@ const Users = () => {
           title: "Rol",
           dataIndex: "role",
           key: "role",
+        },
+        {
+          title: "Teléfono",
+          dataIndex: "phone",
+          key: "phone",
+        },
+        {
+          title: "Fecha de creación",
+          dataIndex: "createdAt",
+          key: "createdAt",
+        },
+        {
+          title: "Fecha de actualización",
+          dataIndex: "updatedAt",
+          key: "updatedAt",
+        },
+        {
+          title: 'Imagen',
+          key: 'image',
+          render: () => <img alt="user-image" />,
         },
       ]}
     />
