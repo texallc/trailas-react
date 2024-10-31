@@ -7,7 +7,9 @@ const Home = lazy(() => import('../views/home'));
 const Trailas = lazy(() => import('../views/trailas'));
 const Drivers = lazy(() => import('../views/drivers'));
 const Users = lazy(() => import('../views/users'));
-
+const Categories = lazy(() => import('../views/categories'));
+const Products = lazy(() => import('../views/products'));
+const Inventories = lazy(() => import('../views/inventories'));
 
 const routes: PathRouteProps[] = [
   {
@@ -33,6 +35,18 @@ const routes: PathRouteProps[] = [
   {
     path: '/usuarios',
     element: <Users />
+  },
+  {
+    path: '/categorias',
+    element: <Categories />
+  },
+  {
+    path: '/productos',
+    element: <Products />
+  },
+  {
+    path: '/inventarios',
+    element: <Inventories />
   },
   {
     path: '*',

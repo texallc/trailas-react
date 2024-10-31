@@ -1,4 +1,4 @@
-import { HomeOutlined, SettingOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined, LogoutOutlined, UserOutlined, AppstoreOutlined, ToolOutlined, InboxOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { message } from "antd";
 import { getAuth } from "firebase/auth";
@@ -33,6 +33,24 @@ const menuItems = [
     title: '',
     label: <Link to="/usuarios?pagina=1&limite=10">Usuarios</Link>,
     icon: <UserOutlined style={styleIcon} />
+  },
+  {
+    key: "/categorias",
+    title: "",
+    label: <Link to="/categorias?pagina=1&limite=10">Categorias</Link>,
+    icon: <AppstoreOutlined style={styleIcon} />
+  },
+  {
+    key: "/productos",
+    title: "",
+    label: <Link to="/productos?pagina=1&limite=10">Productos</Link>,
+    icon: <ToolOutlined style={styleIcon} />
+  },
+  {
+    key: "/inventarios",
+    title: "",
+    label: <Link to="/inventarios?pagina=1&limite=10">Inventarios</Link>,
+    icon: <InboxOutlined style={styleIcon} />
   },
   {
     key: '/configuracion',

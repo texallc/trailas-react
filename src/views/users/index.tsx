@@ -38,7 +38,7 @@ const Users = () => {
         {
           title: 'Imagen',
           key: 'image',
-          render: () => <img alt="user-image" />,
+          render: (_, { image }) => <img style={{ height: 64, width: 80, objectFit: "cover" }} alt="user-image" src={image} />,
         },
       ]}
     />
