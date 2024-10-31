@@ -1,7 +1,7 @@
 import { Category } from "./category";
 
 export interface Product {
-  readonly id?: number;
+  readonly id: number;
   uid?: string;
   name: string;
   price: number;
