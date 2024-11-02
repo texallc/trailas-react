@@ -10,6 +10,7 @@ const Users = lazy(() => import('../views/users'));
 const Categories = lazy(() => import('../views/categories'));
 const Products = lazy(() => import('../views/products'));
 const Inventories = lazy(() => import('../views/inventories'));
+const Sales = lazy(() => import('../views/sales'));
 
 const routes: PathRouteProps[] = [
   {
@@ -47,6 +48,10 @@ const routes: PathRouteProps[] = [
   {
     path: '/inventarios',
     element: <Inventories />
+  },
+  {
+    path: '/ventas',
+    element: <Sales />
   },
   {
     path: '*',
