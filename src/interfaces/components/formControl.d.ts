@@ -8,12 +8,13 @@ export interface ItemInput<K> extends Omit<InputProps, "name"> {
 
 export interface ItemSelect<K> extends Omit<SelectProps, "name"> {
   name: K;
-  label: string;
+  label?: string;
   type?: "select";
   keyValue?: string;
   keyLabel?: string;
   url?: string;
   page?: number;
+  required?: boolean,
 }
 
 export interface SelectGet {

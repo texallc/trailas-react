@@ -4,6 +4,7 @@ import ServerTable from "../../components/tableServer";
 import { User } from "../../interfaces/models/user";
 import ModalForm from "../../components/modalForm";
 import HeaderView from "../../components/headerView";
+import FormControlProvider from "../../context/formControl";
 
 const Users = () => {
   return (
@@ -51,7 +52,58 @@ const Users = () => {
         showDisabled
         showEdit
       />
-      <ModalForm />
+      <FormControlProvider<User>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "uid",
+            style: { display: "none" },
+          },
+          {
+            name: "name",
+            label: "Nombre",
+            required: true,
+          },
+          {
+            name: "email",
+            label: "Email",
+            required: true,
+          },
+          {
+            name: "role",
+            label: "Rol",
+            type: "select",
+            required: true,
+            options: [
+              {
+                value: "Super Admin",
+                label: "Super Admin"
+              },
+              {
+                value: "Administrador de Sucursal",
+                label: "Administrador de Sucursal"
+              },
+              {
+                value: "Vendedor",
+                label: "Vendedor"
+              },
+              {
+                value: "Comprador",
+                label: "Comprador"
+              }
+            ],
+          },
+          {
+            name: "phone",
+            label: "Teléfono",
+          },
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };

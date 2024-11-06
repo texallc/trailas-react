@@ -34,7 +34,7 @@ const HeaderView: FC<Props> = ({ urlProp, goBack }) => {
             {
               goBack
                 ? <BackButton onClick={() => navigate(pathname)} />
-                : <CreateButton onClick={() => navigate({ search: `${url.replace("/list", "")}?id=0` })}>
+                : <CreateButton onClick={() => navigate(`${url.replace("/list", "")}&id=0`)}>
                   {"Registar " + moduleName.slice(0, -1)}
                 </CreateButton>
             }
