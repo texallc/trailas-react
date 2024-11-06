@@ -78,13 +78,13 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
 
   return (
     <>
-      {
-        filters && <FormControlProvider<T>
-          itemsProp={filters}
+      {/*  {
+        <FormControlProvider<T>
+          inputsProp={[]}
         >
           <Filters />
         </FormControlProvider>
-      }
+      } */}
       <br />
       <Table
         sticky

@@ -5,23 +5,28 @@ import { SearchOutlined } from "@ant-design/icons";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
 
-interface PropsItemFilters<T> {
-  item: InputType<T>;
+export interface PropsItemFilters<T> {
+  input: InputType<T>;
   onPopupScroll: (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
   onSearchSelect: (search: string) => void;
 }
 
-const FormControl = <T extends {}>({ item, onPopupScroll, onSearchSelect }: PropsItemFilters<T>) => {
+const FormControl = <T extends {}>({ input, onPopupScroll, onSearchSelect }: PropsItemFilters<T>) => {
   const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
-  const { name, type } = item;
+  const { name, type, label, style } = input;
   const nameString = name as string;
 
   return (
-    <>
+    <div>
       {
-        (!type || type === "input") && <FormItem name={nameString}>
+        (!type || type === "input") && <FormItem
+          name={nameString}
+          label={label}
+          style={style}
+        >
           <Input
-            placeholder={(item.placeholder || "") as string}
+            style={style}
+            placeholder={(input.placeholder || "") as string}
           />
         </FormItem>
       }
@@ -29,34 +34,34 @@ const FormControl = <T extends {}>({ item, onPopupScroll, onSearchSelect }: Prop
         type === "select" && <FormItem name={nameString}>
           <Space.Compact style={{ width: "100%" }}>
             <Select
-              options={item.options}
-              loading={item.loading}
-              placeholder={item.placeholder}
-              onPopupScroll={e => onPopupScroll?.(e, item)}
-              showSearch={item.showSearch}
+              options={input.options}
+              loading={input.loading}
+              placeholder={input.placeholder}
+              onPopupScroll={e => onPopupScroll?.(e, input)}
+              showSearch={input.showSearch}
               filterOption={(input, option) =>
                 ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())
               }
               allowClear={true}
               onSearch={(value) => setSearchValues(prev => {
-                const searchValue = prev.find(search => search.id === item.name);
+                const searchValue = prev.find(search => search.id === name);
 
                 if (searchValue) {
-                  return [...prev, { id: item.name.toString(), value }];
+                  return [...prev, { id: name.toString(), value }];
                 }
 
                 return [];
               })}
-              searchValue={searchValues.find(search => search.id === item.name)?.value || ""}
+              searchValue={searchValues.find(search => search.id === name)?.value || ""}
             />
-            <Button
+            {/*  <Button
               icon={<SearchOutlined />}
-              onClick={() => onSearchSelect?.(item.searchValue || "")}
-            />
+              onClick={() => onSearchSelect?.(input.searchValue || "")}
+            /> */}
           </Space.Compact>
         </FormItem>
       }
-    </>
+    </div>
   );
 };
 

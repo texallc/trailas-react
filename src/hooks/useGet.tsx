@@ -16,11 +16,11 @@ const useGet = <T extends {}>({ url, wait, mergeResponse }: PropsUseGet) => {
 	const [localStateUrl, setLocalStateUrl] = useState("");
 
 	useEffect(() => {
+		setLocalStateUrl(url);
+
 		if (wait || !url || url === localStateUrl) return;
 
-
 		const init = async () => {
-			setLocalStateUrl(url);
 			setLoading(true);
 
 			try {
