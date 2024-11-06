@@ -1,7 +1,8 @@
-import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
 import ServerTable from "../../components/tableServer"
 import { Category } from "../../interfaces/models/category"
+import FormControlProvider from "../../context/formControl";
+import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
 
 const Categories = () => {
@@ -39,7 +40,25 @@ const Categories = () => {
         ]}
         showDisabled
       />
-      <ModalForm />
+      <FormControlProvider<Category>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "name",
+            label: "Nombre",
+            required: true,
+          },
+          {
+            name: "description",
+            label: "Descripción",
+          }
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };

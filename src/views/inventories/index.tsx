@@ -1,6 +1,7 @@
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
 import ServerTable from "../../components/tableServer"
+import FormControlProvider from "../../context/formControl";
 import { Inventory } from "../../interfaces/models/inventory";
 
 const Inventories = () => {
@@ -26,7 +27,20 @@ const Inventories = () => {
           },
         ]}
       />
-      <ModalForm />
+      <FormControlProvider<Inventory>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "stock",
+            label: "Stock",
+          },
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };
