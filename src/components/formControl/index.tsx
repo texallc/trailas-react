@@ -4,6 +4,7 @@ import FormItem from "antd/es/form/FormItem";
 import { SearchOutlined } from "@ant-design/icons";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
+import { rulePassword, rulePhone } from "../../constants";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
@@ -11,32 +12,70 @@ export interface PropsItemFilters<T> {
   onSearchSelect: (search: string) => void;
 }
 
-const FormControl = <T extends {}>({ input, onPopupScroll, onSearchSelect }: PropsItemFilters<T>) => {
+const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>) => {
   const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
-  const { name, type, label, style } = input;
+  const { name, type, label, style, placeholder, rules } = input;
   const nameString = name as string;
 
   return (
-    <div>
+    <div style={{ padding: 5 }}>
       {
         (!type || type === "input") && <FormItem
           name={nameString}
           label={label}
           style={style}
+          rules={rules}
         >
           <Input
             style={style}
-            placeholder={(input.placeholder || "") as string}
+            placeholder={placeholder}
           />
         </FormItem>
       }
       {
-        type === "select" && <FormItem name={nameString}>
+        type === "phone" && <FormItem
+          name={nameString}
+          label={label}
+          style={style}
+          rules={[rulePhone]}
+        >
+          <Input
+            type="number"
+            onKeyDown={e => {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+              }
+
+              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+            }}
+            onWheel={e => e.preventDefault()}
+          />
+        </FormItem>
+      }
+      {
+        type === "password" && <FormItem
+          name={nameString}
+          label={label}
+          style={style}
+          rules={[rulePassword]}
+        >
+          <Input.Password
+            style={style}
+            placeholder={placeholder}
+          />
+        </FormItem>
+      }
+      {
+        type === "select" && <FormItem
+          name={nameString}
+          label={label}
+          rules={rules}
+        >
           <Space.Compact style={{ width: "100%" }}>
             <Select
               options={input.options}
               loading={input.loading}
-              placeholder={input.placeholder}
+              placeholder={placeholder}
               onPopupScroll={e => onPopupScroll?.(e, input)}
               showSearch={input.showSearch}
               filterOption={(input, option) =>
