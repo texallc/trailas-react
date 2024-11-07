@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Modal from "../modal";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import FormControl from "../formControl";
 import { useFormControl } from "../../context/formControl";
@@ -65,6 +65,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       title={title}
       open={open}
       onCancel={handleClose}
+      onOk={() => form.submit()}
     >
       <Form<T>
         form={form}

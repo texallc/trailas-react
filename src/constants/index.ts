@@ -24,7 +24,11 @@ export const rulePhone: FormRule = {
   type: "number"
 } as const;
 export const ruleMaxLength: FormRule = {
-  max: 300,
+  max: 255,
+  message: "El texto no puede tener más de 300 caracteres."
+} as const;
+export const ruleLargeMaxLength: FormRule = {
+  max: 3000,
   message: "El texto no puede tener más de 300 caracteres."
 } as const;
 export const ruleEmail: FormRule = {

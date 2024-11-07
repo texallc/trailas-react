@@ -1,9 +1,10 @@
 import { UIEvent, useState } from "react";
-import { Button, Input, Select, Space } from "antd";
-import FormItem from "antd/es/form/FormItem";
+import { Button, Input, Select, Space, Switch } from "antd";
+import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { SearchOutlined } from "@ant-design/icons";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
+import { ruleMaxLength, rulePassword, rulePhone } from "../../constants";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
@@ -11,32 +12,81 @@ export interface PropsItemFilters<T> {
   onSearchSelect: (search: string) => void;
 }
 
-const FormControl = <T extends {}>({ input, onPopupScroll, onSearchSelect }: PropsItemFilters<T>) => {
+const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>) => {
   const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
-  const { name, type, label, style } = input;
+  const { name, type, label, style, placeholder, rules } = input;
   const nameString = name as string;
 
+  const baseFormItemProps: FormItemProps = {
+    name: nameString,
+    label: label,
+    style: style,
+  } as const;
+
   return (
-    <div>
+    <div style={{ padding: 5 }}>
       {
         (!type || type === "input") && <FormItem
-          name={nameString}
-          label={label}
-          style={style}
+          {...baseFormItemProps}
+          rules={rules}
         >
           <Input
             style={style}
-            placeholder={(input.placeholder || "") as string}
+            placeholder={placeholder}
           />
         </FormItem>
       }
       {
-        type === "select" && <FormItem name={nameString}>
+        type === "phone" && <FormItem
+          {...baseFormItemProps}
+          rules={[rulePhone]}
+        >
+          <Input
+            type="number"
+            onKeyDown={e => {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+              }
+
+              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+            }}
+            onWheel={e => e.preventDefault()}
+          />
+        </FormItem>
+      }
+      {
+        type === "password" && <FormItem
+          {...baseFormItemProps}
+          rules={[rulePassword, ruleMaxLength]}
+        >
+          <Input.Password
+            style={style}
+            placeholder={placeholder}
+          />
+        </FormItem>
+      }
+      {
+        type === "textarea" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
+          <Input.TextArea
+            style={style}
+            placeholder={placeholder}
+          />
+        </FormItem>
+      }
+      {
+        type === "select" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
           <Space.Compact style={{ width: "100%" }}>
             <Select
+              style={style}
               options={input.options}
               loading={input.loading}
-              placeholder={input.placeholder}
+              placeholder={placeholder}
               onPopupScroll={e => onPopupScroll?.(e, input)}
               showSearch={input.showSearch}
               filterOption={(input, option) =>
@@ -59,6 +109,15 @@ const FormControl = <T extends {}>({ input, onPopupScroll, onSearchSelect }: Pro
               onClick={() => onSearchSelect?.(input.searchValue || "")}
             /> */}
           </Space.Compact>
+        </FormItem>
+      }
+      {
+        type === "switch" && <FormItem
+          {...baseFormItemProps}
+          valuePropName="checked"
+          rules={rules}
+        >
+          <Switch />
         </FormItem>
       }
     </div>

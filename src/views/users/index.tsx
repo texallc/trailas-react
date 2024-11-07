@@ -5,6 +5,7 @@ import { User } from "../../interfaces/models/user";
 import ModalForm from "../../components/modalForm";
 import HeaderView from "../../components/headerView";
 import FormControlProvider from "../../context/formControl";
+import { ruleEmail, ruleMaxLength, ruleName } from "../../constants";
 
 const Users = () => {
   return (
@@ -65,18 +66,17 @@ const Users = () => {
           {
             name: "name",
             label: "Nombre",
-            required: true,
+            rules: [ruleName, ruleMaxLength]
           },
           {
             name: "email",
             label: "Email",
-            required: true,
+            rules: [ruleEmail]
           },
           {
             name: "role",
             label: "Rol",
             type: "select",
-            required: true,
             options: [
               {
                 value: "Super Admin",
@@ -95,11 +95,23 @@ const Users = () => {
                 label: "Comprador"
               }
             ],
+            rules: [
+              {
+                required: true,
+                message: "Favor de seleccionar un rol"
+              }
+            ]
           },
           {
             name: "phone",
             label: "Teléfono",
+            type: "phone"
           },
+          {
+            name: "description",
+            label: "Descripción",
+            type: "textarea"
+          }
         ]}
       >
         <ModalForm />

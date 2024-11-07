@@ -1,24 +1,43 @@
-import { InputProps, SelectProps } from "antd";
+import { InputProps, SelectProps, SwitchProps } from "antd";
+import { Rule } from "antd/es/form";
 
-export interface ItemInput<K> extends Omit<InputProps, "name"> {
+interface BaseInputProps<K> {
   name: K;
-  label: string;
+  label?: string;
+  rules?: Rule[];
+}
+
+export interface ItemInput<K> extends Omit<InputProps, "name">, BaseInputProps<K> {
   type?: "input";
 }
 
-export interface ItemSelect<K> extends Omit<SelectProps, "name"> {
-  name: K;
-  label?: string;
-  type?: "select";
+export interface ItemSelect<K> extends Omit<SelectProps, "name">, BaseInputProps<K> {
+  type: "select";
   keyValue?: string;
   keyLabel?: string;
   url?: string;
   page?: number;
-  required?: boolean,
+}
+
+export interface ItemPassword<K> extends Omit<ItemInput<K>, "type"> {
+  type: "password";
+}
+
+export interface ItemPhone<K> extends Omit<ItemInput<K>, "type"> {
+  type: "phone";
+}
+
+export interface ItemTextarea<K> extends Omit<ItemInput<K>, "type"> {
+  type: "textarea";
+}
+
+export interface ItemSwitch<K> extends SwitchProps, BaseInputProps<K> {
+  type: "switch";
+  placeholder?: string;
 }
 
 export interface SelectGet {
-  list: SelectResponse[],
+  list: SelectResponse[];
   total: number;
 }
 
