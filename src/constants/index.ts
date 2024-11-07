@@ -21,26 +21,44 @@ export const rulePhone: FormRule = {
   required: true,
   message: 'El número telefónico tiene que ser de 10 dígitos.',
   validator: (rule, value?: string) => value?.length !== 10 ? Promise.reject(rule.message) : Promise.resolve(),
-  type: "number"
 } as const;
+
+export const rulePrice: FormRule = {
+  required: true,
+  message: 'El precio no puede ser menor a 1 o mayor a 999,999.',
+  validator: (rule, value?: string) => {
+    if (!value) return Promise.reject(rule.message);
+
+    const numberValue = +value;
+
+    if (numberValue < 1 || numberValue > 999999) return Promise.reject(rule.message);
+
+    return Promise.resolve();
+  },
+} as const;
+
 export const ruleMaxLength: FormRule = {
   max: 255,
   message: "El texto no puede tener más de 300 caracteres."
 } as const;
+
 export const ruleLargeMaxLength: FormRule = {
   max: 3000,
   message: "El texto no puede tener más de 300 caracteres."
 } as const;
+
 export const ruleEmail: FormRule = {
   required: true,
   message: 'Favor de escribir un correo electrónico válido.',
   type: "email"
 } as const;
+
 export const rulePassword: FormRule = {
   required: true,
   min: 6,
   message: 'La contraseña tiene que ser de 6 dígitos o más.'
 } as const;
+
 export const titleForm: Record<TypeRoute, string> = {
   create: "Registrar",
   update: "Editar"

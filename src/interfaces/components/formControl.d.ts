@@ -11,6 +11,10 @@ export interface ItemInput<K> extends Omit<InputProps, "name">, BaseInputProps<K
   type?: "input";
 }
 
+export interface ItemNumber<K> extends Omit<ItemInput<K>, "type"> {
+  type: "number";
+}
+
 export interface ItemSelect<K> extends Omit<SelectProps, "name">, BaseInputProps<K> {
   type: "select";
   keyValue?: string;

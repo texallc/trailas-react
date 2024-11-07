@@ -1,7 +1,6 @@
 import { UIEvent, useState } from "react";
-import { Button, Input, Select, Space, Switch } from "antd";
+import { Input, Select, Space, Switch } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
-import { SearchOutlined } from "@ant-design/icons";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
 import { ruleMaxLength, rulePassword, rulePhone } from "../../constants";
@@ -33,6 +32,24 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
           <Input
             style={style}
             placeholder={placeholder}
+          />
+        </FormItem>
+      }
+      {
+        type === "number" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
+          <Input
+            type="number"
+            onKeyDown={e => {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+              }
+
+              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+            }}
+            onWheel={e => e.preventDefault()}
           />
         </FormItem>
       }
