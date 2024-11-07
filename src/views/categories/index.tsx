@@ -6,6 +6,7 @@ import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
 import CachedImage from "../../components/cachedImage";
 import { ruleMaxLength, ruleName } from "../../constants";
+import dayjs from "dayjs";
 
 const Categories = () => {
   return (
@@ -23,16 +24,15 @@ const Categories = () => {
             dataIndex: "description",
             key: "description",
           },
-
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            key: "createdAt",
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
-            dataIndex: "updatedAt",
             key: "updatedAt",
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: 'Imagen',

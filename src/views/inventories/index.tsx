@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
 import ServerTable from "../../components/tableServer"
@@ -18,12 +19,12 @@ const Inventories = () => {
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            key: "createdAt",
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
-            dataIndex: "updatedAt",
             key: "updatedAt",
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
         ]}
       />
