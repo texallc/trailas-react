@@ -1,10 +1,10 @@
 import { UIEvent, useState } from "react";
-import { Button, Input, Select, Space } from "antd";
-import FormItem from "antd/es/form/FormItem";
+import { Button, Input, Select, Space, Switch } from "antd";
+import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { SearchOutlined } from "@ant-design/icons";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
-import { rulePassword, rulePhone } from "../../constants";
+import { ruleMaxLength, rulePassword, rulePhone } from "../../constants";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
@@ -17,13 +17,17 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
   const { name, type, label, style, placeholder, rules } = input;
   const nameString = name as string;
 
+  const baseFormItemProps: FormItemProps = {
+    name: nameString,
+    label: label,
+    style: style,
+  } as const;
+
   return (
     <div style={{ padding: 5 }}>
       {
         (!type || type === "input") && <FormItem
-          name={nameString}
-          label={label}
-          style={style}
+          {...baseFormItemProps}
           rules={rules}
         >
           <Input
@@ -34,9 +38,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
       }
       {
         type === "phone" && <FormItem
-          name={nameString}
-          label={label}
-          style={style}
+          {...baseFormItemProps}
           rules={[rulePhone]}
         >
           <Input
@@ -54,10 +56,8 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
       }
       {
         type === "password" && <FormItem
-          name={nameString}
-          label={label}
-          style={style}
-          rules={[rulePassword]}
+          {...baseFormItemProps}
+          rules={[rulePassword, ruleMaxLength]}
         >
           <Input.Password
             style={style}
@@ -66,13 +66,24 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
         </FormItem>
       }
       {
+        type === "textarea" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
+          <Input.TextArea
+            style={style}
+            placeholder={placeholder}
+          />
+        </FormItem>
+      }
+      {
         type === "select" && <FormItem
-          name={nameString}
-          label={label}
+          {...baseFormItemProps}
           rules={rules}
         >
           <Space.Compact style={{ width: "100%" }}>
             <Select
+              style={style}
               options={input.options}
               loading={input.loading}
               placeholder={placeholder}
@@ -98,6 +109,15 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
               onClick={() => onSearchSelect?.(input.searchValue || "")}
             /> */}
           </Space.Compact>
+        </FormItem>
+      }
+      {
+        type === "switch" && <FormItem
+          {...baseFormItemProps}
+          valuePropName="checked"
+          rules={rules}
+        >
+          <Switch />
         </FormItem>
       }
     </div>

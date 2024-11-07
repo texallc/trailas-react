@@ -5,7 +5,7 @@ import { User } from "../../interfaces/models/user";
 import ModalForm from "../../components/modalForm";
 import HeaderView from "../../components/headerView";
 import FormControlProvider from "../../context/formControl";
-import { ruleEmail, ruleName } from "../../constants";
+import { ruleEmail, ruleMaxLength, ruleName } from "../../constants";
 
 const Users = () => {
   return (
@@ -66,7 +66,7 @@ const Users = () => {
           {
             name: "name",
             label: "Nombre",
-            rules: [ruleName]
+            rules: [ruleName, ruleMaxLength]
           },
           {
             name: "email",
@@ -107,6 +107,11 @@ const Users = () => {
             label: "Teléfono",
             type: "phone"
           },
+          {
+            name: "description",
+            label: "Descripción",
+            type: "textarea"
+          }
         ]}
       >
         <ModalForm />
