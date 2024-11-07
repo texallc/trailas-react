@@ -5,6 +5,7 @@ import { Product } from "../../interfaces/models/product"
 import ModalForm from "../../components/modalForm";
 import FormControlProvider from "../../context/formControl";
 import CachedImage from "../../components/cachedImage";
+import { ruleMaxLength, ruleName } from "../../constants";
 
 const Products = () => {
   return (
@@ -64,12 +65,13 @@ const Products = () => {
           {
             name: "name",
             label: "Nombre",
-            required: true,
+            rules: [ruleName, ruleMaxLength]
           },
           {
             name: "partNumber",
             label: "Número de parte",
             required: true,
+            rules: [ruleMaxLength]
           },
           {
             name: "price",
@@ -80,10 +82,12 @@ const Products = () => {
             name: "brand",
             label: "Marca",
             required: true,
+            rules: [ruleMaxLength]
           },
           {
             name: "description",
             label: "Descripción",
+            type: "textarea",
           },
         ]}
       >

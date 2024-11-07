@@ -5,6 +5,7 @@ import FormControlProvider from "../../context/formControl";
 import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
 import CachedImage from "../../components/cachedImage";
+import { ruleMaxLength, ruleName } from "../../constants";
 
 const Categories = () => {
   return (
@@ -51,10 +52,12 @@ const Categories = () => {
             name: "name",
             label: "Nombre",
             required: true,
+            rules: [ruleName, ruleMaxLength]
           },
           {
             name: "description",
             label: "Descripción",
+            type: "textarea",
           }
         ]}
       >
