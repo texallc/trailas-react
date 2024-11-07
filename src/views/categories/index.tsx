@@ -1,8 +1,10 @@
-import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
 import ServerTable from "../../components/tableServer"
 import { Category } from "../../interfaces/models/category"
+import FormControlProvider from "../../context/formControl";
+import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
+import CachedImage from "../../components/cachedImage";
 
 const Categories = () => {
   return (
@@ -34,12 +36,30 @@ const Categories = () => {
           {
             title: 'Imagen',
             key: 'image',
-            render: (_, { image }) => <img style={{ height: 64, width: 80, objectFit: "cover" }} alt="category-image" src={image} />,
+            render: (_, { image }) => <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />,
           }
         ]}
         showDisabled
       />
-      <ModalForm />
+      <FormControlProvider<Category>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "name",
+            label: "Nombre",
+            required: true,
+          },
+          {
+            name: "description",
+            label: "Descripción",
+          }
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };
