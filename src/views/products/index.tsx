@@ -4,6 +4,7 @@ import ServerTable from "../../components/tableServer"
 import { Product } from "../../interfaces/models/product"
 import ModalForm from "../../components/modalForm";
 import FormControlProvider from "../../context/formControl";
+import CachedImage from "../../components/cachedImage";
 
 const Products = () => {
   return (
@@ -49,7 +50,7 @@ const Products = () => {
           {
             title: "Imagen",
             key: "image",
-            render: (_, { image }) => <img style={{ height: 64, width: 80, objectFit: "cover" }} alt="product-image" src={image} />,
+            render: (_, { image }) => <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />,
           }
         ]}
         showDisabled
