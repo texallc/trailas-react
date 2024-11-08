@@ -5,7 +5,7 @@ import FormControlProvider from "../../context/formControl";
 import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
 import CachedImage from "../../components/cachedImage";
-import { ruleMaxLength, ruleName } from "../../constants";
+import { ruleName } from "../../constants";
 import dayjs from "dayjs";
 
 const Categories = () => {
@@ -41,6 +41,7 @@ const Categories = () => {
           }
         ]}
         showDisabled
+        showEdit
       />
       <FormControlProvider<Category>
         inputsProp={[
@@ -51,8 +52,7 @@ const Categories = () => {
           {
             name: "name",
             label: "Nombre",
-            required: true,
-            rules: [ruleName, ruleMaxLength]
+            rules: [ruleName]
           },
           {
             name: "description",

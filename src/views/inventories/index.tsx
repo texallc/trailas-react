@@ -4,11 +4,39 @@ import ModalForm from "../../components/modalForm";
 import ServerTable from "../../components/tableServer"
 import FormControlProvider from "../../context/formControl";
 import { Inventory } from "../../interfaces/models/inventory";
+import { useSearchParams } from "react-router-dom";
+import { InputType } from "../../types/components/formControl";
+import { useMemo } from "react";
 
 const Inventories = () => {
+  const [searchParams] = useSearchParams();
+
+  const inputs = useMemo(() => {
+    const id = searchParams.get("id");
+    const inputs: InputType<Inventory>[] = [
+      {
+        name: "id",
+        style: { display: "none" },
+      },
+      {
+        name: "stock",
+        label: "Stock",
+      },
+      {
+        name: "userId",
+        label: "Sucursal",
+        type: "select",
+        url: "/inventarios/list?pagina=1&limite=10",
+      }
+    ]
+    return inputs;
+  }, [searchParams]);
+
   return (
     <>
-      <HeaderView />
+      <HeaderView
+        showButton={false}
+      />
       <ServerTable<Inventory>
         columns={[
           {
@@ -29,16 +57,7 @@ const Inventories = () => {
         ]}
       />
       <FormControlProvider<Inventory>
-        inputsProp={[
-          {
-            name: "id",
-            style: { display: "none" },
-          },
-          {
-            name: "stock",
-            label: "Stock",
-          },
-        ]}
+        inputsProp={inputs}
       >
         <ModalForm />
       </FormControlProvider>

@@ -1,10 +1,9 @@
-import { HomeOutlined, SettingOutlined, LogoutOutlined, UserOutlined, AppstoreOutlined, ToolOutlined, InboxOutlined, ShoppingOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined, LogoutOutlined, UserOutlined, AppstoreOutlined, ToolOutlined, InboxOutlined, ShoppingOutlined, SwapOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { message } from "antd";
 import { getAuth } from "firebase/auth";
 import { MdLocalShipping } from 'react-icons/md';
 import { GrUserPolice } from "react-icons/gr";
-<ShoppingOutlined />
 
 const styleIcon = {
   fontSize: 20
@@ -52,6 +51,12 @@ const menuItems = [
     title: "",
     label: <Link to="/inventarios?pagina=1&limite=10">Inventarios</Link>,
     icon: <InboxOutlined style={styleIcon} />
+  },
+  {
+    key: "/movimientos",
+    title: "",
+    label: <Link to="/movimientos?pagina=1&limite=10">Movs. de inv.</Link>,
+    icon: <SwapOutlined style={styleIcon} />
   },
   {
     key: "/ventas",
