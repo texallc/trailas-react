@@ -1,6 +1,6 @@
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
-import ServerTable from "../../components/tableServer"
+import ServerTable from "../../components/tableServer";
 import { Inventory } from "../../interfaces/models/inventory";
 
 const Inventories = () => {

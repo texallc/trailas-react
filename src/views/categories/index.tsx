@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
-import ServerTable from "../../components/tableServer"
-import { Category } from "../../interfaces/models/category"
+import ServerTable from "../../components/tableServer";
+import { Category } from "../../interfaces/models/category";
 import ModalForm from "../../components/modalForm";
 
 const Categories = () => {

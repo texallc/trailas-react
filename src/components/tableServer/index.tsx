@@ -1,16 +1,15 @@
 import { Empty, Table } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import useGet, { PropsUseGet } from "../../hooks/useGet";
+import { PropsUseGet } from "../../hooks/useGet";
 import { Get } from "../../interfaces";
 import { TableProps } from "../../interfaces/components/serverTable";
-import Filters from "./filters";
-import FormControlProvider from "../../context/formControl";
 import { ColumnsType } from "antd/es/table";
 import useAbortController from "../../hooks/useAbortController";
 import TableEditButton from "./tableEditButton";
 import TableDeleteButton from "./tableDeleteButton";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
+import { useGetContext } from "../../context/getContext";
 
 const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled }: TableProps<T>) => {
   const abortController = useAbortController();
@@ -74,7 +73,11 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
     return columns;
   }, [columnsProp, showEdit, showDisabled, abortController, url]);
 
-  const { response, loading } = useGet<Get<T>>(propsUseGet);
+  const { response, loading, setGetProps } = useGetContext<Get<T>>();
+
+  useEffect(() => {
+    setGetProps(propsUseGet);
+  }, [propsUseGet]);
 
   return (
     <>

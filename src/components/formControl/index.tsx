@@ -98,34 +98,32 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
           {...baseFormItemProps}
           rules={rules}
         >
-          <Space.Compact style={{ width: "100%" }}>
-            <Select
-              style={style}
-              options={input.options}
-              loading={input.loading}
-              placeholder={placeholder}
-              onPopupScroll={e => onPopupScroll?.(e, input)}
-              showSearch={input.showSearch}
-              filterOption={(input, option) =>
-                ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())
+          <Select
+            style={style}
+            options={input.options}
+            loading={input.loading}
+            placeholder={placeholder}
+            onPopupScroll={e => onPopupScroll?.(e, input)}
+            showSearch={input.showSearch}
+            filterOption={(input, option) =>
+              ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())
+            }
+            allowClear={true}
+            onSearch={(value) => setSearchValues(prev => {
+              const searchValue = prev.find(search => search.id === name);
+
+              if (searchValue) {
+                return [...prev, { id: name.toString(), value }];
               }
-              allowClear={true}
-              onSearch={(value) => setSearchValues(prev => {
-                const searchValue = prev.find(search => search.id === name);
 
-                if (searchValue) {
-                  return [...prev, { id: name.toString(), value }];
-                }
-
-                return [];
-              })}
-              searchValue={searchValues.find(search => search.id === name)?.value || ""}
-            />
-            {/*  <Button
+              return [];
+            })}
+            searchValue={searchValues.find(search => search.id === name)?.value || ""}
+          />
+          {/*  <Button
               icon={<SearchOutlined />}
               onClick={() => onSearchSelect?.(input.searchValue || "")}
             /> */}
-          </Space.Compact>
         </FormItem>
       }
       {

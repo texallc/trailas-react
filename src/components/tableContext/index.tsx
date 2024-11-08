@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Empty, Table as TableAnt } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useOnSnapshot } from "../../context/snapshotContext";
+import { useOnSnapshotContext } from "../../context/snapshotContext";
 import TableActionsButtons from "../tableActionsButtons";
 
 interface Props<T> {
@@ -15,7 +15,7 @@ interface Props<T> {
 const { PRESENTED_IMAGE_SIMPLE } = Empty;
 
 const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showActionsButtons }: Props<T>) => {
-  const { loading, data, snapshotProps } = useOnSnapshot<T>();
+  const { loading, data, snapshotProps } = useOnSnapshotContext<T>();
 
   useEffect(() => {
     if (loading) return;

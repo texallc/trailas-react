@@ -1,7 +1,7 @@
 import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
-import ServerTable from "../../components/tableServer"
-import { Product } from "../../interfaces/models/product"
+import ServerTable from "../../components/tableServer";
+import { Product } from "../../interfaces/models/product";
 import ModalForm from "../../components/modalForm";
 
 const Products = () => {

@@ -1,7 +1,7 @@
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
-import ServerTable from "../../components/tableServer"
-import { Sale } from "../../interfaces/models/sale"
+import ServerTable from "../../components/tableServer";
+import { Sale } from "../../interfaces/models/sale";
 
 const Sales = () => {
   return (
@@ -43,7 +43,7 @@ const Sales = () => {
       />
       <ModalForm />
     </>
-  )
-}
+  );
+};
 
 export default Sales;

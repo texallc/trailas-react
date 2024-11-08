@@ -7,6 +7,9 @@ import { useFormControl } from "../../context/formControl";
 import { Form, message } from "antd";
 import { post } from "../../services/http";
 import useAbortController from "../../hooks/useAbortController";
+import { useGetContext } from "../../context/getContext";
+import { Get } from "../../interfaces";
+import { RecursivePartial } from "../../types";
 
 interface ModalFormProps<T> {
   urlProp?: string;
@@ -15,6 +18,7 @@ interface ModalFormProps<T> {
 }
 
 const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
+  const { response } = useGetContext<Get<T>>();
   const { inputs, onPopupScroll, onSearchSelect } = useFormControl();
   const abortController = useAbortController();
   const { url } = useGetSearchURL(urlProp);
@@ -30,7 +34,21 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
 
     setOpen(Boolean(id));
     setId(id === null ? id : Number(id));
-  }, [searchParams]);
+
+    if (!id) {
+      form.resetFields();
+      return;
+    }
+
+    const data = response?.list.find((item) => item.id === Number(id));
+
+    if (!data) {
+      form.resetFields();
+      return;
+    }
+
+    form.setFieldsValue(data as RecursivePartial<T>);
+  }, [searchParams, response]);
 
   const title = useMemo(() => {
     const moduleName = pathname.split("/")[1];
@@ -43,7 +61,6 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
     try {
       const { id } = values;
       let urlCreateOrEdit = urlCreate || urlEdit;
-
       let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
 
       await post(urlEndpoint, values, abortController.current);
