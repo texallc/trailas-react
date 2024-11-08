@@ -8,9 +8,10 @@ import useGetSearchURL from "../../hooks/useGestSearchURL";
 interface Props {
   urlProp?: string;
   goBack?: boolean;
+  showButton?: boolean;
 }
 
-const HeaderView: FC<Props> = ({ urlProp, goBack }) => {
+const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
   const { url } = useGetSearchURL(urlProp);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -30,6 +31,7 @@ const HeaderView: FC<Props> = ({ urlProp, goBack }) => {
           </h1>
         </Col>
         {
+          showButton &&
           <Col>
             {
               goBack
