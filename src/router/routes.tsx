@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { PathRouteProps } from 'react-router-dom';
 import SnapshotProvider from "../context/snapshotContext";
+import GetProvider from "../context/getContext";
 
 const Login = lazy(() => import('../views/login'));
 const Home = lazy(() => import('../views/home'));
@@ -35,23 +36,33 @@ const routes: PathRouteProps[] = [
   },
   {
     path: '/usuarios',
-    element: <Users />
+    element: <GetProvider>
+      <Users />
+    </GetProvider>
   },
   {
     path: '/categorias',
-    element: <Categories />
+    element: <GetProvider>
+      <Categories />
+    </GetProvider>
   },
   {
     path: '/productos',
-    element: <Products />
+    element: <GetProvider>
+      <Products />
+    </GetProvider>
   },
   {
     path: '/inventarios',
-    element: <Inventories />
+    element: <GetProvider>
+      <Inventories />
+    </GetProvider>
   },
   {
     path: '/ventas',
-    element: <Sales />
+    element: <GetProvider>
+      <Sales />
+    </GetProvider>
   },
   {
     path: '*',

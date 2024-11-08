@@ -12,7 +12,7 @@ import FiltersTrailas from "./filtersTrailas";
 import ButtonDownloadExcel from "../../components/buttonDownloadExcel";
 import ButtonUploadChangeTires from "./buttonUploadChangeTires";
 import { update } from "../../services/firebase/firestore";
-import { useOnSnapshot } from "../../context/snapshotContext";
+import { useOnSnapshotContext } from "../../context/snapshotContext";
 import TableContext from "../../components/tableContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ModalUpdateTraila from "./modalUpdateTraila";
@@ -30,7 +30,7 @@ const Trailas = () => {
   const [idEdit, setIdEdit] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [drivers, setDrivers] = useState<string[]>([]);
-  const { data: trailas, setData: setTrailas, setSnapshotProps } = useOnSnapshot<Traila>();
+  const { data: trailas, setData: setTrailas, setSnapshotProps } = useOnSnapshotContext<Traila>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

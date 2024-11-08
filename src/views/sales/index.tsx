@@ -76,7 +76,7 @@ const Sales = () => {
         <ModalForm />
       </FormControlProvider>
     </>
-  )
-}
+  );
+};
 
 export default Sales;

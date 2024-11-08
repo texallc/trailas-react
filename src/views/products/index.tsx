@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
-import ServerTable from "../../components/tableServer"
-import { Product } from "../../interfaces/models/product"
+import ServerTable from "../../components/tableServer";
+import { Product } from "../../interfaces/models/product";
 import ModalForm from "../../components/modalForm";
 import FormControlProvider from "../../context/formControl";
 import CachedImage from "../../components/cachedImage";

@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import TableContext from "../../components/tableContext";
 import { ColumnsType } from "antd/es/table";
 import ModalCreateDriver from "./modalCreateDriver";
-import { useOnSnapshot } from "../../context/snapshotContext";
+import { useOnSnapshotContext } from "../../context/snapshotContext";
 import { endAt, orderBy, QueryConstraint, startAt } from "firebase/firestore";
 import { initDriver } from "../../constants";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -15,7 +15,7 @@ const Drivers = () => {
   const [driver, setDriver] = useState<Driver>(initDriver);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [searchParams] = useSearchParams();
-  const { setSnapshotProps } = useOnSnapshot<Driver>();
+  const { setSnapshotProps } = useOnSnapshotContext<Driver>();
   const navigate = useNavigate();
 
   useEffect(() => {
