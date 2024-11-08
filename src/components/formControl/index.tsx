@@ -3,7 +3,7 @@ import { Input, Select, Space, Switch } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
-import { ruleMaxLength, rulePassword, rulePhone } from "../../constants";
+import { ruleEmail, ruleLargeMaxLength, ruleMaxLength, rulePassword, rulePhone } from "../../constants";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
@@ -27,7 +27,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
       {
         (!type || type === "input") && <FormItem
           {...baseFormItemProps}
-          rules={rules}
+          rules={[...rules || [], ruleMaxLength]}
         >
           <Input
             style={style}
@@ -50,6 +50,18 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
               return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
             }}
             onWheel={e => e.preventDefault()}
+          />
+        </FormItem>
+      }
+      {
+        type === "email" && <FormItem
+          {...baseFormItemProps}
+          rules={[ruleEmail, ruleMaxLength]}
+        >
+          <Input
+            type="email"
+            style={style}
+            placeholder={placeholder}
           />
         </FormItem>
       }
@@ -85,7 +97,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
       {
         type === "textarea" && <FormItem
           {...baseFormItemProps}
-          rules={rules}
+          rules={[...rules || [], ruleLargeMaxLength]}
         >
           <Input.TextArea
             style={style}
@@ -104,20 +116,19 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
             loading={input.loading}
             placeholder={placeholder}
             onPopupScroll={e => onPopupScroll?.(e, input)}
-            showSearch={input.showSearch}
             filterOption={(input, option) =>
               ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())
             }
             allowClear={true}
-            onSearch={(value) => setSearchValues(prev => {
-              const searchValue = prev.find(search => search.id === name);
-
-              if (searchValue) {
-                return [...prev, { id: name.toString(), value }];
-              }
-
-              return [];
-            })}
+            /*  onSearch={(value) => setSearchValues(prev => {
+               const searchValue = prev.find(search => search.id === name);
+ 
+               if (searchValue) {
+                 return [...prev, { id: name.toString(), value }];
+               }
+ 
+               return [];
+             })} */
             searchValue={searchValues.find(search => search.id === name)?.value || ""}
           />
           {/*  <Button

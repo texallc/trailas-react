@@ -15,6 +15,10 @@ export interface ItemNumber<K> extends Omit<ItemInput<K>, "type"> {
   type: "number";
 }
 
+export interface ItemEmail<K> extends Omit<ItemInput<K>, "type"> {
+  type: "email";
+}
+
 export interface ItemSelect<K> extends Omit<SelectProps, "name">, BaseInputProps<K> {
   type: "select";
   keyValue?: string;
