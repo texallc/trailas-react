@@ -18,7 +18,7 @@ interface ModalFormProps<T> {
 }
 
 const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
-  const { response } = useGetContext<Get<T>>();
+  const { response, setGetProps } = useGetContext<Get<T>>();
   const { inputs, onPopupScroll, onSearchSelect } = useFormControl();
   const abortController = useAbortController();
   const { url } = useGetSearchURL(urlProp);
@@ -64,6 +64,14 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
 
       await post(urlEndpoint, values, abortController.current);
+
+      setGetProps({ url: "" });
+
+      setTimeout(() => {
+        setGetProps({ url });
+      }, 100);
+
+      message.success("Registro guardado con exito!");
 
       handleClose();
     } catch (error) {
