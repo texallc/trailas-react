@@ -1,6 +1,8 @@
+import dayjs from "dayjs";
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
-import ServerTable from "../../components/tableServer";
+import ServerTable from "../../components/tableServer"
+import FormControlProvider from "../../context/formControl";
 import { Inventory } from "../../interfaces/models/inventory";
 
 const Inventories = () => {
@@ -17,16 +19,29 @@ const Inventories = () => {
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            key: "createdAt",
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
-            dataIndex: "updatedAt",
             key: "updatedAt",
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
         ]}
       />
-      <ModalForm />
+      <FormControlProvider<Inventory>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "stock",
+            label: "Stock",
+          },
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };

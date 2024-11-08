@@ -1,6 +1,7 @@
+import { DatesModel } from "..";
 import { Category } from "./category";
 
-export interface Product {
+export interface Product extends DatesModel {
   readonly id: number;
   uid?: string;
   name: string;

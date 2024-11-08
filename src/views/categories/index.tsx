@@ -1,8 +1,12 @@
-import { Modal } from "antd";
 import HeaderView from "../../components/headerView";
-import ServerTable from "../../components/tableServer";
-import { Category } from "../../interfaces/models/category";
+import ServerTable from "../../components/tableServer"
+import { Category } from "../../interfaces/models/category"
+import FormControlProvider from "../../context/formControl";
+import { Modal } from "antd";
 import ModalForm from "../../components/modalForm";
+import CachedImage from "../../components/cachedImage";
+import { ruleMaxLength, ruleName } from "../../constants";
+import dayjs from "dayjs";
 
 const Categories = () => {
   return (
@@ -20,26 +24,45 @@ const Categories = () => {
             dataIndex: "description",
             key: "description",
           },
-
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            key: "createdAt",
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
-            dataIndex: "updatedAt",
             key: "updatedAt",
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
           {
             title: 'Imagen',
             key: 'image',
-            render: (_, { image }) => <img style={{ height: 64, width: 80, objectFit: "cover" }} alt="category-image" src={image} />,
+            render: (_, { image }) => <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />,
           }
         ]}
         showDisabled
       />
-      <ModalForm />
+      <FormControlProvider<Category>
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "name",
+            label: "Nombre",
+            required: true,
+            rules: [ruleName, ruleMaxLength]
+          },
+          {
+            name: "description",
+            label: "Descripción",
+            type: "textarea",
+          }
+        ]}
+      >
+        <ModalForm />
+      </FormControlProvider>
     </>
   );
 };
