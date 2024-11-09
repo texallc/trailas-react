@@ -56,6 +56,30 @@ export const post = async<T extends {}>(url: string, body: Record<string, unknow
   }
 };
 
+export const put = async<T extends {}>(url: string, body: Record<string, unknown>, abortController: AbortController) => {
+  try {
+    const token = await getCurrentToken();
+    const response = await fetch(
+      baseUrl + url,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: getHeaders(token),
+        signal: abortController.signal
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw handleError(error);
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    throw handleError(error);
+  }
+};
+
 export const patch = async<T extends {}>(url: string, body: Record<string, unknown>, abortController: AbortController) => {
   try {
     const token = await getCurrentToken();

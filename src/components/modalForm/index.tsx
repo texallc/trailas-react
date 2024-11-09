@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import FormControl from "../formControl";
 import { useFormControl } from "../../context/formControl";
+import { post, put } from "../../services/http";
 import { Button, Form, message } from "antd";
-import { post } from "../../services/http";
 import useAbortController from "../../hooks/useAbortController";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
@@ -48,7 +48,7 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
     }
 
     form.setFieldsValue(data as RecursivePartial<T>);
-  }, [searchParams, response]);
+  }, [searchParams, response, form]);
 
   const title = useMemo(() => {
     const moduleName = pathname.split("/")[1];
@@ -70,8 +70,9 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
     let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
 
     try {
-      await post(urlEndpoint, values, abortController.current);
-
+      id ? await put(urlEndpoint, values, abortController.current)
+         : await post(urlEndpoint, values, abortController.current);
+        
       setGetProps({ url: "" });
 
       setTimeout(() => {

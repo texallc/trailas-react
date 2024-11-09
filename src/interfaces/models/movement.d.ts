@@ -8,7 +8,7 @@ export interface Movement extends DatesModel {
   quantity: number;
   inventory?: Inventory;
   inventoryId: number;
-  user?: User;
+  user: User;
   userId: number;
   typeMovement: TypeMovement;
 }

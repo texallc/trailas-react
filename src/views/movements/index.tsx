@@ -25,8 +25,8 @@ const Movements = () => {
           },
           {
             title: "Usuario",
-            dataIndex: "userId",
-            key: "userId",
+            dataIndex: "user.name",
+            render: (_, { user }) => user?.name,
           },
           {
             title: "Tipo de movimiento",
@@ -44,7 +44,6 @@ const Movements = () => {
             render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
           },
         ]}
-        showEdit
       />
       <FormControlProvider<Movement>
         inputsProp={[

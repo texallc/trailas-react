@@ -152,7 +152,7 @@ const Products = () => {
           {
             title: "Categoria",
             dataIndex: "category.name",
-            render: (_, { category }) => category.name,
+            render: (_, { category }) => category?.name,
           },
           {
             title: "Descripción",
