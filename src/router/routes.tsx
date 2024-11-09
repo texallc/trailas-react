@@ -12,6 +12,7 @@ const Categories = lazy(() => import('../views/categories'));
 const Products = lazy(() => import('../views/products'));
 const Inventories = lazy(() => import('../views/inventories'));
 const Sales = lazy(() => import('../views/sales'));
+const Movements = lazy(() => import('../views/movements'));
 
 const routes: PathRouteProps[] = [
   {
@@ -63,6 +64,10 @@ const routes: PathRouteProps[] = [
     element: <GetProvider>
       <Sales />
     </GetProvider>
+  },
+  {
+    path: '/movimientos',
+    element: <Movements />
   },
   {
     path: '*',

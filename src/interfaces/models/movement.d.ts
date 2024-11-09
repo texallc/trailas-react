@@ -1,12 +1,11 @@
+import { DatesModel } from "..";
 import { TypeMovement } from "../../types/models/movement";
 import { Inventory } from "./inventory";
-import { Product } from "./product";
 import { User } from "./user";
 
-export interface Movement {
-  readonly id?: number;
+export interface Movement extends DatesModel {
+  readonly id: number;
   quantity: number;
-  createdAt?: Date;
   inventory?: Inventory;
   inventoryId: number;
   user?: User;

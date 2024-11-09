@@ -6,7 +6,7 @@ import { Product } from "../../interfaces/models/product";
 import ModalForm from "../../components/modalForm";
 import FormControlProvider from "../../context/formControl";
 import CachedImage from "../../components/cachedImage";
-import { ruleMaxLength, ruleName, rulePrice } from "../../constants";
+import { ruleName, rulePrice } from "../../constants";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InputType } from "../../types/components/formControl";
@@ -24,13 +24,12 @@ const Products = () => {
       {
         name: "name",
         label: "Nombre",
-        rules: [ruleName, ruleMaxLength]
+        rules: [ruleName]
       },
       {
         name: "partNumber",
         label: "Número de parte",
         required: true,
-        rules: [ruleMaxLength]
       },
       {
         name: "price",
@@ -42,7 +41,6 @@ const Products = () => {
         name: "brand",
         label: "Marca",
         required: true,
-        rules: [ruleMaxLength]
       },
       {
         name: "description",
@@ -50,10 +48,70 @@ const Products = () => {
         type: "textarea",
       },
       {
+        name: "stock",
+        label: "Stock",
+        type: "number",
+      },
+      {
         name: "categoryId",
         label: "Categoría",
         type: "select",
         url: "/categorias/list?pagina=1&limite=10",
+      },
+      {
+        name: "unitType",
+        label: "Tipo de unidad",
+        type: "select",
+        options: [
+          {
+            value: "Pza",
+            label: "Pieza"
+          },
+          {
+            value: "Kg",
+            label: "Kilogramos"
+          },
+          {
+            value: "L",
+            label: "Litros"
+          },
+          {
+            value: "m",
+            label: "Metros"
+          },
+          {
+            value: "m2",
+            label: "Metros cuadrados"
+          },
+          {
+            value: "Gal",
+            label: "Galon"
+          },
+          {
+            value: "ml",
+            label: "Mililitros"
+          },
+          {
+            value: "g",
+            label: "Gramos"
+          },
+          {
+            value: "m3",
+            label: "Metros cúbicos"
+          },
+          {
+            value: "Pqt",
+            label: "Paquete"
+          },
+          {
+            value: "Caja",
+            label: "Caja"
+          },
+          {
+            value: "Juego",
+            label: "Juego"
+          }
+        ]
       }
     ]
     if (id && id !== "0") {
@@ -90,6 +148,11 @@ const Products = () => {
             title: "Marca",
             dataIndex: "brand",
             key: "brand",
+          },
+          {
+            title: "Categoria",
+            dataIndex: "category.name",
+            render: (_, { category }) => category.name,
           },
           {
             title: "Descripción",
