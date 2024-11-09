@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import FormControl from "../formControl";
 import { useFormControl } from "../../context/formControl";
-import { Form, message } from "antd";
 import { post, put } from "../../services/http";
+import { Button, Form, message } from "antd";
 import useAbortController from "../../hooks/useAbortController";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
@@ -17,7 +17,7 @@ interface ModalFormProps<T> {
   urlEdit?: string;
 }
 
-const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
+const ModalForm = <T extends { id: number; password?: string; confirmPassword?: string; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
   const { response, setGetProps } = useGetContext<Get<T>>();
   const { inputs, onPopupScroll, onSearchSelect } = useFormControl();
   const abortController = useAbortController();
@@ -58,14 +58,21 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
   }, [pathname, id]);
 
   const onFinish = async (values: T) => {
+    const { password, confirmPassword } = values;
+
+    if (password && confirmPassword && password !== confirmPassword) {
+      message.error("Error, Las contraseñas no coinciden.");
+      return;
+    }
+
+    const { id } = values;
+    let urlCreateOrEdit = urlCreate || urlEdit;
+    let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
+
     try {
-      const { id } = values;
-      let urlCreateOrEdit = urlCreate || urlEdit;
-      let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
-
       id ? await put(urlEndpoint, values, abortController.current)
-        : await post(urlEndpoint, values, abortController.current);
-
+         : await post(urlEndpoint, values, abortController.current);
+        
       setGetProps({ url: "" });
 
       setTimeout(() => {
@@ -77,6 +84,12 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       handleClose();
     } catch (error) {
       console.log(error);
+
+      if (error instanceof Error) {
+        message.error(error.message);
+        return;
+      }
+
       message.error("Ocurrio un error al guardar el registro.");
     }
   };
@@ -95,8 +108,12 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
     >
       <Form<T>
         form={form}
+        onError={(error) => {
+          console.log(error);
+        }}
         onFinish={onFinish}
         layout="vertical"
+        autoComplete="off"
       >
         {
           inputs.map((input) => {
@@ -111,6 +128,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
           })
         }
       </Form>
+      <Button htmlType="submit">Sub</Button>
     </Modal>
   );
 };

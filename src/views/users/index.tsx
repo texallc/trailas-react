@@ -66,7 +66,6 @@ const Users = () => {
           {
             name: "name",
             label: "Nombre",
-            rules: [ruleName]
           },
           {
             name: "email",
@@ -76,6 +75,11 @@ const Users = () => {
           {
             name: "password",
             label: "Contraseña",
+            type: "password",
+          },
+          {
+            name: "confirmPassword",
+            label: "Confirmar contraseña",
             type: "password",
           },
           {
