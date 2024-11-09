@@ -67,7 +67,9 @@ const routes: PathRouteProps[] = [
   },
   {
     path: '/movimientos',
-    element: <Movements />
+    element: <GetProvider>
+      <Movements />
+    </GetProvider>
   },
   {
     path: '*',

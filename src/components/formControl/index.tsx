@@ -22,12 +22,14 @@ const FormControl = <T extends {}>({ input, onPopupScroll }: PropsItemFilters<T>
     style: style,
   } as const;
 
+  const _ruleMaxLength = name !== "id" ? [ruleMaxLength] : [];
+
   return (
     <div style={{ padding: 5 }}>
       {
         (!type || type === "input") && <FormItem
           {...baseFormItemProps}
-          rules={[...rules || [], ruleMaxLength]}
+          rules={[...rules || [], ..._ruleMaxLength]}
         >
           <Input
             style={style}
