@@ -113,12 +113,16 @@ export const fileToBase64 = (file: File) => new Promise((resolve, reject) => {
 export const handleError = (error: any) => {
   console.log(error);
 
+  if (typeof error.error === "string") {
+    throw new Error(error.error);
+  }
+
   if (typeof error === "string") {
     throw new Error(error);
   }
 
   if (error instanceof Error) {
-    throw new Error(error.message);
+    throw error;
   }
 
   throw new Error(JSON.stringify(error));

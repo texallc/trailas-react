@@ -14,6 +14,7 @@ export interface User extends DatesModel {
   active: boolean;
   image: string;
   password?: string;
+  confirmPassword?: string;
   rfc: string;
   phone: number;
   inventories?: Inventory[];
