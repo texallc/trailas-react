@@ -39,7 +39,8 @@ export const rulePrice: FormRule = {
 
 export const ruleMaxLength: FormRule = {
   max: 255,
-  message: "El texto no puede tener más de 300 caracteres."
+  message: "El texto no puede tener más de 300 caracteres.",
+  type: "string"
 } as const;
 
 export const ruleLargeMaxLength: FormRule = {
