@@ -1,25 +1,25 @@
 import { UIEvent, useMemo, useState } from "react";
-import { Form, FormInstance, Input, Select, Space, Switch } from "antd";
+import { Form, FormInstance, Input, InputNumber, Select, Space, Switch } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
-import { ruleEmail, ruleLargeMaxLength, ruleMaxLength, rulePassword, rulePhone } from "../../constants";
+import { ruleEmail, ruleLargeMaxLength, ruleMaxLength, rulePassword, rulePhone, rulePrice } from "../../constants";
 import { Rule } from "antd/es/form";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
-  onPopupScroll: (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
-  onSearchSelect: (search: string) => void;
+  onPopupScroll?: (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
+  onSearchSelect?: (search: string) => void;
   form?: FormInstance<T>;
 }
 
-const FormControl = <T extends { password?: string; confirmPassword?: string; }>({ input, onPopupScroll, form }: PropsItemFilters<T>) => {
+const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilters<T>) => {
   const id = Form.useWatch('id', form);
   const password = Form.useWatch('password', form);
   const confirmPassword = Form.useWatch('confirmPassword', form);
 
   const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
-  const { name, type, label, style, placeholder, rules } = input;
+  const { name, type, label, style, placeholder, rules, disabled } = input;
   const nameString = name as string;
 
   const baseFormItemProps: FormItemProps = {
@@ -50,6 +50,7 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
           <Input
             style={style}
             placeholder={placeholder}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -68,6 +69,30 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
               return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
             }}
             onWheel={e => e.preventDefault()}
+            disabled={disabled}
+          />
+        </FormItem>
+      }
+      {
+        type === "price" && <FormItem
+          {...baseFormItemProps}
+          rules={[rulePrice]}
+        >
+          <InputNumber<number>
+            style={{ width: '100%' }}
+            onKeyDown={e => {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+              }
+
+              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+            }}
+            min={1}
+            max={999_999}
+            onWheel={e => e.preventDefault()}
+            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -80,6 +105,7 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
             type="email"
             style={style}
             placeholder={placeholder}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -98,6 +124,7 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
               return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
             }}
             onWheel={e => e.preventDefault()}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -109,6 +136,7 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
           <Input.Password
             style={style}
             placeholder={placeholder}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -120,6 +148,7 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
           <Input.TextArea
             style={style}
             placeholder={placeholder}
+            disabled={disabled}
           />
         </FormItem>
       }
@@ -148,6 +177,8 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
                return [];
              })} */
             searchValue={searchValues.find(search => search.id === name)?.value || ""}
+            disabled={disabled}
+            mode={input.mode}
           />
           {/*  <Button
               icon={<SearchOutlined />}
@@ -161,7 +192,9 @@ const FormControl = <T extends { password?: string; confirmPassword?: string; }>
           valuePropName="checked"
           rules={rules}
         >
-          <Switch />
+          <Switch
+            disabled={disabled}
+          />
         </FormItem>
       }
     </div>

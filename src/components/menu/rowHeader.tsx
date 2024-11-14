@@ -28,6 +28,7 @@ const RowHeader: FC<Props> = ({ collapsed }) => {
         !collapsed && <div style={screens.xs ? { color: "black" } : { color: "white" }}>
           <div style={{ margin: 10 }}>
             <b>{user?.email}</b>
+            <p style={{ marginTop: 4 }}>{user?.role}</p>
           </div>
         </div>
       }

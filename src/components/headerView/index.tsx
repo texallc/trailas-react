@@ -19,7 +19,7 @@ const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
   const moduleName = useMemo(() => {
     const moduleName = pathname.split("/")[1];
 
-    return moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
+    return (moduleName.charAt(0).toUpperCase() + moduleName.slice(1)).replaceAll("-", " ");
   }, [pathname]);
 
   return (
@@ -43,7 +43,6 @@ const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
           </Col>
         }
       </Row>
-      <br />
     </>
   );
 };

@@ -247,3 +247,17 @@ export const once = <T extends (...args: any[]) => any>(fn: T): T => {
 
   return wrappedFn as T;
 };
+
+export const priceFormatUSD = (price: number) => new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD"
+}).format(price);
+
+export const changePageAndLimitUrl = (url: string, page: number, limit: number) => {
+  const urlObj = new URL(url, location.origin);
+
+  urlObj.searchParams.set('limite', limit.toString());
+  urlObj.searchParams.set('pagina', page.toString());
+
+  return urlObj.pathname + urlObj.search;
+};

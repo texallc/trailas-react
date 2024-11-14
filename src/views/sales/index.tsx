@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
-import FormControl from "../../components/formControl";
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
-import ServerTable from "../../components/tableServer"
+import ServerTable from "../../components/tableServer";
 import FormControlProvider from "../../context/formControl";
-import { Sale } from "../../interfaces/models/sale"
+import { Sale } from "../../interfaces/models/sale";
 
 const Sales = () => {
   return (
@@ -37,12 +36,12 @@ const Sales = () => {
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
             key: "updatedAt",
-            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
         ]}
       />

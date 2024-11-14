@@ -7,7 +7,7 @@ const useGetSearchURL = (urlProp?: string) => {
   const [url, setUrl] = useState<string>("");
 
   useEffect(() => {
-    let _url = urlProp || `${pathname}/list`;
+    let _url = urlProp ? urlProp.split("?")[0] : `${pathname}/list`;
 
     for (const param of searchParams) {
       if (param[0] === "id") continue;

@@ -10,6 +10,7 @@ import TableEditButton from "./tableEditButton";
 import TableDeleteButton from "./tableDeleteButton";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import { useGetContext } from "../../context/getContext";
+import { changePageAndLimitUrl } from "../../utils/functions";
 
 const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled }: TableProps<T>) => {
   const abortController = useAbortController();
@@ -18,7 +19,7 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
   const [propsUseGet, setPropsUseGet] = useState<PropsUseGet>({ url: "" });
   const { url } = useGetSearchURL(urlProp);
   const page = searchParams.get("pagina") || 1;
-  const limit = searchParams.get("limite") || 10;
+  const limit = searchParams.get("limite");
 
   useEffect(() => {
     setPropsUseGet({ url });
@@ -93,22 +94,24 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
         sticky
         scroll={{ x: 400 }}
         columns={columns}
-        dataSource={response?.list}
+        dataSource={response?.list || []}
         loading={loading}
         locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Sin registros.' /> }}
         rowKey="id"
         pagination={{
           total: response?.total,
           current: +page,
-          pageSize: +limit,
+          pageSize: limit ? +limit : undefined,
           onChange: (_page: number, pageSize: number) => {
+            const newUrl = changePageAndLimitUrl(url, _page, pageSize);
+
             navigate({
-              search: `?pagina=${_page}&limite=${pageSize}`
+              search: newUrl.split("?")[1]
             });
           },
           showTotal: (total: number, range: number[]) => `${range[0]}-${range[1]} de ${total} registros.`,
           locale: { items_per_page: '/ página' },
-          showSizeChanger: true
+          showSizeChanger: true,
         }}
       />
     </>

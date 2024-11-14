@@ -1,21 +1,24 @@
-import dayjs from "dayjs";
-import { Modal } from "antd";
-import HeaderView from "../../components/headerView";
-import ServerTable from "../../components/tableServer";
-import { Product } from "../../interfaces/models/product";
-import ModalForm from "../../components/modalForm";
-import FormControlProvider from "../../context/formControl";
-import CachedImage from "../../components/cachedImage";
-import { ruleName, rulePrice } from "../../constants";
 import { useMemo } from "react";
+import { Product } from "../../interfaces/models/product";
+import FormControlProvider from "../../context/formControl";
+import { ruleName } from "../../constants";
 import { useSearchParams } from "react-router-dom";
 import { InputType } from "../../types/components/formControl";
+import { useGetContext } from "../../context/getContext";
+import { Get } from "../../interfaces";
+import Products from "./products";
 
-const Products = () => {
+const ProductsPage = () => {
+  const { response } = useGetContext<Get<Product>>();
   const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
 
   const inputs = useMemo(() => {
-    const id = searchParams.get("id");
+    const optionsBranchOffice = id && id !== "0" ? response?.list.find(p => p.id === +id)?.inventories?.map((i) => ({
+      value: i.userId,
+      label: i.user?.name
+    })) : undefined;
+
     const inputs: InputType<Product>[] = [
       {
         name: "id",
@@ -27,36 +30,35 @@ const Products = () => {
         rules: [ruleName]
       },
       {
+        name: "categoryId",
+        label: "Categoría",
+        type: "select",
+        url: "/categorias/list?pagina=1&limite=100",
+        rules: [
+          {
+            required: true,
+            message: "Por favor seleccione una categoría."
+          }
+        ]
+      },
+      {
         name: "partNumber",
         label: "Número de parte",
-        required: true,
+        rules: [
+          {
+            required: true,
+            message: "Por favor ingrese el número de parte."
+          }
+        ]
       },
       {
         name: "price",
         label: "Precio",
-        type: "number",
-        rules: [rulePrice]
+        type: "price"
       },
       {
         name: "brand",
-        label: "Marca",
-        required: true,
-      },
-      {
-        name: "description",
-        label: "Descripción",
-        type: "textarea",
-      },
-      {
-        name: "stock",
-        label: "Stock",
-        type: "number",
-      },
-      {
-        name: "categoryId",
-        label: "Categoría",
-        type: "select",
-        url: "/categorias/list?pagina=1&limite=10",
+        label: "Marca"
       },
       {
         name: "unitType",
@@ -64,43 +66,35 @@ const Products = () => {
         type: "select",
         options: [
           {
-            value: "Pza",
+            value: "Pieza",
             label: "Pieza"
           },
           {
-            value: "Kg",
-            label: "Kilogramos"
-          },
-          {
-            value: "L",
-            label: "Litros"
-          },
-          {
-            value: "m",
-            label: "Metros"
-          },
-          {
-            value: "m2",
-            label: "Metros cuadrados"
-          },
-          {
-            value: "Gal",
-            label: "Galon"
-          },
-          {
-            value: "ml",
+            value: "Mililitros",
             label: "Mililitros"
           },
           {
-            value: "g",
+            value: "Litros",
+            label: "Litros"
+          },
+          {
+            value: "Galon",
+            label: "Galon"
+          },
+          {
+            value: "Gramos",
             label: "Gramos"
           },
           {
-            value: "m3",
-            label: "Metros cúbicos"
+            value: "Kilogramos",
+            label: "Kilogramos"
           },
           {
-            value: "Pqt",
+            value: "Onzas",
+            label: "Onzas"
+          },
+          {
+            value: "Paquete",
             label: "Paquete"
           },
           {
@@ -111,80 +105,57 @@ const Products = () => {
             value: "Juego",
             label: "Juego"
           }
-        ]
-      }
-    ]
+        ],
+      },
+      {
+        name: "description",
+        label: "Descripción",
+        type: "textarea"
+      },
+      {
+        name: "userIds",
+        label: id === "0" ? "Agregar al inventario de una Sucursal" : "Sucursales en las que se encuentra",
+        type: "select",
+        url: id === "0" ? "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal" : undefined,
+        disabled: Boolean(id && id !== "0"),
+        rules: [
+          {
+            required: id === "0",
+            message: "Por favor seleccione una sucursal."
+          }
+        ],
+        options: optionsBranchOffice,
+        mode: "multiple"
+      },
+    ];
+
+    if (id === "0") {
+      inputs.push(...
+        [
+          {
+            name: "stock",
+            label: "Stock",
+            type: "number"
+          }
+        ] as InputType<Product>[]
+      );
+    }
+
     if (id && id !== "0") {
       inputs.push({
         name: "active",
-        label: "Active",
+        label: "Activo",
         type: "switch",
       });
     }
     return inputs;
-  }, [searchParams]);
+  }, [id, response]);
 
   return (
-    <>
-      <HeaderView />
-      <ServerTable<Product>
-        columns={[
-          {
-            title: "Nombre",
-            dataIndex: "name",
-            key: "name",
-          },
-          {
-            title: "Número de parte",
-            dataIndex: "partNumber",
-            key: "partNumber",
-          },
-          {
-            title: "Precio",
-            dataIndex: "price",
-            key: "price",
-          },
-          {
-            title: "Marca",
-            dataIndex: "brand",
-            key: "brand",
-          },
-          {
-            title: "Categoria",
-            dataIndex: "category.name",
-            render: (_, { category }) => category?.name,
-          },
-          {
-            title: "Descripción",
-            dataIndex: "description",
-            key: "description",
-          },
-          {
-            title: "Fecha de creación",
-            dataIndex: "createdAt",
-            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
-          },
-          {
-            title: "Fecha de actualización",
-            key: "updatedAt",
-            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
-          },
-          {
-            title: "Imagen",
-            key: "image",
-            render: (_, { image }) => <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />,
-          }
-        ]}
-        showDisabled
-        showEdit
-      />
-      <FormControlProvider<Product>
-        inputsProp={inputs}
-      >
-        <ModalForm />
-      </FormControlProvider>
-    </>
+    <FormControlProvider inputsProp={inputs}>
+      <Products />
+    </FormControlProvider>
   );
 };
 
-export default Products;
+export default ProductsPage;

@@ -76,15 +76,15 @@ input[type=number] {
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
 }
 
-.ant-card {
-  border-radius: var(--borderRadius);
-  border-color: black;
-}
-
 .ant-table-tbody {
   background-color: white;
 }
 
 .ant-switch-checked {
   background-color: var(--secondary) !important;
+}
+
+.ant-table-cell {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
 }
