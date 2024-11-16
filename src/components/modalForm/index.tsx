@@ -27,6 +27,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const id = searchParams.get("id");
@@ -64,6 +65,8 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       return;
     }
 
+    setSaving(true);
+
     const { id } = values;
     let urlCreateOrEdit = urlCreate || urlEdit;
     let urlEndpoint = urlCreateOrEdit || `${pathname}/${id ? "update" : "create"}`;
@@ -90,6 +93,8 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       }
 
       message.error("Ocurrio un error al guardar el registro.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -104,6 +109,10 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       open={open}
       onCancel={handleClose}
       onOk={() => form.submit()}
+      okButtonProps={{
+        loading: saving,
+        disabled: saving
+      }}
     >
       <Form<T>
         form={form}
