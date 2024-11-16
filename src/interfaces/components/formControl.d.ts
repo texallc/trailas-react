@@ -1,5 +1,6 @@
 import { InputNumberProps, InputProps, SelectProps, SwitchProps } from "antd";
 import { Rule } from "antd/es/form";
+import { DefaultOptionType } from "antd/es/select";
 
 interface BaseInputProps<K> {
   name: K;
@@ -24,12 +25,13 @@ export interface ItemEmail<K> extends Omit<ItemInput<K>, "type"> {
   type: "email";
 }
 
-export interface ItemSelect<K> extends Omit<SelectProps, "name">, BaseInputProps<K> {
+export interface ItemSelect<K> extends Omit<SelectProps, "name" | "onChange">, BaseInputProps<K> {
   type: "select";
   keyValue?: string;
   keyLabel?: string;
   url?: string;
   page?: number;
+  onChange?: ({ title, value }: DefaultOptionType) => void;
 }
 
 export interface ItemPassword<K> extends Omit<ItemInput<K>, "type"> {

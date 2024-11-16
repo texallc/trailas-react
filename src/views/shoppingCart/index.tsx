@@ -29,12 +29,12 @@ const ShoppingCart = () => {
   const { user } = useAuth();
   const { response, loading } = useGetContext<Get<Inventory>>();
   const [showSelectBranchOffice, setShowSelectBranchOffice] = useState(false);
-  const [branchOffice, setBranchOffice] = useState<User | null>(null);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [productsCart, setProductsCart] = useState<ProductCart[]>([]);
   const [taxes, setTaxes] = useState<number | undefined | null>(0);
   const [discount, setDiscount] = useState<number | undefined | null>(0);
   const [saving, setSaving] = useState(false);
+  const [branchOfficeName, setBranchOfficeName] = useState<string>("");
 
   useEffect(() => {
     if (user?.role !== "Super Admin") return;
@@ -46,7 +46,6 @@ const ShoppingCart = () => {
     if (loading || !response?.list.length) return;
 
     setInventories(response?.list);
-    setBranchOffice(response?.list[0].user!);
   }, [response]);
 
   const subtotal = useMemo(() => {
@@ -99,6 +98,7 @@ const ShoppingCart = () => {
   };
 
   const clearCart = () => {
+    setBranchOfficeName("");
     setProductsCart([]);
     setTaxes(0);
     setDiscount(0);
@@ -117,8 +117,8 @@ const ShoppingCart = () => {
     });
 
     const cart: Cart = {
-      total: Big(total).toNumber(),
-      subtotal: subtotal,
+      total,
+      subtotal,
       discount: discount || 0,
       taxes: taxes || 0,
       products
@@ -166,7 +166,8 @@ const ShoppingCart = () => {
             onSelectBranchOffice={(value) => {
               clearCart();
               setShowSelectBranchOffice(false);
-              navigate({ search: `?pagina=1&limite=5&userId=${value}` });
+              setBranchOfficeName(value.title || "");
+              navigate({ search: `?pagina=1&limite=5&userId=${value.value}` });
             }}
           />
         </FormControlProvider>
@@ -175,7 +176,7 @@ const ShoppingCart = () => {
         !showSelectBranchOffice && <div>
           <Row align="middle" gutter={20}>
             <Col>
-              <h3>Lista de productos {` | Sucursal: ${branchOffice?.name}`}</h3>
+              <h3>Lista de productos {` | Sucursal: ${branchOfficeName}`}</h3>
             </Col>
             {
               user?.role === "Super Admin" && !showSelectBranchOffice && <Row

@@ -1,5 +1,5 @@
 import { UIEvent, useMemo, useState } from "react";
-import { Form, FormInstance, Input, InputNumber, Select, Space, Switch } from "antd";
+import { Form, FormInstance, Input, InputNumber, Select, Switch } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
@@ -179,6 +179,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
             searchValue={searchValues.find(search => search.id === name)?.value || ""}
             disabled={disabled}
             mode={input.mode}
+            onChange={(e) => input.onChange?.({ value: e, title: input.options?.find(option => option.value === e)?.label?.toString() || "" })}
           />
           {/*  <Button
               icon={<SearchOutlined />}

@@ -2,15 +2,20 @@ import { Button, Col, Form, Row } from "antd";
 import { useFormControl } from "../../../context/formControl";
 import FormControl from "../../../components/formControl";
 import { User } from "../../../interfaces/models/user";
+import { InputType } from "../../../types/components/formControl";
+import { DefaultOptionType } from "antd/es/select";
+import { useState } from "react";
 
-const BranchOfficeFilter = ({ onSelectBranchOffice }: { onSelectBranchOffice: (id: number) => void; }) => {
+
+const BranchOfficeFilter = ({ onSelectBranchOffice }: { onSelectBranchOffice: (value: DefaultOptionType) => void; }) => {
   const { form, inputs } = useFormControl<User>();
+  const [branchOfficeOption, setBranchOfficeOption] = useState<DefaultOptionType | null>(null);
 
   return (
     <Form
       layout="vertical"
       form={form}
-      onFinish={({ id }) => onSelectBranchOffice(id)}
+      onFinish={() => onSelectBranchOffice(branchOfficeOption!)}
     >
       <Row align="middle" gutter={20}>
         <Col xs={12} md={7}>
@@ -19,7 +24,10 @@ const BranchOfficeFilter = ({ onSelectBranchOffice }: { onSelectBranchOffice: (i
               return (
                 <FormControl
                   key={input.name}
-                  input={input}
+                  input={{
+                    ...input,
+                    onChange: (value) => setBranchOfficeOption(value)
+                  } as InputType<User>}
                 />
               );
             })
