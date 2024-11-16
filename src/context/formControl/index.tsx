@@ -1,56 +1,61 @@
-import { useEffect, useContext, createContext, ReactNode, useState, UIEvent } from "react";
+import { useEffect, useContext, createContext, ReactNode, useState, UIEvent, Dispatch, SetStateAction } from "react";
 import { InputType } from "../../types/components/formControl";
 import { ItemSelect, SelectGet } from "../../interfaces/components/formControl";
-import { message } from "antd";
+import { Form, FormInstance, message } from "antd";
 import useAbortController from "../../hooks/useAbortController";
 import { get } from "../../services/http";
 import { once } from "../../utils/functions";
 
 interface Props<T> {
   children: ReactNode;
-  itemsProp: InputType<T>[];
+  inputsProp?: InputType<T>[];
 }
 
 type OnPopupScrollFun<T> = (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
 
 interface Context<T> {
-  items: InputType<T>[];
+  inputs: InputType<T>[];
   onPopupScroll: OnPopupScrollFun<T>;
   onSearchSelect: (search: string) => void;
+  form: FormInstance<T>;
 }
 
 const createStateContext = once(<T extends {}>() => createContext({
-  items: [],
+  inputs: [],
   onPopupScroll: () => Promise.resolve(),
-  onSearchSelect: (_: string) => { }
+  onSearchSelect: (_: string) => { },
+  form: {} as FormInstance<T>,
 } as Context<T>));
 
 export const useFormControl = <T extends {}>() => useContext(createStateContext<T>());
 
-const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) => {
+const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) => {
+  const [form] = Form.useForm<T>();
   const Context = createStateContext<T>();
   const abortController = useAbortController();
-  const [items, setItems] = useState<InputType<T>[]>([]);
+  const [inputs, setInputs] = useState<InputType<T>[]>([]);
   const [notLoadMore, setNotLoadMore] = useState(false);
 
   useEffect(() => {
-    if (!itemsProp.length || items.length) return;
+    if (!inputsProp?.length) return;
 
     const init = async () => {
       try {
-        const newItems = await Promise.all(itemsProp.map(async item => {
-          if (item.type !== "select" || !item.url) return item;
+        setNotLoadMore(false);
 
-          const response = await get<SelectGet>(item.url, abortController.current);
+        const newItems = await Promise.all(inputsProp.map(async input => {
+          if (input.type !== "select" || !input.url) return input;
 
-          item.loading = false;
-          item.page = 1;
-          item.options = response.list.map((r) => ({ value: r.id, label: `${r.name || ""} ${r.email ? " - " + r.email : ""}` }));
+          const response = await get<SelectGet>(input.url, abortController.current);
 
-          return item;
+          input.loading = false;
+          input.page = 1;
+          input.options = response.list.map((r) => ({ value: r.id, label: `${r.name || ""} ${r.email ? " - " + r.email : ""}` }));
+
+          return input;
         }));
 
-        setItems(newItems);
+        setInputs(newItems);
       } catch (error) {
         console.log(error);
         message.error("Error al obtener los filtros de listas.");
@@ -58,12 +63,12 @@ const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) =>
     };
 
     init();
-  }, [itemsProp, abortController, items, message]);
+  }, [inputsProp, abortController, message]);
 
   const onPopupScroll = async (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => {
     if (notLoadMore) return;
 
-    const selectItems = items.filter(i => i.type === "select") as ItemSelect<keyof T>[];
+    const selectItems = inputs.filter(i => i.type === "select") as ItemSelect<keyof T>[];
 
     if (selectItems.some(i => i.loading)) return;
 
@@ -72,7 +77,7 @@ const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) =>
 
     if (target.scrollTop + target.offsetHeight !== target.scrollHeight) return;
 
-    setItems(prev => prev.map(i => {
+    setInputs(prev => prev.map(i => {
       const parseItem = i as ItemSelect<keyof T>;
 
       if (parseItem.id !== item.id) return parseItem;
@@ -83,13 +88,14 @@ const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) =>
     }));
 
     try {
-      const response = await get<SelectGet>(`${url}?page=${page! + 1}`, abortController.current);
+      const path = url?.split("?")[0];
+      const response = await get<SelectGet>(`${path}?pagina=${page! + 1}&limite=10`, abortController.current);
 
       if (response.list.length !== 10) {
         setNotLoadMore(true);
       }
 
-      setItems(items.map(i => {
+      setInputs(inputs.map(i => {
         const parseItem = i as ItemSelect<keyof T>;
 
         if (parseItem.id !== item.id) return parseItem;
@@ -103,7 +109,7 @@ const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) =>
       console.log(error);
       message.error("Error al obtener más resultados.");
     } finally {
-      setItems(prev => prev.map(i => {
+      setInputs(prev => prev.map(i => {
         const parseItem = i as ItemSelect<keyof T>;
 
         if (parseItem.id !== item.id) return parseItem;
@@ -119,7 +125,7 @@ const FormControlProvider = <T extends {}>({ children, itemsProp }: Props<T>) =>
     console.log("searchValue ---->", search);
   };
 
-  return <Context.Provider value={{ items, onPopupScroll, onSearchSelect }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ inputs, onPopupScroll, onSearchSelect, form }}>{children}</Context.Provider>;
 };
 
 export default FormControlProvider;

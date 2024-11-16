@@ -1,47 +1,53 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { Col, Row } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CreateButton from '../registerButton';
 import BackButton from '../backButton';
+import useGetSearchURL from "../../hooks/useGestSearchURL";
 
 interface Props {
-  title: string;
-  path?: string;
+  urlProp?: string;
   goBack?: boolean;
+  showButton?: boolean;
+  showTitle?: boolean;
 }
 
-const textButtonsCreate: Record<string, string> = {
-  "Sucursales": "sucursal",
-  "Vendedores": "vendedor",
-  "Repartidores": "repartidores"
-} as const;
-
-const HeaderView: FC<Props> = ({ title, path, goBack }) => {
+const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true, showTitle = true }) => {
+  const { url } = useGetSearchURL(urlProp);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const moduleName = useMemo(() => {
+    const moduleName = pathname.split("/")[1];
+
+    return (moduleName.charAt(0).toUpperCase() + moduleName.slice(1)).replaceAll("-", " ");
+  }, [pathname]);
 
   return (
     <>
       <Row justify='space-between' align="middle">
         <Col>
-          <h1>
-            {title}
-          </h1>
+          {
+            showTitle && <h1>
+              {moduleName}
+            </h1>
+          }
         </Col>
         {
-          path && <Col>
+          showButton &&
+          <Col>
             {
               goBack
-                ? <BackButton onClick={() => navigate(path)} />
-                : <CreateButton onClick={() => navigate(path)}>
-                  {"Registar " + textButtonsCreate[title]}
+                ? <BackButton onClick={() => navigate(pathname)} />
+                : <CreateButton onClick={() => navigate(`${url.replace("/list", "")}&id=0`)}>
+                  {"Registar " + moduleName.slice(0, -1)}
                 </CreateButton>
             }
           </Col>
         }
       </Row>
-      <br />
     </>
-  )
-}
+  );
+};
 
-export default HeaderView;
+export default HeaderView;;;;;

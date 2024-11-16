@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import menuItems from "../menu/menuItems";
 
+const pathsWithPagination = ["/usuarios", "/categorias", "/productos", "/inventarios", "/movimientos", "/ventas"];
+
 const Breadcrumb = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -16,8 +18,8 @@ const Breadcrumb = () => {
     return {
       icon,
       paths
-    }
-  }, [pathname])
+    };
+  }, [pathname]);
 
   const toPath = (path: string) => {
     const paths = pathname.split("/");
@@ -28,13 +30,17 @@ const Breadcrumb = () => {
     let to = "";
 
     toPaths.forEach((path) => {
-      to += ("/" + path)
+      to += ("/" + path);
     });
 
     if (to.includes("configuracion")) return;
 
+    if (pathsWithPagination.includes(to)) {
+      to += "?pagina=1&limite=10";
+    }
+
     navigate(to);
-  }
+  };
 
   return (
     <div style={{ display: "flex" }}>
@@ -44,14 +50,14 @@ const Breadcrumb = () => {
       <BreadcrumbAnt
         items={
           paths.map(path => ({
-            title: path.charAt(0).toUpperCase() + path.slice(1),
+            title: (path.charAt(0).toUpperCase() + path.slice(1)).replaceAll("-", " "),
             href: "",
             onClick: () => toPath(path)
           }))
         }
       />
     </div>
-  )
-}
+  );
+};
 
 export default Breadcrumb;

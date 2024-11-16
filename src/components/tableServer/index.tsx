@@ -1,68 +1,117 @@
-
 import { Empty, Table } from "antd";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useMemo, useState } from "react";
-import useGet from "../../hooks/useGet";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { PropsUseGet } from "../../hooks/useGet";
 import { Get } from "../../interfaces";
 import { TableProps } from "../../interfaces/components/serverTable";
-import Filters from "./filters";
-import FormControlProvider from "../../context/formControl";
+import { ColumnsType } from "antd/es/table";
+import useAbortController from "../../hooks/useAbortController";
+import TableEditButton from "./tableEditButton";
+import TableDeleteButton from "./tableDeleteButton";
+import useGetSearchURL from "../../hooks/useGestSearchURL";
+import { useGetContext } from "../../context/getContext";
+import { changePageAndLimitUrl } from "../../utils/functions";
 
-const ServerTable = <T extends { id: string; }>({ url, columns, filters }: TableProps<T>) => {
-  const { pathname } = useLocation();
+const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled, wait }: TableProps<T>) => {
+  const abortController = useAbortController();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [propsUseGet, setPropsUseGet] = useState<PropsUseGet>({ url: "" });
+  const { url } = useGetSearchURL(urlProp);
+  const page = searchParams.get("pagina") || 1;
+  const limit = searchParams.get("limite");
 
-  const page = searchParams.get('pagina') || 1;
-  const limit = searchParams.get('limite') || 10;
+  useEffect(() => {
+    setPropsUseGet({ url, wait });
+  }, [url, wait]);
 
-  const completeUrl = useMemo(() => {
-    let _url = url || `${pathname}/lista`;
+  const columns = useMemo<ColumnsType<T>>(() => {
+    const columns = columnsProp.map(c => ({ ...c, width: c.width || 150 }));
 
-    for (const param of searchParams) {
-      if (!_url.includes("?")) {
-        _url += `?${param[0]}=${param[1]}`;
-        continue;
-      };
+    if (showDisabled) {
+      columns.push({
+        title: 'Activo',
+        dataIndex: 'active',
+        key: 'active',
+        width: 100,
+        render: (_, record) => {
+          const { id, active } = record as T & { active: boolean; };
 
-      _url += `&${param[0]}=${param[1]}`;
+          return (
+            <TableDeleteButton
+              record={{ id, active }}
+              onDeleted={() => {
+                setPropsUseGet({ url: "" });
+
+                setTimeout(() => {
+                  setPropsUseGet({ url });
+                }, 500);
+              }}
+            />
+          );
+        },
+      });
     }
 
-    return _url;
-  }, [searchParams]);
+    if (showEdit) {
+      columns.push({
+        title: 'Editar',
+        key: 'edit',
+        fixed: 'right',
+        width: 100,
+        render: (_, record: T) => {
+          const r = record as T & { active: boolean; };
 
-  const { response, loading } = useGet<Get<T>>({ url: completeUrl });
+          return (
+            <TableEditButton
+              id={record.id}
+              url={url}
+            />
+          );
+        },
+      });
+    }
+    return columns;
+  }, [columnsProp, showEdit, showDisabled, abortController, url]);
+
+  const { response, loading, setGetProps } = useGetContext<Get<T>>();
+
+  useEffect(() => {
+    setGetProps(propsUseGet);
+  }, [propsUseGet]);
 
   return (
     <>
-      {
-        filters && <FormControlProvider<T>
-          itemsProp={filters}
+      {/*  {
+        <FormControlProvider<T>
+          inputsProp={[]}
         >
           <Filters />
         </FormControlProvider>
-      }
+      } */}
       <br />
       <Table
         sticky
         scroll={{ x: 400 }}
         columns={columns}
-        dataSource={response?.list}
+        dataSource={response?.list || []}
         loading={loading}
         locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='Sin registros.' /> }}
         rowKey="id"
         pagination={{
           total: response?.total,
           current: +page,
-          pageSize: +limit,
+          pageSize: limit ? +limit : undefined,
           onChange: (_page: number, pageSize: number) => {
+            const newUrl = changePageAndLimitUrl(url, _page, pageSize);
+
             navigate({
-              search: `?pagina=${_page}&limite=${pageSize}`
+              search: newUrl.split("?")[1]
             });
           },
           showTotal: (total: number, range: number[]) => `${range[0]}-${range[1]} de ${total} registros.`,
           locale: { items_per_page: '/ página' },
-          showSizeChanger: true
+          showSizeChanger: true,
         }}
       />
     </>

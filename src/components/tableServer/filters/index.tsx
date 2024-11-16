@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFormControl } from "../../../context/formControl";
 
 const Filters = <T extends {}>() => {
-  const { items, onPopupScroll, onSearchSelect } = useFormControl<T>();
+  const { inputs, onPopupScroll, onSearchSelect } = useFormControl<T>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -14,7 +14,7 @@ const Filters = <T extends {}>() => {
   useEffect(() => {
     let defaultValues: T = {} as T;
 
-    items.forEach(item => {
+    inputs.forEach(item => {
       const { name } = item;
       const nameString = name as string;
 
@@ -34,7 +34,7 @@ const Filters = <T extends {}>() => {
 
     form.setFieldsValue(defaultValues);
     form.submit();
-  }, [form, items, searchParams]);
+  }, [form, inputs, searchParams]);
 
   return (
     <Card
@@ -72,14 +72,14 @@ const Filters = <T extends {}>() => {
         </Row>
         <Row style={{ marginBottom: -20 }} gutter={[10, 20]}>
           {
-            items.map((item) => {
-              const { name } = item;
+            inputs.map((input) => {
+              const { name } = input;
               const nameString = name as string;
 
               return (
                 <Col key={nameString} xs={24} md={8}>
                   <FormControl
-                    item={item}
+                    input={input}
                     onPopupScroll={onPopupScroll}
                     onSearchSelect={onSearchSelect}
                   />

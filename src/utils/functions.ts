@@ -113,11 +113,19 @@ export const fileToBase64 = (file: File) => new Promise((resolve, reject) => {
 export const handleError = (error: any) => {
   console.log(error);
 
-  if (error instanceof Error) {
-    throw new Error(error.message);
+  if (typeof error.error === "string") {
+    throw new Error(error.error);
   }
 
-  throw new Error(error as string);
+  if (typeof error === "string") {
+    throw new Error(error);
+  }
+
+  if (error instanceof Error) {
+    throw error;
+  }
+
+  throw new Error(JSON.stringify(error));
 };
 
 export const confirmDialog = <T>(content: ReactNode, fun: () => Promise<T>, textSuccess?: string) =>
@@ -238,4 +246,18 @@ export const once = <T extends (...args: any[]) => any>(fn: T): T => {
   };
 
   return wrappedFn as T;
+};
+
+export const priceFormatUSD = (price: number) => new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD"
+}).format(price);
+
+export const changePageAndLimitUrl = (url: string, page: number, limit: number) => {
+  const urlObj = new URL(url, location.origin);
+
+  urlObj.searchParams.set('limite', limit.toString());
+  urlObj.searchParams.set('pagina', page.toString());
+
+  return urlObj.pathname + urlObj.search;
 };

@@ -3,6 +3,10 @@ import { TypeRoute } from "../types";
 import { SizeTires, SizeTiresUpload, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
 import { SizesTires } from "../types/traila";
 import { Column } from "exceljs";
+import CachedImage from "../components/cachedImage";
+import { Inventory } from "../interfaces/models/inventory";
+import { ColumnsType } from "antd/es/table";
+import { priceFormatUSD } from "../utils/functions";
 
 /* export const urlImageDefaultProfile = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/imagenesPerfil%2F1467646262_522853_1467646344_noticia_normal.jpg?alt=media&token=f6e761ad-95c5-462f-bc39-0e889ac30a5c";
 export const baseUrlStorage = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/";
@@ -21,22 +25,45 @@ export const rulePhone: FormRule = {
   required: true,
   message: 'El número telefónico tiene que ser de 10 dígitos.',
   validator: (rule, value?: string) => value?.length !== 10 ? Promise.reject(rule.message) : Promise.resolve(),
-  type: "number"
 } as const;
+
+export const rulePrice: FormRule = {
+  required: true,
+  message: 'El precio no puede ser menor a 1 o mayor a 999,999.',
+  validator: (rule, value?: string) => {
+    if (!value) return Promise.reject(rule.message);
+
+    const numberValue = +value;
+
+    if (numberValue < 1 || numberValue > 999999) return Promise.reject(rule.message);
+
+    return Promise.resolve();
+  },
+} as const;
+
 export const ruleMaxLength: FormRule = {
-  max: 300,
+  max: 255,
+  message: "El texto no puede tener más de 300 caracteres.",
+  type: "string"
+} as const;
+
+export const ruleLargeMaxLength: FormRule = {
+  max: 3000,
   message: "El texto no puede tener más de 300 caracteres."
 } as const;
+
 export const ruleEmail: FormRule = {
   required: true,
   message: 'Favor de escribir un correo electrónico válido.',
   type: "email"
 } as const;
+
 export const rulePassword: FormRule = {
   required: true,
   min: 6,
   message: 'La contraseña tiene que ser de 6 dígitos o más.'
 } as const;
+
 export const titleForm: Record<TypeRoute, string> = {
   create: "Registrar",
   update: "Editar"
@@ -161,5 +188,39 @@ export const columnsExcelTrailas: Partial<Column>[] = [
     header: "LLantas cambiadas",
     key: "tiresChanged",
     width: 32
+  }
+];
+
+export const columnsProductsCart: ColumnsType<Inventory> = [
+  {
+    title: "Imagen producto",
+    dataIndex: "product.image",
+    render: (_, { product }) => <div style={{ display: "flex" }}>
+      <CachedImage style={{ height: 48, width: 60, objectFit: "cover" }} imageUrl={product?.image || ""} />
+    </div>,
+    width: 100
+  },
+  {
+    title: "Producto",
+    dataIndex: "product.name",
+    render: (_, { product }) => <div>
+      <div style={{ fontSize: 12 }}>{product?.partNumber ? "No. de parte: " : ""}<b>{product?.partNumber}</b></div>
+      <div style={{ fontSize: 12 }}>Nombre: <b>{product?.name}</b></div>
+      <div style={{ fontSize: 12 }}>Categoria: <b>{product?.category?.name}</b></div>
+    </div>,
+    width: 200
+  },
+  {
+    title: "Stock",
+    dataIndex: "stock",
+    key: "stock",
+    width: 70
+  },
+  {
+    title: "Precio",
+    dataIndex: "price",
+    key: "price",
+    render: (_, { product }) => <div>{priceFormatUSD(product?.price || 0)}</div>,
+    width: 140
   }
 ];

@@ -1,6 +1,6 @@
 
-import React, { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
-import { onSnapshot, getFirestore, QueryConstraint, Timestamp, collection as col, query as q, collection } from 'firebase/firestore';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
+import { onSnapshot, getFirestore, QueryConstraint, Timestamp, collection as col, query as q } from 'firebase/firestore';
 import dayjs from "dayjs";
 import { once } from "../utils/functions";
 
@@ -13,7 +13,7 @@ export interface PropsUseOnSnapshot {
   whitPropsDateFormated?: boolean;
 }
 
-interface Snapshot<T> {
+interface SnapshotContext<T> {
   loading: boolean;
   data: Array<T>;
   setData: Dispatch<SetStateAction<Array<T>>>;
@@ -24,15 +24,15 @@ interface Snapshot<T> {
 const createSnapshotContext = once(<T extends {}>() => createContext({
   data: [],
   loading: true,
-  setData: () => { },
+  setData: () => [],
   setSnapshotProps: () => { },
   snapshotProps: {
     collection: "",
     query: [],
   }
-} as Snapshot<T>));
+} as SnapshotContext<T>));
 
-export const useOnSnapshot = <T extends {}>() => useContext(createSnapshotContext<T>());
+export const useOnSnapshotContext = <T extends {}>() => useContext(createSnapshotContext<T>());
 
 const SnapshotProvider = <T extends {}>({ children }: { children: ReactNode; }) => {
   const Context = createSnapshotContext<T>();
