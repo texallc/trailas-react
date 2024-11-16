@@ -133,7 +133,6 @@ const ShoppingCart = () => {
 
       clearCart();
       setShowSelectBranchOffice(true);
-      navigate("/carrito-de-compras");
     } catch (error) {
       console.log(error);
       message.error("Error al guardar la venta");
@@ -192,6 +191,7 @@ const ShoppingCart = () => {
                         async () => {
                           clearCart();
                           setShowSelectBranchOffice(true);
+                          navigate({ search: "" });
                         }
                       );
                     }}
