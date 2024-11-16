@@ -131,6 +131,7 @@ const ShoppingCart = () => {
 
       message.success("Venta guardada correctamente!");
 
+      navigate("/carrito-de-compras");
       clearCart();
       setShowSelectBranchOffice(true);
     } catch (error) {
