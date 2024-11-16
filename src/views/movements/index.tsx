@@ -14,6 +14,14 @@ const Movements = () => {
       <ServerTable<Movement>
         columns={[
           {
+            title: "Producto",
+            dataIndex: "inventory.product.name",
+            render: (_, { inventory }) => <div>
+              <div>Nombre: {inventory?.product?.name}</div>
+              <div>No. parte: {inventory?.product?.partNumber}</div>
+            </div>
+          },
+          {
             title: "Tipo de movimiento",
             dataIndex: "typeMovement",
             key: "typeMovement",
@@ -22,11 +30,6 @@ const Movements = () => {
             title: "Cantidad",
             dataIndex: "quantity",
             key: "quantity",
-          },
-          {
-            title: "Producto",
-            dataIndex: "inventory.product.name",
-            render: (_, { inventory }) => inventory?.product?.name
           },
           {
             title: "Sucursal",
@@ -40,8 +43,8 @@ const Movements = () => {
             title: "Usuario del movimiento",
             dataIndex: "user.name",
             render: (_, { user }) => <div>
-              <div>{user.name}</div>
-              <div>{user.email}</div>
+              <div>{user?.name}</div>
+              <div>{user?.email}</div>
             </div>,
           },
           {

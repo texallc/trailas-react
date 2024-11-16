@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import HeaderView from "../../components/headerView";
 import { useAuth } from "../../context/authContext";
 import { Inventory } from "../../interfaces/models/inventory";
 import FormControlProvider from "../../context/formControl";
@@ -8,27 +7,34 @@ import ServerTable from "../../components/tableServer";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
 import { User } from "../../interfaces/models/user";
-import { Button, Card, Col, Empty, Form, Input, InputNumber, message, Row, Table } from "antd";
-import { RetweetOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Empty, Form, InputNumber, message, Row, Table } from "antd";
+import { RetweetOutlined, PlusOutlined, DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { confirmDialog, priceFormatUSD } from "../../utils/functions";
 import Big from 'big.js';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { columnsProductsCart } from "../../constants";
 import FormItem from "antd/es/form/FormItem";
-import { ProductCart } from "../../types/models/sale";
+import { ProductCart } from "../../types/models/product";
+import { Cart, ProductInCart } from "../../interfaces/cart";
+import { post } from "../../services/http";
+import useAbortController from "../../hooks/useAbortController";
 
 const ShoppingCart = () => {
+  const abortController = useAbortController();
+  const [searchParams] = useSearchParams();
+  const userId = Number(searchParams.get("userId") || 0);
   const navigate = useNavigate();
   const [form] = Form.useForm<ProductCart>();
+  const valuesForm = Form.useWatch([], form);
   const { user } = useAuth();
   const { response, loading } = useGetContext<Get<Inventory>>();
   const [showSelectBranchOffice, setShowSelectBranchOffice] = useState(false);
-  const [userId, setUserId] = useState<number>(0);
   const [branchOffice, setBranchOffice] = useState<User | null>(null);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [productsCart, setProductsCart] = useState<ProductCart[]>([]);
   const [taxes, setTaxes] = useState<number | undefined | null>(0);
-  const valuesForm = Form.useWatch([], form);
+  const [discount, setDiscount] = useState<number | undefined | null>(0);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (user?.role !== "Super Admin") return;
@@ -43,25 +49,45 @@ const ShoppingCart = () => {
     setBranchOffice(response?.list[0].user!);
   }, [response]);
 
-  const getTotal = useMemo(() => {
+  const subtotal = useMemo(() => {
     if (!productsCart.length || !Object.keys(valuesForm).length) return 0;
 
-    Object.entries(valuesForm).forEach(([key, value]) => {
-      console.log(key);
-      if (key.includes("quantity-")) {
-        const productId = Number(key.split("-")[1]);
-        const inventory = inventories.find((inventory) => inventory.productId === productId);
-        const quantity = Number(value);
-        const price = inventory?.product?.price || 0;
-        const subTotal = Big(price).mul(quantity).toNumber();
+    const entriesForm = Object.entries(valuesForm);
 
-        console.log(subTotal);
-      }
-    });
-    console.log(valuesForm);
+    const subtotal = entriesForm.reduce((acc, [key, value]) => {
+      if (!key.includes("quantity-")) return acc;
+
+      const productId = Number(key.split("-")[1]);
+      const inventory = inventories.find((inventory) => inventory.productId === productId);
+      const quantity = Number(value || 0);
+      const price = Number(inventory?.product?.price || 0);
+      const subtotalByProduct = Big(price).mul(quantity).plus(acc);
+
+      return subtotalByProduct.toNumber();
+    }, 0);
+
+    return subtotal;
   }, [valuesForm, productsCart]);
 
-  console.log(getTotal);
+  const { total, totalWithoutDiscount } = useMemo(() => {
+    if (!subtotal) return {
+      total: 0,
+      totalWithoutDiscount: 0
+    };
+
+    const _taxes = taxes ? Big(Math.min(taxes, 100)) : Big(0);
+    const _discount = discount ? Big(Math.min(discount, 100)) : Big(0);
+
+    const totalWithoutDiscount = Big(subtotal)
+      .mul(Big(1).plus(_taxes.div(100))); // Aplica el impuesto
+
+    const total = totalWithoutDiscount.mul(Big(1).minus(_discount.div(100))); // Aplica el descuento
+
+    return {
+      totalWithoutDiscount: totalWithoutDiscount.toNumber(),
+      total: total.toNumber()
+    };
+  }, [subtotal, taxes, discount]);
 
   const SubTotalCell = ({ productId }: { productId: number; }) => {
     const quantity = Form.useWatch(`quantity-${productId}`, form) || 0;
@@ -72,15 +98,52 @@ const ShoppingCart = () => {
     </div>;
   };
 
-  const onSaveSale = (products: ProductCart) => {
-    console.log(products);
+  const clearCart = () => {
+    setProductsCart([]);
+    setTaxes(0);
+    setDiscount(0);
+    form.resetFields();
+  };
+
+  const onSaveSale = async (productsCartForm: ProductCart) => {
+    const products: ProductInCart[] = productsCart.map(p => {
+      const quantity = Number(productsCartForm[`quantity-${p.productId}`] || 0);
+
+      return {
+        productId: p.productId,
+        price: Number(p.product?.price || 0),
+        quantity
+      };
+    });
+
+    const cart: Cart = {
+      total: Big(total).toNumber(),
+      subtotal: subtotal,
+      discount: discount || 0,
+      taxes: taxes || 0,
+      products
+    };
+
+    setSaving(true);
+
+    try {
+      await post("/ventas/create", cart, abortController.current);
+
+      message.success("Venta guardada correctamente!");
+
+      clearCart();
+      setShowSelectBranchOffice(true);
+      navigate("/carrito-de-compras");
+    } catch (error) {
+      console.log(error);
+      message.error("Error al guardar la venta");
+    } finally {
+      setSaving(false);
+    };
   };
 
   return (
-    <div>
-      <HeaderView
-        showButton={false}
-      />
+    <div style={{ marginTop: 15 }}>
       {
         user?.role === "Super Admin" && showSelectBranchOffice &&
         <FormControlProvider<Inventory>
@@ -101,11 +164,8 @@ const ShoppingCart = () => {
         >
           <BranchOfficeFilter
             onSelectBranchOffice={(value) => {
-              setUserId(value);
+              clearCart();
               setShowSelectBranchOffice(false);
-              setProductsCart([]);
-              setTaxes(0);
-              form.resetFields();
               navigate({ search: `?pagina=1&limite=5&userId=${value}` });
             }}
           />
@@ -129,7 +189,7 @@ const ShoppingCart = () => {
                       await confirmDialog(
                         "¿Seguro que deseas cambiar de sucursal?",
                         async () => {
-                          setUserId(0);
+                          clearCart();
                           setShowSelectBranchOffice(true);
                         }
                       );
@@ -143,7 +203,8 @@ const ShoppingCart = () => {
           </Row>
           <hr />
           <ServerTable<Inventory>
-            url={userId ? `/inventarios/list-by-branch-office?pagina=1&limite=5&userId=${userId}` : ""}
+            wait={!Boolean(userId)}
+            url={`/inventarios/list-by-branch-office?pagina=1&limite=5&userId=${userId}`}
             columns={[
               ...columnsProductsCart,
               {
@@ -162,7 +223,7 @@ const ShoppingCart = () => {
                       setProductsCart([...productsCart, productCart]);
                     }}
                     disabled={!inventory.stock || productsCart.some((product) => product.productId === inventory.productId)}
-                    title={inventory.stock ? "" : "Sin stock"}
+                    title={productsCart.some((product) => product.productId === inventory.productId) ? "En el carrito" : inventory.stock ? "" : "Sin stock"}
                   />
                 )
               }
@@ -174,9 +235,9 @@ const ShoppingCart = () => {
             onFinish={onSaveSale}
             form={form}
           >
-            <h3>Productos seleccionados</h3>
+            <h3>Productos en el carrito</h3>
             <Row align='top' gutter={10}>
-              <Col xs={24} md={20}>
+              <Col xs={24} md={18}>
                 <Table
                   rowKey="id"
                   columns={[
@@ -239,30 +300,58 @@ const ShoppingCart = () => {
                   pagination={false}
                 />
               </Col>
-              <Col xs={24} md={4}>
+              <Col xs={24} md={6}>
                 <Card>
                   <h4>Detalle de venta</h4>
                   <hr />
-                  <div style={{ display: "grid" }}>
-                    <label>Impuestos:</label>
+                  <div>Sub total: {priceFormatUSD(subtotal)}</div>
+                  <br />
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label>Impuesto: </label>
+                    <div style={{ width: 10 }} />
                     <InputNumber
                       value={taxes}
                       onChange={(e) => setTaxes(e)}
                       prefix="%"
                       min={0}
                       max={100}
+                      size="small"
                     />
                   </div>
                   <br />
-                  <div>Sub total: {priceFormatUSD(0)}</div>
-                  <div>Total: {priceFormatUSD(0)}</div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label>Descuento: </label>
+                    <div style={{ width: 10 }} />
+                    <InputNumber
+                      value={discount}
+                      onChange={(e) => setDiscount(e)}
+                      prefix="%"
+                      min={0}
+                      max={100}
+                      size="small"
+                    />
+                  </div>
+                  <br />
+                  <div>Total sin descuento: {priceFormatUSD(totalWithoutDiscount)}</div>
+                  <div>
+                    <b>Total: {priceFormatUSD(total)}</b>
+                  </div>
+                  <br />
+                  <Row justify="end">
+                    <Button
+                      icon={<ShoppingCartOutlined />}
+                      type="primary"
+                      htmlType="submit"
+                      loading={saving}
+                      disabled={saving || !productsCart.length}
+                    >
+                      Terminar compra
+                    </Button>
+                  </Row>
                 </Card>
               </Col>
             </Row>
             <br />
-            <Row justify="end">
-              <Button type="primary" htmlType="submit">Terminar compra</Button>
-            </Row>
           </Form>
         </div>
       }

@@ -7,4 +7,5 @@ export interface TableProps<T> {
   filters?: InputType<T>[];
   showEdit?: boolean;
   showDisabled?: boolean;
+  wait?: boolean;
 }

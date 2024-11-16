@@ -12,7 +12,7 @@ import useGetSearchURL from "../../hooks/useGestSearchURL";
 import { useGetContext } from "../../context/getContext";
 import { changePageAndLimitUrl } from "../../utils/functions";
 
-const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled }: TableProps<T>) => {
+const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled, wait }: TableProps<T>) => {
   const abortController = useAbortController();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -22,8 +22,8 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
   const limit = searchParams.get("limite");
 
   useEffect(() => {
-    setPropsUseGet({ url });
-  }, [url]);
+    setPropsUseGet({ url, wait });
+  }, [url, wait]);
 
   const columns = useMemo<ColumnsType<T>>(() => {
     const columns = columnsProp.map(c => ({ ...c, width: c.width || 150 }));

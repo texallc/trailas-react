@@ -9,9 +9,10 @@ interface Props {
   urlProp?: string;
   goBack?: boolean;
   showButton?: boolean;
+  showTitle?: boolean;
 }
 
-const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
+const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true, showTitle = true }) => {
   const { url } = useGetSearchURL(urlProp);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -26,9 +27,11 @@ const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
     <>
       <Row justify='space-between' align="middle">
         <Col>
-          <h1>
-            {moduleName}
-          </h1>
+          {
+            showTitle && <h1>
+              {moduleName}
+            </h1>
+          }
         </Col>
         {
           showButton &&

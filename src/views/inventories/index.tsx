@@ -15,15 +15,18 @@ const Inventories = () => {
       <ServerTable<Inventory>
         columns={[
           {
-            title: "Sucursal",
+            title: "Sucursal del producto",
             dataIndex: "user.name",
             render: (_, { user }) => user?.name,
 
           },
           {
             title: "Producto",
-            dataIndex: "product.name",
-            render: (_, { product }) => product?.name,
+            dataIndex: "product",
+            render: (_, { product }) => <div>
+              <div>Nombre: {product?.name}</div>
+              <div>No. parte: {product?.partNumber}</div>
+            </div>
           },
           {
             title: "Stock",
