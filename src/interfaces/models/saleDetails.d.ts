@@ -1,7 +1,7 @@
 import { Product } from "./product";
 import { Sale } from "./sale";
 
-export interface SaleDetails {
+export interface SalesDetail {
   readonly id?: number;
   quantity: number;
   saleId: number;

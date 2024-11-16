@@ -57,7 +57,7 @@ const TableActionsButtons = <T extends { id: string; }>({ record, onDeleted, pat
         shape="circle"
         onClick={() => onEdit()}
         size="middle"
-        style={{ color: '#fff', backgroundColor: '#ec9822 ' }}
+        style={{ color: '#fff', backgroundColor: '#ec9822' }}
         type='default'
       />
       <DeleteButton onClick={del} />

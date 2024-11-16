@@ -1,4 +1,4 @@
-import { InputProps, SelectProps, SwitchProps } from "antd";
+import { InputNumberProps, InputProps, SelectProps, SwitchProps } from "antd";
 import { Rule } from "antd/es/form";
 
 interface BaseInputProps<K> {
@@ -13,6 +13,11 @@ export interface ItemInput<K> extends Omit<InputProps, "name">, BaseInputProps<K
 
 export interface ItemNumber<K> extends Omit<ItemInput<K>, "type"> {
   type: "number";
+}
+
+
+export interface ItemPrice<K> extends Omit<InputNumberProps, "name">, BaseInputProps<K> {
+  type: "price";
 }
 
 export interface ItemEmail<K> extends Omit<ItemInput<K>, "type"> {

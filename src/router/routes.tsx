@@ -2,6 +2,8 @@ import { lazy } from "react";
 import { PathRouteProps } from 'react-router-dom';
 import SnapshotProvider from "../context/snapshotContext";
 import GetProvider from "../context/getContext";
+import FormControlProvider from "../context/formControl";
+import ShoppingCart from "../views/shoppingCart";
 
 const Login = lazy(() => import('../views/login'));
 const Home = lazy(() => import('../views/home'));
@@ -69,6 +71,12 @@ const routes: PathRouteProps[] = [
     path: '/movimientos',
     element: <GetProvider>
       <Movements />
+    </GetProvider>
+  },
+  {
+    path: '/carrito-de-compras',
+    element: <GetProvider>
+      <ShoppingCart />
     </GetProvider>
   },
   {

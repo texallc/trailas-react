@@ -1,37 +1,12 @@
 import dayjs from "dayjs";
 import HeaderView from "../../components/headerView";
 import ModalForm from "../../components/modalForm";
-import ServerTable from "../../components/tableServer"
+import ServerTable from "../../components/tableServer";
 import FormControlProvider from "../../context/formControl";
 import { Inventory } from "../../interfaces/models/inventory";
-import { useSearchParams } from "react-router-dom";
-import { InputType } from "../../types/components/formControl";
-import { useMemo } from "react";
+import { render } from "react-dom";
 
 const Inventories = () => {
-  const [searchParams] = useSearchParams();
-
-  const inputs = useMemo(() => {
-    const id = searchParams.get("id");
-    const inputs: InputType<Inventory>[] = [
-      {
-        name: "id",
-        style: { display: "none" },
-      },
-      {
-        name: "stock",
-        label: "Stock",
-      },
-      {
-        name: "userId",
-        label: "Sucursal",
-        type: "select",
-        url: "/inventarios/list?pagina=1&limite=10",
-      }
-    ]
-    return inputs;
-  }, [searchParams]);
-
   return (
     <>
       <HeaderView
@@ -40,6 +15,20 @@ const Inventories = () => {
       <ServerTable<Inventory>
         columns={[
           {
+            title: "Sucursal del producto",
+            dataIndex: "user.name",
+            render: (_, { user }) => user?.name,
+
+          },
+          {
+            title: "Producto",
+            dataIndex: "product",
+            render: (_, { product }) => <div>
+              <div>Nombre: {product?.name}</div>
+              <div>No. parte: {product?.partNumber}</div>
+            </div>
+          },
+          {
             title: "Stock",
             dataIndex: "stock",
             key: "stock",
@@ -47,17 +36,32 @@ const Inventories = () => {
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
             key: "updatedAt",
-            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
         ]}
       />
       <FormControlProvider<Inventory>
-        inputsProp={inputs}
+        inputsProp={[
+          {
+            name: "id",
+            style: { display: "none" },
+          },
+          {
+            name: "stock",
+            label: "Stock",
+          },
+          {
+            name: "userId",
+            label: "Sucursal",
+            type: "select",
+            url: "/inventarios/list?pagina=1&limite=10",
+          }
+        ]}
       >
         <ModalForm />
       </FormControlProvider>

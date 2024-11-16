@@ -9,9 +9,10 @@ interface Props {
   urlProp?: string;
   goBack?: boolean;
   showButton?: boolean;
+  showTitle?: boolean;
 }
 
-const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
+const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true, showTitle = true }) => {
   const { url } = useGetSearchURL(urlProp);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -19,16 +20,18 @@ const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
   const moduleName = useMemo(() => {
     const moduleName = pathname.split("/")[1];
 
-    return moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
+    return (moduleName.charAt(0).toUpperCase() + moduleName.slice(1)).replaceAll("-", " ");
   }, [pathname]);
 
   return (
     <>
       <Row justify='space-between' align="middle">
         <Col>
-          <h1>
-            {moduleName}
-          </h1>
+          {
+            showTitle && <h1>
+              {moduleName}
+            </h1>
+          }
         </Col>
         {
           showButton &&
@@ -43,7 +46,6 @@ const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true }) => {
           </Col>
         }
       </Row>
-      <br />
     </>
   );
 };

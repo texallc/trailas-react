@@ -1,5 +1,6 @@
 import { DatesModel } from "..";
 import { Category } from "./category";
+import { Inventory } from "./inventory";
 
 export interface Product extends DatesModel {
   readonly id: number;
@@ -12,8 +13,9 @@ export interface Product extends DatesModel {
   description: string;
   active: boolean;
   image: string;
-  category: Category;
+  category?: Category;
   categoryId: number;
   stock?: number;
-  inventoryId?: number;
+  inventories?: Inventory[];
+  userIds?: number[];
 }

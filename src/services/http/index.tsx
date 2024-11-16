@@ -32,7 +32,7 @@ export const get = async<T extends {}>(url: string, abortController: AbortContro
   }
 };
 
-export const post = async<T extends {}>(url: string, body: Record<string, unknown>, abortController: AbortController) => {
+export const post = async<T extends {}>(url: string, body: Record<string, any>, abortController: AbortController) => {
   try {
     const token = await getCurrentToken();
     const response = await fetch(

@@ -3,6 +3,10 @@ import { TypeRoute } from "../types";
 import { SizeTires, SizeTiresUpload, Tires, TiresChangedByTraila, Traila } from "../interfaces/traila";
 import { SizesTires } from "../types/traila";
 import { Column } from "exceljs";
+import CachedImage from "../components/cachedImage";
+import { Inventory } from "../interfaces/models/inventory";
+import { ColumnsType } from "antd/es/table";
+import { priceFormatUSD } from "../utils/functions";
 
 /* export const urlImageDefaultProfile = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/imagenesPerfil%2F1467646262_522853_1467646344_noticia_normal.jpg?alt=media&token=f6e761ad-95c5-462f-bc39-0e889ac30a5c";
 export const baseUrlStorage = "https://firebasestorage.googleapis.com/v0/b/delivery-hmo.appspot.com/o/";
@@ -184,5 +188,39 @@ export const columnsExcelTrailas: Partial<Column>[] = [
     header: "LLantas cambiadas",
     key: "tiresChanged",
     width: 32
+  }
+];
+
+export const columnsProductsCart: ColumnsType<Inventory> = [
+  {
+    title: "Imagen producto",
+    dataIndex: "product.image",
+    render: (_, { product }) => <div style={{ display: "flex" }}>
+      <CachedImage style={{ height: 48, width: 60, objectFit: "cover" }} imageUrl={product?.image || ""} />
+    </div>,
+    width: 100
+  },
+  {
+    title: "Producto",
+    dataIndex: "product.name",
+    render: (_, { product }) => <div>
+      <div style={{ fontSize: 12 }}>{product?.partNumber ? "No. de parte: " : ""}<b>{product?.partNumber}</b></div>
+      <div style={{ fontSize: 12 }}>Nombre: <b>{product?.name}</b></div>
+      <div style={{ fontSize: 12 }}>Categoria: <b>{product?.category?.name}</b></div>
+    </div>,
+    width: 200
+  },
+  {
+    title: "Stock",
+    dataIndex: "stock",
+    key: "stock",
+    width: 70
+  },
+  {
+    title: "Precio",
+    dataIndex: "price",
+    key: "price",
+    render: (_, { product }) => <div>{priceFormatUSD(product?.price || 0)}</div>,
+    width: 140
   }
 ];

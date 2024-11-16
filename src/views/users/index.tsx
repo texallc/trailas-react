@@ -37,17 +37,19 @@ const Users = () => {
           {
             title: "Fecha de creación",
             dataIndex: "createdAt",
-            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { createdAt }) => dayjs(createdAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
           {
             title: "Fecha de actualización",
             key: "updatedAt",
-            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY HH:mm:ss a"),
+            render: (_, { updatedAt }) => dayjs(updatedAt).format("DD/MM/YYYY hh:mm:ss a"),
           },
           {
             title: 'Imagen',
             key: 'image',
-            render: (_, { image }) => <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />,
+            render: (_, { image }) => <div style={{ display: "flex" }}>
+              <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />
+            </div>,
           }
         ]}
         showDisabled
@@ -66,6 +68,7 @@ const Users = () => {
           {
             name: "name",
             label: "Nombre",
+            rules: [ruleName]
           },
           {
             name: "email",
@@ -107,7 +110,7 @@ const Users = () => {
             rules: [
               {
                 required: true,
-                message: "Favor de seleccionar un rol"
+                message: "Favor de seleccionar un rol."
               }
             ]
           },

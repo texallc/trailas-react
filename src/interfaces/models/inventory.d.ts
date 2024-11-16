@@ -8,6 +8,9 @@ export interface Inventory {
   createdAt?: Date;
   updatedAt?: Date;
   products: Product[];
-  user: User;
+  user?: User;
   userId: number;
+  product?: Product;
+  productId: number;
+
 }

@@ -1,14 +1,14 @@
-import { useEffect, useContext, createContext, ReactNode, useState, UIEvent } from "react";
+import { useEffect, useContext, createContext, ReactNode, useState, UIEvent, Dispatch, SetStateAction } from "react";
 import { InputType } from "../../types/components/formControl";
 import { ItemSelect, SelectGet } from "../../interfaces/components/formControl";
-import { message } from "antd";
+import { Form, FormInstance, message } from "antd";
 import useAbortController from "../../hooks/useAbortController";
 import { get } from "../../services/http";
 import { once } from "../../utils/functions";
 
 interface Props<T> {
   children: ReactNode;
-  inputsProp: InputType<T>[];
+  inputsProp?: InputType<T>[];
 }
 
 type OnPopupScrollFun<T> = (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
@@ -17,27 +17,32 @@ interface Context<T> {
   inputs: InputType<T>[];
   onPopupScroll: OnPopupScrollFun<T>;
   onSearchSelect: (search: string) => void;
+  form: FormInstance<T>;
 }
 
 const createStateContext = once(<T extends {}>() => createContext({
   inputs: [],
   onPopupScroll: () => Promise.resolve(),
-  onSearchSelect: (_: string) => { }
+  onSearchSelect: (_: string) => { },
+  form: {} as FormInstance<T>,
 } as Context<T>));
 
 export const useFormControl = <T extends {}>() => useContext(createStateContext<T>());
 
 const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) => {
+  const [form] = Form.useForm<T>();
   const Context = createStateContext<T>();
   const abortController = useAbortController();
   const [inputs, setInputs] = useState<InputType<T>[]>([]);
   const [notLoadMore, setNotLoadMore] = useState(false);
 
   useEffect(() => {
-    if (!inputsProp.length) return;
+    if (!inputsProp?.length) return;
 
     const init = async () => {
       try {
+        setNotLoadMore(false);
+
         const newItems = await Promise.all(inputsProp.map(async input => {
           if (input.type !== "select" || !input.url) return input;
 
@@ -83,7 +88,8 @@ const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) =
     }));
 
     try {
-      const response = await get<SelectGet>(`${url}?page=${page! + 1}`, abortController.current);
+      const path = url?.split("?")[0];
+      const response = await get<SelectGet>(`${path}?pagina=${page! + 1}&limite=10`, abortController.current);
 
       if (response.list.length !== 10) {
         setNotLoadMore(true);
@@ -119,7 +125,7 @@ const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) =
     console.log("searchValue ---->", search);
   };
 
-  return <Context.Provider value={{ inputs, onPopupScroll, onSearchSelect }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ inputs, onPopupScroll, onSearchSelect, form }}>{children}</Context.Provider>;
 };
 
 export default FormControlProvider;

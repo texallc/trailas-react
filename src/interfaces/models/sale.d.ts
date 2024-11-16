@@ -7,11 +7,12 @@ export interface Sale extends DatesModel {
   readonly id: number;
   total: number;
   subtotal: number;
-  saleTax: number;
-  status: Status
+  taxes: number;
+  discount: number;
+  status: Status;
   buyerId: number;
-  buyer: User;
+  buyer?: User;
   sellerId: number;
-  seller: User;
+  seller?: User;
   details: SaleDetails[];
 }

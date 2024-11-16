@@ -17,15 +17,14 @@ interface ModalFormProps<T> {
   urlEdit?: string;
 }
 
-const ModalForm = <T extends { id: number; password?: string; confirmPassword?: string; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
+const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
   const { response, setGetProps } = useGetContext<Get<T>>();
-  const { inputs, onPopupScroll, onSearchSelect } = useFormControl();
+  const { inputs, onPopupScroll, onSearchSelect, form } = useFormControl<T>();
   const abortController = useAbortController();
   const { url } = useGetSearchURL(urlProp);
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [form] = Form.useForm<T>();
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number | null>(null);
 
@@ -58,7 +57,7 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
   }, [pathname, id]);
 
   const onFinish = async (values: T) => {
-    const { password, confirmPassword } = values;
+    const { password, confirmPassword } = values as T & { password?: string; confirmPassword?: string; };
 
     if (password && confirmPassword && password !== confirmPassword) {
       message.error("Error, Las contraseñas no coinciden.");
@@ -71,8 +70,8 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
 
     try {
       id ? await put(urlEndpoint, values, abortController.current)
-         : await post(urlEndpoint, values, abortController.current);
-        
+        : await post(urlEndpoint, values, abortController.current);
+
       setGetProps({ url: "" });
 
       setTimeout(() => {
@@ -119,7 +118,7 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
           inputs.map((input) => {
             return (
               <FormControl
-                key={input.name}
+                key={input.name.toString()}
                 input={input}
                 onPopupScroll={onPopupScroll}
                 onSearchSelect={onSearchSelect}
@@ -128,7 +127,6 @@ const ModalForm = <T extends { id: number; password?: string; confirmPassword?: 
           })
         }
       </Form>
-      <Button htmlType="submit">Sub</Button>
     </Modal>
   );
 };
