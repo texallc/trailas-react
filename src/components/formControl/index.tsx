@@ -85,7 +85,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
                 e.preventDefault();
               }
 
-              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+              return ["e", "E", "+", "-", "/", "%", "*"].includes(e.key) && e.preventDefault();
             }}
             min={1}
             max={999_999}
