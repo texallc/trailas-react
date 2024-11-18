@@ -29,13 +29,13 @@ export const rulePhone: FormRule = {
 
 export const rulePrice: FormRule = {
   required: true,
-  message: 'El precio no puede ser menor a 1 o mayor a 999,999.',
+  message: 'El precio no puede ser menor a 0.01 o mayor a 999,999.',
   validator: (rule, value?: string) => {
     if (!value) return Promise.reject(rule.message);
 
     const numberValue = +value;
 
-    if (numberValue < 1 || numberValue > 999999) return Promise.reject(rule.message);
+    if (numberValue < 0.01 || numberValue > 999999) return Promise.reject(rule.message);
 
     return Promise.resolve();
   },
