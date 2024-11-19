@@ -17,7 +17,6 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
   const id = Form.useWatch('id', form);
   const password = Form.useWatch('password', form);
   const confirmPassword = Form.useWatch('confirmPassword', form);
-
   const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
   const { name, type, label, style, placeholder, rules, disabled } = input;
   const nameString = name as string;
@@ -59,17 +58,20 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
           {...baseFormItemProps}
           rules={rules}
         >
-          <Input
+          <InputNumber
+            style={{ width: '100%' }}
             type="number"
             onKeyDown={e => {
               if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                 e.preventDefault();
               }
 
-              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+              return ["e", "E", "+", "/", "%", "*", "$"].includes(e.key) && e.preventDefault();
             }}
             onWheel={e => e.preventDefault()}
             disabled={disabled}
+            max={input.max}
+            min={input.min}
           />
         </FormItem>
       }
@@ -85,7 +87,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
                 e.preventDefault();
               }
 
-              return ["e", "E", "+", "-", "/", "%", "*"].includes(e.key) && e.preventDefault();
+              return ["e", "E", "+", "-", "/", "%", "*", "$"].includes(e.key) && e.preventDefault();
             }}
             min={1}
             max={999_999}
@@ -121,7 +123,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
                 e.preventDefault();
               }
 
-              return ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault();
+              return ["e", "E", "+", "-", "/", "%", "*", "$"].includes(e.key) && e.preventDefault();
             }}
             onWheel={e => e.preventDefault()}
             disabled={disabled}

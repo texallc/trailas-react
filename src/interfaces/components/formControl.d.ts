@@ -1,10 +1,11 @@
 import { InputNumberProps, InputProps, SelectProps, SwitchProps } from "antd";
 import { Rule } from "antd/es/form";
 import { DefaultOptionType } from "antd/es/select";
+import { ReactNode } from "react";
 
 interface BaseInputProps<K> {
   name: K;
-  label?: string;
+  label?: ReactNode;
   rules?: Rule[];
 }
 

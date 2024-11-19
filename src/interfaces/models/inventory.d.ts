@@ -12,5 +12,5 @@ export interface Inventory {
   userId: number;
   product?: Product;
   productId: number;
-
+  addStock?: number;
 }

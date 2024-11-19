@@ -7,6 +7,7 @@ import { InputType } from "../../types/components/formControl";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
 import Products from "./products";
+import { DefaultOptionType } from "antd/es/select";
 
 const ProductsPage = () => {
   const { response } = useGetContext<Get<Product>>();
@@ -14,7 +15,7 @@ const ProductsPage = () => {
   const id = searchParams.get("id");
 
   const inputs = useMemo(() => {
-    const optionsBranchOffice = id && id !== "0" ? response?.list.find(p => p.id === +id)?.inventories?.map((i) => ({
+    const optionsBranchOffice: DefaultOptionType[] | undefined = id && id !== "0" ? response?.list.find(p => p.id === +id)?.inventories?.map((i) => ({
       value: i.userId,
       label: i.user?.name
     })) : undefined;
@@ -117,6 +118,7 @@ const ProductsPage = () => {
         label: id === "0" ? "Agregar al inventario de una Sucursal" : "Sucursales en las que se encuentra",
         type: "select",
         url: id === "0" ? "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal" : undefined,
+        //debemos poder habilitar este input de alguna manera
         disabled: Boolean(id && id !== "0"),
         rules: [
           {
@@ -135,7 +137,9 @@ const ProductsPage = () => {
           {
             name: "stock",
             label: "Stock",
-            type: "number"
+            type: "number",
+            min: 0,
+            max: 999_999
           }
         ] as InputType<Product>[]
       );
