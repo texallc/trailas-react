@@ -1,19 +1,25 @@
-import { UIEvent, useMemo, useState } from "react";
-import { Form, FormInstance, Input, InputNumber, Select, Switch } from "antd";
+import { Dispatch, SetStateAction, UIEvent, useMemo, useState } from "react";
+import { Form, FormInstance, GetProp, Input, InputNumber, Select, Switch, Upload, UploadFile, UploadProps } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
 import { ruleEmail, ruleLargeMaxLength, ruleMaxLength, rulePassword, rulePhone, rulePrice } from "../../constants";
 import { Rule } from "antd/es/form";
+import ImgCrop from "antd-img-crop";
+import ButtonUpload from "../buttonUpload";
 
 export interface PropsItemFilters<T> {
   input: InputType<T>;
   onPopupScroll?: (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
   onSearchSelect?: (search: string) => void;
   form?: FormInstance<T>;
+  fileListImage?: UploadFile[];
+  setFileListImage?: Dispatch<SetStateAction<UploadFile<any>[]>>;
 }
 
-const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilters<T>) => {
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const FormControl = <T extends {}>({ input, onPopupScroll, form, fileListImage, setFileListImage }: PropsItemFilters<T>) => {
   const id = Form.useWatch('id', form);
   const password = Form.useWatch('password', form);
   const confirmPassword = Form.useWatch('confirmPassword', form);
@@ -21,13 +27,13 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
   const { name, type, label, style, placeholder, rules, disabled } = input;
   const nameString = name as string;
 
-  const baseFormItemProps: FormItemProps = {
+  const baseFormItemProps: FormItemProps = useMemo(() => ({
     name: nameString,
     label: label,
     style: style,
-  } as const;
+  }), [nameString, label, style]);
 
-  const _ruleMaxLength = name !== "id" ? [ruleMaxLength] : [];
+  const _ruleMaxLength = useMemo(() => name !== "id" ? [ruleMaxLength] : [], [name]);
 
   const rulesPassword = useMemo(() => {
     const rules: Rule[] = [rulePassword, ruleMaxLength];
@@ -39,8 +45,27 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
     return [];
   }, [id, password, confirmPassword]);
 
+  const onPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file.originFileObj as FileType);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+
+    const image = new Image();
+    image.src = src;
+
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
+
   return (
-    <div style={{ padding: 5 }}>
+    <>
       {
         (!type || type === "input") && <FormItem
           {...baseFormItemProps}
@@ -139,6 +164,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
             style={style}
             placeholder={placeholder}
             disabled={disabled}
+            autoComplete="new-password"
           />
         </FormItem>
       }
@@ -200,7 +226,54 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form }: PropsItemFilt
           />
         </FormItem>
       }
-    </div>
+      {
+        type === "image" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
+          <ImgCrop
+            rotationSlider
+            showGrid
+            showReset
+            modalTitle="Editar"
+            modalCancel="Cancelar"
+            modalOk="Aceptar"
+            resetText="Reiniciar"
+            beforeCrop={(file) => {
+              if (!["image/png", "image/jpeg"].includes(file.type)) return false;
+            }}
+          >
+            <Upload
+              fileList={fileListImage}
+              onChange={(e) => {
+                if (!["image/png", "image/jpeg"].includes(e.file.type || "")) return;
+
+                setFileListImage?.(e.fileList);
+                input.onChange?.(e);
+              }}
+              onRemove={(e) => {
+                setFileListImage?.(prev => prev.filter((file) => file.uid !== e.uid));
+                input.onRemove?.(e);
+              }}
+              customRequest={({ onSuccess }) => {
+                setTimeout(() => {
+                  onSuccess?.("ok");
+                }, 0);
+              }}
+              accept="image/png, image/jpeg"
+              listType="picture-card"
+              multiple={false}
+              maxCount={1}
+              onPreview={onPreview}
+            >
+              <ButtonUpload
+                value={input.fileList || []}
+              />
+            </Upload>
+          </ImgCrop>
+        </FormItem >
+      }
+    </>
   );
 };
 

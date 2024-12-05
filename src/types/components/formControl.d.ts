@@ -1,4 +1,15 @@
-import { ItemInput, ItemPassword, ItemPhone, ItemSelect, ItemTextarea, ItemSwitch, ItemNumber, ItemEmail, ItemPrice } from "../../interfaces/components/formControl";
+import {
+  ItemInput,
+  ItemPassword,
+  ItemPhone,
+  ItemSelect,
+  ItemTextarea,
+  ItemSwitch,
+  ItemNumber,
+  ItemEmail,
+  ItemPrice,
+  ItemImage
+} from "../../interfaces/components/formControl";
 
 export type InputType<T> = ItemInput<keyof T>
   | ItemSelect<keyof T>
@@ -8,4 +19,5 @@ export type InputType<T> = ItemInput<keyof T>
   | ItemSwitch<keyof T>
   | ItemNumber<keyof T>
   | ItemEmail<keyof T>
-  | ItemPrice<keyof T>;
+  | ItemPrice<keyof T>
+  | ItemImage<keyof T>;

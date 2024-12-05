@@ -1,4 +1,4 @@
-import { InputNumberProps, InputProps, SelectProps, SwitchProps } from "antd";
+import { InputNumberProps, InputProps, SelectProps, SwitchProps, UploadProps } from "antd";
 import { Rule } from "antd/es/form";
 import { DefaultOptionType } from "antd/es/select";
 import { ReactNode } from "react";
@@ -7,6 +7,8 @@ interface BaseInputProps<K> {
   name: K;
   label?: ReactNode;
   rules?: Rule[];
+  placeholder?: string;
+  md?: number;
 }
 
 export interface ItemInput<K> extends Omit<InputProps, "name">, BaseInputProps<K> {
@@ -17,7 +19,6 @@ export interface ItemNumber<K> extends Omit<ItemInput<K>, "type"> {
   type: "number";
 }
 
-
 export interface ItemPrice<K> extends Omit<InputNumberProps, "name">, BaseInputProps<K> {
   type: "price";
 }
@@ -26,7 +27,7 @@ export interface ItemEmail<K> extends Omit<ItemInput<K>, "type"> {
   type: "email";
 }
 
-export interface ItemSelect<K> extends Omit<SelectProps, "name" | "onChange">, BaseInputProps<K> {
+export interface ItemSelect<K> extends Omit<SelectProps, "name" | "onChange" | "placeholder">, BaseInputProps<K> {
   type: "select";
   keyValue?: string;
   keyLabel?: string;
@@ -49,7 +50,10 @@ export interface ItemTextarea<K> extends Omit<ItemInput<K>, "type"> {
 
 export interface ItemSwitch<K> extends SwitchProps, BaseInputProps<K> {
   type: "switch";
-  placeholder?: string;
+}
+
+export interface ItemImage<K> extends Omit<UploadProps, "name" | "type">, BaseInputProps<K> {
+  type: "image";
 }
 
 export interface SelectGet {

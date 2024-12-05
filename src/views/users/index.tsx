@@ -48,7 +48,7 @@ const Users = () => {
             title: 'Imagen',
             key: 'image',
             render: (_, { image }) => <div style={{ display: "flex" }}>
-              <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />
+              <CachedImage style={{ height: 70, width: 80, objectFit: "cover" }} imageUrl={image} />
             </div>,
           }
         ]}
@@ -122,7 +122,14 @@ const Users = () => {
           {
             name: "description",
             label: "Descripción",
-            type: "textarea"
+            type: "textarea",
+            md: 24,
+          },
+          {
+            name: "image",
+            label: "Imagen",
+            type: "image",
+            md: 24,
           }
         ]}
       >
