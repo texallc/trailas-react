@@ -1,23 +1,23 @@
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Modal from "../modal";
-import { useEffect, useMemo, useState } from "react";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import FormControl from "../formControl";
 import { useFormControl } from "../../context/formControl";
 import { post, put } from "../../services/http";
-import { Button, Form, message } from "antd";
+import { Col, Form, message, Row, UploadFile } from "antd";
 import useAbortController from "../../hooks/useAbortController";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
 import { RecursivePartial } from "../../types";
 
-interface ModalFormProps<T> {
+interface ModalFormProps {
   urlProp?: string;
   urlCreate?: string;
   urlEdit?: string;
 }
 
-const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps<T>) => {
+const ModalForm = <T extends { id: number; image?: string; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps) => {
   const { response, setGetProps } = useGetContext<Get<T>>();
   const { inputs, onPopupScroll, onSearchSelect, form } = useFormControl<T>();
   const abortController = useAbortController();
@@ -28,6 +28,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [fileListImage, setFileListImage] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     const id = searchParams.get("id");
@@ -36,6 +37,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
     setId(id === null ? id : Number(id));
 
     if (!id) {
+      setFileListImage?.([]);
       form.resetFields();
       return;
     }
@@ -47,8 +49,21 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
       return;
     }
 
+    if (data.image) {
+      const url = data.image;
+
+      const imageUploadFile: UploadFile = {
+        name: url,
+        uid: url,
+        url,
+        status: "done"
+      };
+
+      setFileListImage?.([imageUploadFile]);
+    }
+
     form.setFieldsValue(data as RecursivePartial<T>);
-  }, [searchParams, response, form]);
+  }, [searchParams, response, form, setFileListImage]);
 
   const title = useMemo(() => {
     const moduleName = pathname.split("/")[1];
@@ -66,6 +81,14 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
     }
 
     setSaving(true);
+
+    const urlImgOrBase64 = fileListImage?.length ? fileListImage?.map(i => i.thumbUrl || "")[0] : "";
+
+    if (urlImgOrBase64) {
+      values = { ...values, image: urlImgOrBase64 };
+    } else {
+      delete values.image;
+    }
 
     const { id } = values;
     let urlCreateOrEdit = urlCreate || urlEdit;
@@ -105,6 +128,7 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
 
   return (
     <Modal
+      width={1000}
       title={title}
       open={open}
       onCancel={handleClose}
@@ -123,18 +147,31 @@ const ModalForm = <T extends { id: number; }>({ urlProp, urlCreate, urlEdit }: M
         layout="vertical"
         autoComplete="off"
       >
-        {
-          inputs.map((input) => {
-            return (
-              <FormControl
-                key={input.name.toString()}
-                input={input}
-                onPopupScroll={onPopupScroll}
-                onSearchSelect={onSearchSelect}
-              />
-            );
-          })
-        }
+        <Row justify="center" align="middle" gutter={20}>
+          {
+            inputs.map((input) => {
+              return (
+                ["id", "uid"].includes(input.name.toString())
+                  ?
+                  <FormControl
+                    input={input}
+                    onPopupScroll={onPopupScroll}
+                    onSearchSelect={onSearchSelect}
+                  />
+                  :
+                  <Col xs={24} md={input.md || 12} key={input.name.toString()}>
+                    <FormControl
+                      input={input}
+                      onPopupScroll={onPopupScroll}
+                      onSearchSelect={onSearchSelect}
+                      fileListImage={fileListImage}
+                      setFileListImage={setFileListImage}
+                    />
+                  </Col>
+              );
+            })
+          }
+        </Row>
       </Form>
     </Modal>
   );
