@@ -28,7 +28,8 @@ const ProductsPage = () => {
       {
         name: "name",
         label: "Nombre",
-        rules: [ruleName]
+        rules: [ruleName],
+        md: 12
       },
       {
         name: "categoryId",
@@ -40,7 +41,8 @@ const ProductsPage = () => {
             required: true,
             message: "Por favor seleccione una categoría."
           }
-        ]
+        ],
+        md: 12
       },
       {
         name: "partNumber",
@@ -50,16 +52,19 @@ const ProductsPage = () => {
             required: true,
             message: "Por favor ingrese el número de parte."
           }
-        ]
+        ],
+        md: 12
       },
       {
         name: "price",
         label: "Precio",
-        type: "price"
+        type: "price",
+        md: 12
       },
       {
         name: "brand",
-        label: "Marca"
+        label: "Marca",
+        md: 12
       },
       {
         name: "unitType",
@@ -107,11 +112,13 @@ const ProductsPage = () => {
             label: "Juego"
           }
         ],
+        md: 12
       },
       {
         name: "description",
         label: "Descripción",
-        type: "textarea"
+        type: "textarea",
+        md: 24
       },
       {
         name: "userIds",
@@ -152,6 +159,14 @@ const ProductsPage = () => {
         type: "switch",
       });
     }
+
+    inputs.push({
+      name: "image",
+      label: "Imagen",
+      type: "image",
+      md: 24
+    });
+
     return inputs;
   }, [id, response]);
 

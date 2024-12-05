@@ -53,12 +53,20 @@ const Categories = () => {
           {
             name: "name",
             label: "Nombre",
-            rules: [ruleName]
+            rules: [ruleName],
+            md: 24
           },
           {
             name: "description",
             label: "Descripción",
             type: "textarea",
+            md: 24
+          },
+          {
+            name: "image",
+            label: "Imagen",
+            type: "image",
+            md: 24
           }
         ]}
       >

@@ -80,7 +80,6 @@ const Inventories = () => {
             title: "Sucursal del producto",
             dataIndex: "user.name",
             render: (_, { user }) => user?.name,
-
           },
           {
             title: "Producto",

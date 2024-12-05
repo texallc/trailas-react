@@ -29,13 +29,13 @@ const columns: ColumnsType<SalesDetail> = [
     title: "Precio",
     dataIndex: "price",
     key: "price",
-    render: (_, { product }) => priceFormatUSD(product.price),
+    render: (_, { price }) => priceFormatUSD(price),
   },
   {
     title: "Subtotal por producto",
     dataIndex: "subtotal",
     key: "subtotal",
-    render: (_, { product, quantity }) => priceFormatUSD(Big(product.price || 0).mul(quantity).toNumber()),
+    render: (_, { price, quantity }) => priceFormatUSD(Big(price || 0).mul(quantity).toNumber()),
   }
 ];
 
