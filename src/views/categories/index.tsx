@@ -37,7 +37,7 @@ const Categories = () => {
             title: 'Imagen',
             key: 'image',
             render: (_, { image }) => <div style={{ display: "flex" }}>
-              <CachedImage style={{ height: 64, width: 80, objectFit: "cover" }} imageUrl={image} />
+              <CachedImage style={{ height: 70, width: 80, objectFit: "cover" }} imageUrl={image} />
             </div>
           }
         ]}
