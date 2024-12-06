@@ -267,7 +267,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form, fileListImage, 
               onPreview={onPreview}
             >
               <ButtonUpload
-                value={input.fileList || []}
+                value={fileListImage || []}
               />
             </Upload>
           </ImgCrop>
