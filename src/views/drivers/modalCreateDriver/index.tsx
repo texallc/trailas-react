@@ -12,7 +12,7 @@ interface Props extends ModalProps {
   driver: Driver;
 }
 
-const ModalCreateDriver = ({ onClose, driver, ...props }: Props) => {
+const ModalCreateDriver = ({ onClose, driver, open, ...props }: Props) => {
   const { user } = useAuth();
   const [form] = Form.useForm<Driver>();
   const [saving, setSaving] = useState(false);
@@ -21,7 +21,7 @@ const ModalCreateDriver = ({ onClose, driver, ...props }: Props) => {
     if (!open) return;
 
     form.setFieldsValue(driver);
-  }, [open, driver]);
+  }, [open, driver, form]);
 
   const saveDriver = async (driver: Driver) => {
     if (saving) return;

@@ -30,7 +30,7 @@ const Drivers = () => {
       query,
       whitPropsDateFormated: true
     });
-  }, [search]);
+  }, [search, setSnapshotProps]);
 
   useEffect(() => {
     const idEdit = searchParams.get("editar");

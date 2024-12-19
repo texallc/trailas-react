@@ -254,7 +254,7 @@ export const priceFormatUSD = (price: number) => new Intl.NumberFormat("en-US", 
 }).format(price);
 
 export const changePageAndLimitUrl = (url: string, page: number, limit: number) => {
-  const urlObj = new URL(url, location.origin);
+  const urlObj = new URL(url, window.location.origin);
 
   urlObj.searchParams.set('limite', limit.toString());
   urlObj.searchParams.set('pagina', page.toString());
