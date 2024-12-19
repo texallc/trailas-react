@@ -32,7 +32,7 @@ const useGetSearchURL = ({ urlProp, propsUrl, }: { urlProp?: string, propsUrl?: 
     }
 
     setUrl(_url);
-  }, [searchParams, pathname, urlProp]);
+  }, [searchParams, pathname, urlProp, propsUrl]);
 
   return ({ url });
 };

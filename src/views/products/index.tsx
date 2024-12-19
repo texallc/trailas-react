@@ -137,21 +137,20 @@ const ProductsPage = () => {
     ];
 
     if (id === "0") {
-      inputs.push(...
-        [
-          {
-            name: "stock",
-            label: "Stock",
-            type: "number",
-            min: 0,
-            max: 999_999,
-            showTag: true,
-            tagProps: {
-              color: "processing",
-              children: "Nota: el stock aplica para todas las sucursales seleccionadas."
-            }
+      inputs.push(...[
+        {
+          name: "stock",
+          label: "Stock",
+          type: "number",
+          min: 0,
+          max: 999_999,
+          showTag: true,
+          tagProps: {
+            color: "processing",
+            children: "Nota: el stock aplica para todas las sucursales seleccionadas."
           }
-        ] as InputType<Product>[]
+        }
+      ] as InputType<Product>[]
       );
     }
 

@@ -79,7 +79,7 @@ const FormControlProvider = <T extends {}>({ children, inputsProp, isFiltersTabl
     if (!open) return;
 
     init();
-  }, [open]);
+  }, [open, init]);
 
   const onPopupScroll = async (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => {
     if (notLoadMore) return;

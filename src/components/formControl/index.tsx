@@ -23,7 +23,7 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form, fileListImage, 
   const id = Form.useWatch('id', form);
   const password = Form.useWatch('password', form);
   const confirmPassword = Form.useWatch('confirmPassword', form);
-  const [searchValues, setSearchValues] = useState<{ id: string, value: string; }[]>([]);
+  const [searchValues] = useState<{ id: string, value: string; }[]>([]);
   const { name, type, label, style, placeholder, rules, disabled } = input;
   const nameString = name as string;
 
