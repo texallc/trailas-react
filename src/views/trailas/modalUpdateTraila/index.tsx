@@ -23,7 +23,7 @@ const ModalUpdateTraila = ({ traila, onClose, categories, drivers, ...props }: P
     if (!traila || !traila.id || loading) return;
 
     form.setFieldsValue({ ...traila, sizesTires: traila.sizesTires || "" });
-  }, [user, traila, form, props.open]);
+  }, [user, traila, form, props.open, loading]);
 
   const saveTraila = async (traila: Traila) => {
     if (saving) return;

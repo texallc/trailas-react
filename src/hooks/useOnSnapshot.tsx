@@ -55,7 +55,7 @@ const useOnSnapshot = <T extends {}>({ query, extraPropsByItemArray, formatDate,
       mounted = false;
       uns();
     };
-  }, [collection, query, extraPropsByItemArray, formatDate, wait]);
+  }, [collection, query, extraPropsByItemArray, formatDate, wait, whitPropsDateFormated]);
 
   return { loading, data, setData };
 };

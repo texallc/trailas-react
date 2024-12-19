@@ -50,7 +50,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     return () => {
       uns();
     };
-  }, []);
+  }, [abortController]);
 
   if (loading) return <FullLoader />;
 

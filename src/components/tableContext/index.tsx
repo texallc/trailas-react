@@ -21,7 +21,7 @@ const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showAct
     if (loading) return;
 
     onLoadData?.(data);
-  }, [loading, data]);
+  }, [loading, data, onLoadData]);
 
   const columns = useMemo<ColumnsType<T>>(() => {
     const columns = columnsProps.map(c => ({ ...c, width: c.width || 150 }));
@@ -48,7 +48,7 @@ const TableContext = <T extends {}>({ columns: columnsProps, onLoadData, showAct
     }
 
     return columns;
-  }, [columnsProps, data]);
+  }, [columnsProps, showActionsButtons, snapshotProps.collection]);
 
   return (
     <div>

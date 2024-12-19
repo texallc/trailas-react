@@ -59,7 +59,7 @@ const Trailas = () => {
       query,
       whitPropsDateFormated: true,
     });
-  }, [filters]);
+  }, [filters, setSnapshotProps]);
 
   useEffect(() => {
     const idEdit = searchParams.get("editar");
@@ -78,7 +78,7 @@ const Trailas = () => {
     } finally {
       setTrailas(prevTrailas => prevTrailas.map(traila => traila.id === id ? { ...traila, aligning: false } : traila));
     }
-  }, []);
+  }, [setTrailas]);
 
   const columns = useMemo<ColumnsType<Traila>>(() => {
     return [

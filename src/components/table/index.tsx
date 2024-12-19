@@ -20,7 +20,7 @@ const Table = <T extends {}>({ columns: columnsProps, onLoadData, ...props }: Pr
 		if (loading) return;
 
 		onLoadData?.(data);
-	}, [loading, data]);
+	}, [loading, data, onLoadData]);
 
 	const columns = useMemo<ColumnsType<T>>(() => {
 		const columns = columnsProps.map(c => ({ ...c, width: c.width || 150 }));
@@ -45,7 +45,7 @@ const Table = <T extends {}>({ columns: columnsProps, onLoadData, ...props }: Pr
 		});
  */
 		return columns;
-	}, [columnsProps, data]);
+	}, [columnsProps]);
 
 	return (
 		<div>

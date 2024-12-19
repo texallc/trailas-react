@@ -132,7 +132,7 @@ const ButtonUploadChangeTires = () => {
     };
 
     return propsUpload;
-  }, [fileList]);
+  }, [fileList, user]);
 
   return (
     <Upload {...propsUpload}>

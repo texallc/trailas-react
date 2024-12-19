@@ -84,7 +84,7 @@ const SnapshotProvider = <T extends {}>({ children }: { children: ReactNode; }) 
       uns();
       setData([]);
     };
-  }, [collection, query, extraPropsByItemArray, formatDate, wait]);
+  }, [collection, query, extraPropsByItemArray, formatDate, wait, whitPropsDateFormated]);
 
   return <Context.Provider value={{ loading, data, setData, snapshotProps, setSnapshotProps }}>{children}</Context.Provider>;
 };
