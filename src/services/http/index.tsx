@@ -1,7 +1,7 @@
 import { handleError } from "../../utils/functions";
 import { getCurrentToken } from "../firebase/auth";
 
-const baseUrl = "https://octopus-app-hn94d.ondigitalocean.app";
+const baseUrl = "http://localhost:3001";
 
 const getHeaders = (token: string) => ({
   Accept: 'application/json',

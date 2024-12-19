@@ -75,11 +75,38 @@ const Inventories = () => {
         showButton={false}
       />
       <ServerTable<Inventory>
+        filters={[
+          {
+            label: "Sucursal del producto",
+            name: "userId",
+            md: 6,
+            type: "select",
+            url: "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal",
+          },
+          {
+            label: "Nombre del producto",
+            name: "productName",
+            md: 6
+          },
+          {
+            label: "Número de parte del producto",
+            name: "productPartNumber",
+            md: 6
+          },
+          {
+            label: "Descripción del producto",
+            name: "productDescription",
+            md: 6
+          }
+        ]}
         columns={[
           {
             title: "Sucursal del producto",
             dataIndex: "user.name",
-            render: (_, { user }) => user?.name,
+            render: (_, { user }) => <div>
+              <div><b>Nombre:</b> {user?.name}</div>
+              <div><b>Email:</b> {user?.email}</div>
+            </div>,
           },
           {
             title: "Producto",
@@ -87,6 +114,7 @@ const Inventories = () => {
             render: (_, { product }) => <div>
               <div><b>Nombre:</b> {product?.name}</div>
               <div><b>No. parte:</b> {product?.partNumber}</div>
+              <div><b>Descripción:</b> {product?.description || "Sin descripción"}</div>
             </div>
           },
           {
@@ -106,6 +134,7 @@ const Inventories = () => {
           }
         ]}
         showEdit
+        showDisabled
       />
       <FormControlProvider<Inventory>
         inputsProp={inputs}

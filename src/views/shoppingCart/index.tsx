@@ -6,13 +6,12 @@ import BranchOfficeFilter from "./branchOfficeFilter";
 import ServerTable from "../../components/tableServer";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
-import { User } from "../../interfaces/models/user";
 import { Button, Card, Col, Empty, Form, InputNumber, message, Row, Table } from "antd";
 import { RetweetOutlined, PlusOutlined, DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { confirmDialog, priceFormatUSD } from "../../utils/functions";
 import Big from 'big.js';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { columnsProductsCart } from "../../constants";
+import { columnsProductsCart, columnsProductsInCart } from "../../constants";
 import FormItem from "antd/es/form/FormItem";
 import { ProductCart } from "../../types/models/product";
 import { Cart, ProductInCart } from "../../interfaces/cart";
@@ -21,8 +20,6 @@ import useAbortController from "../../hooks/useAbortController";
 
 const ShoppingCart = () => {
   const abortController = useAbortController();
-  const [searchParams] = useSearchParams();
-  const userId = Number(searchParams.get("userId") || 0);
   const navigate = useNavigate();
   const [form] = Form.useForm<ProductCart>();
   const valuesForm = Form.useWatch([], form);
@@ -35,6 +32,7 @@ const ShoppingCart = () => {
   const [discount, setDiscount] = useState<number | undefined | null>(0);
   const [saving, setSaving] = useState(false);
   const [branchOfficeName, setBranchOfficeName] = useState<string>("");
+  const [userId, setUserId] = useState(0);
 
   useEffect(() => {
     if (user?.role !== "Super Admin") return;
@@ -147,6 +145,7 @@ const ShoppingCart = () => {
       {
         user?.role === "Super Admin" && showSelectBranchOffice &&
         <FormControlProvider<Inventory>
+          isFiltersTable
           inputsProp={[
             {
               name: "id",
@@ -163,11 +162,12 @@ const ShoppingCart = () => {
           ]}
         >
           <BranchOfficeFilter
-            onSelectBranchOffice={(value) => {
+            onSelectBranchOffice={(defaultOption) => {
               clearCart();
               setShowSelectBranchOffice(false);
-              setBranchOfficeName(value.title || "");
-              navigate({ search: `?pagina=1&limite=5&userId=${value.value}` });
+              setBranchOfficeName(defaultOption.title || "");
+              setUserId(Number(defaultOption.value || 0));
+              navigate({ search: `?pagina=1&limite=5&userId=${defaultOption.value}` });
             }}
           />
         </FormControlProvider>
@@ -205,8 +205,28 @@ const ShoppingCart = () => {
           </Row>
           <hr />
           <ServerTable<Inventory>
+            filters={[
+              {
+                label: "Nombre del producto",
+                name: "productName",
+                md: 6
+              },
+              {
+                label: "Número de parte del producto",
+                name: "productPartNumber",
+                md: 6
+              },
+              {
+                label: "Descripción del producto",
+                name: "productDescription",
+                md: 6
+              }
+            ]}
             wait={!Boolean(userId)}
-            url={`/inventarios/list-by-branch-office?pagina=1&limite=5&userId=${userId}`}
+            url="/inventarios/list-by-branch-office"
+            propsUrl={{
+              userId: userId.toString()
+            }}
             columns={[
               ...columnsProductsCart,
               {
@@ -243,10 +263,11 @@ const ShoppingCart = () => {
                 <Table
                   rowKey="id"
                   columns={[
-                    ...columnsProductsCart,
+                    ...columnsProductsInCart,
                     {
                       title: "Cantidad",
                       dataIndex: "quantity",
+                      width: 100,
                       render: (_, { id, productId }) => (
                         <div style={{ marginBottom: -22 }}>
                           <FormItem
@@ -270,6 +291,7 @@ const ShoppingCart = () => {
                     {
                       title: "Subtotal",
                       dataIndex: "subTotal",
+                      width: 160,
                       render: (_, { productId }) => <SubTotalCell
                         productId={productId}
                       />
@@ -278,7 +300,7 @@ const ShoppingCart = () => {
                       title: "Eliminar del carrito",
                       key: "add",
                       fixed: "right",
-                      width: 100,
+                      width: 160,
                       render: (_, inventory: Inventory) => (
                         <Button
                           shape="circle"

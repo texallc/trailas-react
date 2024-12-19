@@ -12,6 +12,47 @@ const Users = () => {
     <>
       <HeaderView />
       <ServerTable<User>
+        filters={[
+          {
+            label: "Nombre",
+            name: "name",
+            md: 6
+          },
+          {
+            label: "Email",
+            name: "email",
+            md: 6
+          },
+          {
+            label: "Rol",
+            name: "role",
+            md: 6,
+            type: "select",
+            options: [
+              {
+                value: "Super Admin",
+                label: "Super Admin"
+              },
+              {
+                value: "Administrador de Sucursal",
+                label: "Administrador de Sucursal"
+              },
+              {
+                value: "Vendedor",
+                label: "Vendedor"
+              },
+              {
+                value: "Comprador",
+                label: "Comprador"
+              }
+            ]
+          },
+          {
+            label: "Teléfono",
+            name: "phone",
+            md: 6
+          }
+        ]}
         columns={[
           {
             title: "Nombre",

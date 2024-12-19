@@ -12,6 +12,18 @@ const Categories = () => {
     <>
       <HeaderView />
       <ServerTable<Category>
+        filters={[
+          {
+            label: "Nombre",
+            name: "name",
+            md: 12
+          },
+          {
+            label: "Descripción",
+            name: "description",
+            md: 12
+          }
+        ]}
         columns={[
           {
             title: "Nombre",

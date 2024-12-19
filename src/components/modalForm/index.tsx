@@ -5,7 +5,7 @@ import useGetSearchURL from "../../hooks/useGestSearchURL";
 import FormControl from "../formControl";
 import { useFormControl } from "../../context/formControl";
 import { post, put } from "../../services/http";
-import { Col, Form, message, Row, UploadFile } from "antd";
+import { Col, Form, message, Row, Tag, UploadFile } from "antd";
 import useAbortController from "../../hooks/useAbortController";
 import { useGetContext } from "../../context/getContext";
 import { Get } from "../../interfaces";
@@ -19,13 +19,12 @@ interface ModalFormProps {
 
 const ModalForm = <T extends { id: number; image?: string; }>({ urlProp, urlCreate, urlEdit }: ModalFormProps) => {
   const { response, setGetProps } = useGetContext<Get<T>>();
-  const { inputs, onPopupScroll, onSearchSelect, form } = useFormControl<T>();
+  const { inputs, onPopupScroll, onSearchSelect, form, open, setOpen } = useFormControl<T>();
   const abortController = useAbortController();
-  const { url } = useGetSearchURL(urlProp);
+  const { url } = useGetSearchURL({ urlProp });
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [id, setId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [fileListImage, setFileListImage] = useState<UploadFile[]>([]);
@@ -154,19 +153,23 @@ const ModalForm = <T extends { id: number; image?: string; }>({ urlProp, urlCrea
                 ["id", "uid"].includes(input.name.toString())
                   ?
                   <FormControl
+                    key={input.name.toString()}
                     input={input}
                     onPopupScroll={onPopupScroll}
                     onSearchSelect={onSearchSelect}
                   />
                   :
                   <Col xs={24} md={input.md || 12} key={input.name.toString()}>
-                    <FormControl
-                      input={input}
-                      onPopupScroll={onPopupScroll}
-                      onSearchSelect={onSearchSelect}
-                      fileListImage={fileListImage}
-                      setFileListImage={setFileListImage}
-                    />
+                    <div style={input.showTag ? { paddingTop: 22 } : undefined}>
+                      <FormControl
+                        input={input}
+                        onPopupScroll={onPopupScroll}
+                        onSearchSelect={onSearchSelect}
+                        fileListImage={fileListImage}
+                        setFileListImage={setFileListImage}
+                      />
+                    </div>
+                    {input.showTag && <Tag {...input.tagProps} />}
                   </Col>
               );
             })

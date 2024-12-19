@@ -11,4 +11,8 @@ export interface Movement extends DatesModel {
   user: User;
   userId: number;
   typeMovement: TypeMovement;
+  productName?: string;
+  productPartNumber?: string;
+  productDescription?: string;
+  branchOfficeId?: number;
 }

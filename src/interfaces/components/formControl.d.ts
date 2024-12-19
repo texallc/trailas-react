@@ -1,4 +1,5 @@
-import { InputNumberProps, InputProps, SelectProps, SwitchProps, UploadProps } from "antd";
+import { InputNumberProps, InputProps, PopoverProps, SelectProps, SwitchProps, TagProps, UploadProps } from "antd";
+import { RangePickerProps } from "antd/es/date-picker";
 import { Rule } from "antd/es/form";
 import { DefaultOptionType } from "antd/es/select";
 import { ReactNode } from "react";
@@ -9,6 +10,8 @@ interface BaseInputProps<K> {
   rules?: Rule[];
   placeholder?: string;
   md?: number;
+  showTag?: boolean;
+  tagProps?: TagProps;
 }
 
 export interface ItemInput<K> extends Omit<InputProps, "name">, BaseInputProps<K> {
@@ -54,6 +57,10 @@ export interface ItemSwitch<K> extends SwitchProps, BaseInputProps<K> {
 
 export interface ItemImage<K> extends Omit<UploadProps, "name" | "type">, BaseInputProps<K> {
   type: "image";
+}
+
+export interface ItemDate<K> extends Omit<RangePickerProps, "name" | "placeholder">, BaseInputProps<K> {
+  type: "date";
 }
 
 export interface SelectGet {

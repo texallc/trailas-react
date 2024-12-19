@@ -13,4 +13,7 @@ export interface Inventory {
   product?: Product;
   productId: number;
   addStock?: number;
+  productName?: string;
+  productPartNumber?: string;
+  productDescription?: string;
 }

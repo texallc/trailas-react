@@ -124,12 +124,10 @@ const ProductsPage = () => {
         name: "userIds",
         label: id === "0" ? "Agregar al inventario de una Sucursal" : "Sucursales en las que se encuentra",
         type: "select",
-        url: id === "0" ? "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal" : undefined,
-        //debemos poder habilitar este input de alguna manera
-        disabled: Boolean(id && id !== "0"),
+        url: "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal",
         rules: [
           {
-            required: id === "0",
+            required: true,
             message: "Por favor seleccione una sucursal."
           }
         ],
@@ -146,7 +144,12 @@ const ProductsPage = () => {
             label: "Stock",
             type: "number",
             min: 0,
-            max: 999_999
+            max: 999_999,
+            showTag: true,
+            tagProps: {
+              color: "processing",
+              children: "Nota: el stock aplica para todas las sucursales seleccionadas."
+            }
           }
         ] as InputType<Product>[]
       );
