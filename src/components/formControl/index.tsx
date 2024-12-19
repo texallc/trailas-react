@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, UIEvent, useMemo, useState } from "react";
-import { Form, FormInstance, GetProp, Input, InputNumber, Select, Switch, Upload, UploadFile, UploadProps } from "antd";
+import { DatePicker, Form, FormInstance, GetProp, Input, InputNumber, Select, Switch, Upload, UploadFile, UploadProps } from "antd";
 import FormItem, { FormItemProps } from "antd/es/form/FormItem";
 import { ItemSelect } from "../../interfaces/components/formControl";
 import { InputType } from "../../types/components/formControl";
@@ -272,6 +272,16 @@ const FormControl = <T extends {}>({ input, onPopupScroll, form, fileListImage, 
             </Upload>
           </ImgCrop>
         </FormItem >
+      }
+      {
+        type === "date" && <FormItem
+          {...baseFormItemProps}
+          rules={rules}
+        >
+          <DatePicker.RangePicker
+            showTime={input.showTime}
+          />
+        </FormItem>
       }
     </>
   );

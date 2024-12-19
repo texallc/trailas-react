@@ -1,6 +1,6 @@
 import { DatesModel } from "..";
 import { Status } from "../../types/models/movement";
-import { SaleDetails } from "./saleDetails";
+import { SalesDetail } from "./saleDetails";
 import { User } from "./user";
 
 export interface Sale extends DatesModel {
@@ -14,5 +14,5 @@ export interface Sale extends DatesModel {
   buyer?: User;
   sellerId: number;
   seller?: User;
-  details: SaleDetails[];
+  details: SalesDetail[];
 }

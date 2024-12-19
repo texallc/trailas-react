@@ -191,30 +191,22 @@ export const columnsExcelTrailas: Partial<Column>[] = [
   }
 ];
 
-export const columnsProductsCart: ColumnsType<Inventory> = [
-  {
-    title: "Imagen producto",
-    dataIndex: "product.image",
-    render: (_, { product }) => <div style={{ display: "flex" }}>
-      <CachedImage style={{ height: 48, width: 60, objectFit: "cover" }} imageUrl={product?.image || ""} />
-    </div>,
-    width: 100
-  },
+const baseColumnsProductCart: ColumnsType<Inventory> = [
   {
     title: "Producto",
     dataIndex: "product.name",
     render: (_, { product }) => <div>
-      <div style={{ fontSize: 12 }}>{product?.partNumber ? "No. de parte: " : ""}<b>{product?.partNumber}</b></div>
-      <div style={{ fontSize: 12 }}>Nombre: <b>{product?.name}</b></div>
-      <div style={{ fontSize: 12 }}>Categoria: <b>{product?.category?.name}</b></div>
+      <div style={{ fontSize: 12 }}><b>Nombre:</b> {product?.name}</div>
+      <div style={{ fontSize: 12 }}><b>No. de parte: </b>{product?.partNumber}</div>
+      <div style={{ fontSize: 12 }}><b>Categoria: </b>{product?.category?.name}</div>
+      <div style={{ fontSize: 12 }}><b>Descripción:</b> {product?.description || "Sin descripción"}</div>
     </div>,
-    width: 200
   },
   {
     title: "Stock",
     dataIndex: "stock",
     key: "stock",
-    width: 70
+    width: 100
   },
   {
     title: "Precio",
@@ -223,4 +215,28 @@ export const columnsProductsCart: ColumnsType<Inventory> = [
     render: (_, { product }) => <div>{priceFormatUSD(product?.price || 0)}</div>,
     width: 140
   }
+];
+
+export const columnsProductsCart: ColumnsType<Inventory> = [
+  {
+    title: "Imagen producto",
+    dataIndex: "product.image",
+    render: (_, { product }) => <div style={{ display: "flex" }}>
+      <CachedImage style={{ height: 48, width: 60, objectFit: "cover" }} imageUrl={product?.image || ""} />
+    </div>,
+    width: 40
+  },
+  ...baseColumnsProductCart
+];
+
+export const columnsProductsInCart: ColumnsType<Inventory> = [
+  {
+    title: "Imagen producto",
+    dataIndex: "product.image",
+    render: (_, { product }) => <div style={{ display: "flex" }}>
+      <CachedImage style={{ height: 48, width: 60, objectFit: "cover" }} imageUrl={product?.image || ""} />
+    </div>,
+    width: 160
+  },
+  ...baseColumnsProductCart
 ];

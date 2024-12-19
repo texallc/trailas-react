@@ -11,15 +11,25 @@ import TableDeleteButton from "./tableDeleteButton";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
 import { useGetContext } from "../../context/getContext";
 import { changePageAndLimitUrl } from "../../utils/functions";
+import FormControlProvider from "../../context/formControl";
+import Filters from "./filters";
 
-const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columnsProp, filters, showEdit, showDisabled, wait }: TableProps<T>) => {
+const ServerTable = <T extends { id: number; }>({
+  url: urlProp,
+  propsUrl,
+  columns: columnsProp,
+  filters,
+  showEdit,
+  showDisabled,
+  wait,
+}: TableProps<T>) => {
   const abortController = useAbortController();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [propsUseGet, setPropsUseGet] = useState<PropsUseGet>({ url: "" });
-  const { url } = useGetSearchURL(urlProp);
+  const { url } = useGetSearchURL({ urlProp, propsUrl });
   const page = searchParams.get("pagina") || 1;
-  const limit = searchParams.get("limite");
+  const limit = searchParams.get("limite") || 10;
 
   useEffect(() => {
     setPropsUseGet({ url, wait });
@@ -82,13 +92,14 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
 
   return (
     <>
-      {/*  {
-        <FormControlProvider<T>
-          inputsProp={[]}
+      {
+        (filters && filters?.length > 0) && <FormControlProvider<T>
+          inputsProp={filters}
+          isFiltersTable
         >
           <Filters />
         </FormControlProvider>
-      } */}
+      }
       <br />
       <Table
         sticky
@@ -100,8 +111,8 @@ const ServerTable = <T extends { id: number; }>({ url: urlProp, columns: columns
         rowKey="id"
         pagination={{
           total: response?.total,
-          current: +page,
-          pageSize: limit ? +limit : undefined,
+          current: isFinite(+page) ? +page : 1,
+          pageSize: limit && isFinite(+limit) ? +limit : 10,
           onChange: (_page: number, pageSize: number) => {
             const newUrl = changePageAndLimitUrl(url, _page, pageSize);
 

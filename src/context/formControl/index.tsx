@@ -1,4 +1,4 @@
-import { useEffect, useContext, createContext, ReactNode, useState, UIEvent, Dispatch, SetStateAction } from "react";
+import { useEffect, useContext, createContext, ReactNode, useState, UIEvent, useCallback, Dispatch, SetStateAction } from "react";
 import { InputType } from "../../types/components/formControl";
 import { ItemSelect, SelectGet } from "../../interfaces/components/formControl";
 import { Form, FormInstance, message } from "antd";
@@ -9,6 +9,7 @@ import { once } from "../../utils/functions";
 interface Props<T> {
   children: ReactNode;
   inputsProp?: InputType<T>[];
+  isFiltersTable?: boolean;
 }
 
 type OnPopupScrollFun<T> = (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => Promise<void>;
@@ -18,6 +19,8 @@ interface Context<T> {
   onPopupScroll: OnPopupScrollFun<T>;
   onSearchSelect: (search: string) => void;
   form: FormInstance<T>;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const createStateContext = once(<T extends {}>() => createContext({
@@ -25,45 +28,58 @@ const createStateContext = once(<T extends {}>() => createContext({
   onPopupScroll: () => Promise.resolve(),
   onSearchSelect: (_: string) => { },
   form: {} as FormInstance<T>,
+  open: false,
+  setOpen: () => false
 } as Context<T>));
 
 export const useFormControl = <T extends {}>() => useContext(createStateContext<T>());
 
-const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) => {
+const FormControlProvider = <T extends {}>({ children, inputsProp, isFiltersTable }: Props<T>) => {
   const [form] = Form.useForm<T>();
   const Context = createStateContext<T>();
   const abortController = useAbortController();
   const [inputs, setInputs] = useState<InputType<T>[]>([]);
   const [notLoadMore, setNotLoadMore] = useState(false);
+  const [filtersTabledLoaded, setFiltersTabledLoaded] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const init = useCallback(async () => {
+    if (!inputsProp?.length || inputsProp.some(i => i.type === "select" && i.loading)) return;
+
+    try {
+      setNotLoadMore(false);
+
+      const newItems = await Promise.all(inputsProp!.map(async input => {
+        if (input.type !== "select" || !input.url) return input;
+
+        const response = await get<SelectGet>(input.url, abortController.current);
+
+        input.loading = false;
+        input.page = 1;
+        input.options = response.list.map((r) => ({ value: r.id, label: `${r.name || ""} ${r.email ? " - " + r.email : ""}` }));
+
+        return input;
+      }));
+
+      setInputs(newItems);
+    } catch (error) {
+      console.log(error);
+      message.error("Error al obtener los filtros de listas.");
+    }
+  }, [inputsProp, abortController]);
 
   useEffect(() => {
-    if (!inputsProp?.length) return;
-
-    const init = async () => {
-      try {
-        setNotLoadMore(false);
-
-        const newItems = await Promise.all(inputsProp.map(async input => {
-          if (input.type !== "select" || !input.url) return input;
-
-          const response = await get<SelectGet>(input.url, abortController.current);
-
-          input.loading = false;
-          input.page = 1;
-          input.options = response.list.map((r) => ({ value: r.id, label: `${r.name || ""} ${r.email ? " - " + r.email : ""}` }));
-
-          return input;
-        }));
-
-        setInputs(newItems);
-      } catch (error) {
-        console.log(error);
-        message.error("Error al obtener los filtros de listas.");
-      }
-    };
+    if (!isFiltersTable || filtersTabledLoaded) return;
 
     init();
-  }, [inputsProp, abortController, message]);
+    setFiltersTabledLoaded(true);
+  }, [init, isFiltersTable, filtersTabledLoaded]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    init();
+  }, [open]);
 
   const onPopupScroll = async (e: UIEvent<HTMLDivElement, globalThis.UIEvent>, item: ItemSelect<keyof T>) => {
     if (notLoadMore) return;
@@ -125,7 +141,7 @@ const FormControlProvider = <T extends {}>({ children, inputsProp }: Props<T>) =
     console.log("searchValue ---->", search);
   };
 
-  return <Context.Provider value={{ inputs, onPopupScroll, onSearchSelect, form }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ inputs, onPopupScroll, onSearchSelect, form, open, setOpen }}>{children}</Context.Provider>;
 };
 
 export default FormControlProvider;

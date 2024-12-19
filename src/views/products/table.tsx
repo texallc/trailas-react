@@ -7,6 +7,30 @@ import dayjs from "dayjs";
 const Table = () => {
   return (
     <ServerTable<Product>
+      filters={[
+        {
+          label: "Nombre",
+          name: "name",
+          md: 6
+        },
+        {
+          name: "categoryId",
+          label: "Categoría",
+          type: "select",
+          url: "/categorias/list?pagina=1&limite=100",
+          md: 6
+        },
+        {
+          label: "Número de parte",
+          name: "partNumber",
+          md: 6
+        },
+        {
+          label: "Descripción",
+          name: "description",
+          md: 6
+        },
+      ]}
       columns={[
         {
           title: "Nombre",
@@ -32,6 +56,11 @@ const Table = () => {
           title: "Marca",
           dataIndex: "brand",
           key: "brand",
+        },
+        {
+          title: "Descripción",
+          dataIndex: "description",
+          key: "description",
         },
         {
           title: "Fecha de creación",

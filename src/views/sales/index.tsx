@@ -21,6 +21,22 @@ const Sales = () => {
         showButton={false}
       />
       <ServerTable<Sale>
+        filters={[
+          {
+            label: "Vendedores",
+            name: "sellerId",
+            md: 6,
+            type: "select",
+            url: "/usuarios/list-sellers?pagina=1&limite=100",
+          },
+          {
+            label: "Fecha de creación",
+            name: "createdAtRange",
+            md: 6,
+            type: "date",
+            showTime: true
+          },
+        ]}
         columns={[
           {
             title: "Vendedor",
@@ -28,8 +44,8 @@ const Sales = () => {
             key: "seller",
             width: 200,
             render: (_, { seller }) => <div>
-              <div>{seller?.name}</div>
-              <div>{seller?.email}</div>
+              <div><b>Nombre:</b> {seller?.name}</div>
+              <div><b>Email:</b> {seller?.email}</div>
             </div>
           },
           {

@@ -8,7 +8,8 @@ import {
   ItemNumber,
   ItemEmail,
   ItemPrice,
-  ItemImage
+  ItemImage,
+  ItemDate
 } from "../../interfaces/components/formControl";
 
 export type InputType<T> = ItemInput<keyof T>
@@ -20,4 +21,5 @@ export type InputType<T> = ItemInput<keyof T>
   | ItemNumber<keyof T>
   | ItemEmail<keyof T>
   | ItemPrice<keyof T>
-  | ItemImage<keyof T>;
+  | ItemImage<keyof T>
+  | ItemDate<keyof T>;

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const HeaderView: FC<Props> = ({ urlProp, goBack, showButton = true, showTitle = true }) => {
-  const { url } = useGetSearchURL(urlProp);
+  const { url } = useGetSearchURL({ urlProp });
   const navigate = useNavigate();
   const { pathname } = useLocation();
 

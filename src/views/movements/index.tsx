@@ -12,39 +12,96 @@ const Movements = () => {
         showButton={false}
       />
       <ServerTable<Movement>
+        filters={[
+          {
+            label: "Nombre del producto",
+            name: "productName",
+            md: 6
+          },
+          {
+            label: "Número de parte del producto",
+            name: "productPartNumber",
+            md: 6
+          },
+          {
+            label: "Descripción del producto",
+            name: "productDescription",
+            md: 6
+          },
+          {
+            label: "Tipo de movimiento",
+            name: "typeMovement",
+            md: 6,
+            type: "select",
+            options: [
+              {
+                label: "Entrada",
+                value: "Entrada"
+              },
+              {
+                label: "Salida",
+                value: "Salida"
+              }
+            ]
+          },
+          {
+            label: "Sucursal del producto",
+            name: "branchOfficeId",
+            md: 6,
+            type: "select",
+            url: "/usuarios/list?pagina=1&limite=10&role=Administrador de Sucursal",
+          },
+          {
+            label: "Usuario del movimiento",
+            name: "userId",
+            md: 6,
+            type: "select",
+            url: "/usuarios/list-admins?pagina=1&limite=100",
+          },
+          {
+            label: "Fecha de creación",
+            name: "createdAtRange",
+            md: 6,
+            type: "date",
+            showTime: true
+          },
+        ]}
         columns={[
           {
             title: "Producto",
             dataIndex: "inventory.product.name",
             render: (_, { inventory }) => <div>
-              <div>Nombre: {inventory?.product?.name}</div>
-              <div>No. parte: {inventory?.product?.partNumber}</div>
+              <div><b>Nombre:</b> {inventory?.product?.name}</div>
+              <div><b>No. parte:</b> {inventory?.product?.partNumber}</div>
+              <div><b>Descripción:</b> {inventory?.product?.description || "Sin descripción"}</div>
             </div>
           },
           {
             title: "Tipo de movimiento",
             dataIndex: "typeMovement",
             key: "typeMovement",
+            width: 64
           },
           {
             title: "Cantidad",
             dataIndex: "quantity",
             key: "quantity",
+            width: 40
           },
           {
-            title: "Sucursal",
+            title: "Sucursal del producto",
             dataIndex: "inventory.user.name",
             render: (_, { inventory }) => <div>
-              <div>{inventory?.user?.name}</div>
-              <div>{inventory?.user?.email}</div>
+              <div><b>Nombre:</b> {inventory?.user?.name}</div>
+              <div><b>Email:</b> {inventory?.user?.email}</div>
             </div>
           },
           {
             title: "Usuario del movimiento",
             dataIndex: "user.name",
             render: (_, { user }) => <div>
-              <div>{user?.name}</div>
-              <div>{user?.email}</div>
+              <div><b>Nombre:</b> {user?.name}</div>
+              <div><b>Email:</b> {user?.email}</div>
             </div>,
           },
           {
