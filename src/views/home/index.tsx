@@ -9,7 +9,7 @@ import {
   Legend,
   ChartData,
 } from 'chart.js';
-import { generateRandomColorWithBaseTone, getMonthLabels } from "../../utils/functions";
+import { generateRandomColorWithBaseTone } from "../../utils/functions";
 import useOnSnapshot, { PropsUseOnSnapshot } from "../../hooks/useOnSnapshot";
 import { useMemo } from "react";
 import { Traila } from "../../interfaces/traila";

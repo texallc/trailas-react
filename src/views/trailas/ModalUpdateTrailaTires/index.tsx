@@ -50,7 +50,7 @@ const ModalUpdateTrailaTires = ({ traila, onClose, ...props }: Props) => {
     setTiresChangeByTraila(_tiresChangeByTraila);
     setFileList([]);
     form.setFieldsValue({ ..._tiresChangeByTraila, notes: "" });
-  }, [user, traila, form, props.open]);
+  }, [user, traila, form, props.open, loading]);
 
   const saveChangeTire = async (_tiresChangeByTraila: TiresChangedByTraila) => {
     try {

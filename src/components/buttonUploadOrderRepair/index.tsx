@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { Button, Form, Upload, UploadFile, UploadProps } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -22,7 +22,7 @@ const ButtonUploadOrderRepair = ({ fileList, setFileList }: Props) => {
     };
 
     return propsUpload;
-  }, [fileList]);
+  }, [fileList, setFileList]);
 
   return (
     <Form.Item name="repairOrders">

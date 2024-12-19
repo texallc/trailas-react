@@ -74,7 +74,7 @@ const GetProvider = <T extends {}>({ children }: { children: ReactNode; }) => {
     };
 
     init();
-  }, [url, wait, mergeResponse, abortController]);
+  }, [url, wait, mergeResponse, abortController, localStateUrl]);
 
   return <Context.Provider value={{ loading, response, setResponse, getProps, setGetProps }}>{children}</Context.Provider>;
 };

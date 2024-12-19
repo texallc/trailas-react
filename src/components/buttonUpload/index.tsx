@@ -12,9 +12,9 @@ const ButtonUpload: FC<Props> = ({ value, multiple, maxCount }) => {
   const disabled = useMemo(() => {
     const count = value.length;
 
-    maxCount = maxCount || 1;
+    let _maxCount = maxCount || 1;
 
-    return count >= maxCount;
+    return count >= _maxCount;
   }, [value, maxCount]);
 
   const textButton = useMemo(() => {
