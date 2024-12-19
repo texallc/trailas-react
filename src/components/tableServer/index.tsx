@@ -5,7 +5,6 @@ import { PropsUseGet } from "../../hooks/useGet";
 import { Get } from "../../interfaces";
 import { TableProps } from "../../interfaces/components/serverTable";
 import { ColumnsType } from "antd/es/table";
-import useAbortController from "../../hooks/useAbortController";
 import TableEditButton from "./tableEditButton";
 import TableDeleteButton from "./tableDeleteButton";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
@@ -23,7 +22,6 @@ const ServerTable = <T extends { id: number; }>({
   showDisabled,
   wait,
 }: TableProps<T>) => {
-  const abortController = useAbortController();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [propsUseGet, setPropsUseGet] = useState<PropsUseGet>({ url: "" });
@@ -70,8 +68,6 @@ const ServerTable = <T extends { id: number; }>({
         fixed: 'right',
         width: 100,
         render: (_, record: T) => {
-          const r = record as T & { active: boolean; };
-
           return (
             <TableEditButton
               id={record.id}
@@ -82,13 +78,13 @@ const ServerTable = <T extends { id: number; }>({
       });
     }
     return columns;
-  }, [columnsProp, showEdit, showDisabled, abortController, url]);
+  }, [columnsProp, showEdit, showDisabled, url]);
 
   const { response, loading, setGetProps } = useGetContext<Get<T>>();
 
   useEffect(() => {
     setGetProps(propsUseGet);
-  }, [propsUseGet]);
+  }, [propsUseGet, setGetProps]);
 
   return (
     <>

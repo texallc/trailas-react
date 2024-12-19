@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Modal from "../modal";
 import useGetSearchURL from "../../hooks/useGestSearchURL";
@@ -62,7 +62,7 @@ const ModalForm = <T extends { id: number; image?: string; }>({ urlProp, urlCrea
     }
 
     form.setFieldsValue(data as RecursivePartial<T>);
-  }, [searchParams, response, form, setFileListImage]);
+  }, [searchParams, response, form, setFileListImage, setOpen]);
 
   const title = useMemo(() => {
     const moduleName = pathname.split("/")[1];

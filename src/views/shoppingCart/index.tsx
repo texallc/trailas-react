@@ -10,7 +10,7 @@ import { Button, Card, Col, Empty, Form, InputNumber, message, Row, Table } from
 import { RetweetOutlined, PlusOutlined, DeleteOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { confirmDialog, priceFormatUSD } from "../../utils/functions";
 import Big from 'big.js';
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { columnsProductsCart, columnsProductsInCart } from "../../constants";
 import FormItem from "antd/es/form/FormItem";
 import { ProductCart } from "../../types/models/product";
@@ -44,7 +44,7 @@ const ShoppingCart = () => {
     if (loading || !response?.list.length) return;
 
     setInventories(response?.list);
-  }, [response]);
+  }, [response, loading]);
 
   const subtotal = useMemo(() => {
     if (!productsCart.length || !Object.keys(valuesForm).length) return 0;
@@ -64,7 +64,7 @@ const ShoppingCart = () => {
     }, 0);
 
     return subtotal;
-  }, [valuesForm, productsCart]);
+  }, [valuesForm, productsCart, inventories]);
 
   const { total, totalWithoutDiscount } = useMemo(() => {
     if (!subtotal) return {
