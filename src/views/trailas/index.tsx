@@ -68,7 +68,13 @@ const Trailas = () => {
   }, [searchParams]);
 
   const onChangeAlignment = useCallback(async (value: boolean, id: string) => {
-    setTrailas(prevTrailas => prevTrailas.map(traila => traila.id === id ? { ...traila, aligning: true } : traila));
+    setTrailas(
+      prevTrailas =>
+        prevTrailas.map(traila => traila.id === id
+          ? { ...traila, aligning: true }
+          : traila
+        )
+    );
 
     try {
       await update("trailas", id, { aligned: value });

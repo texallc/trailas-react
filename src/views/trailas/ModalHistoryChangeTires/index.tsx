@@ -42,7 +42,8 @@ const ModalHistoryChangeTires = ({ traila, onClose, ...props }: Props) => {
                 <Link
                   target="_blank"
                   to={order}
-                  key={order}>
+                  key={order}
+                >
                   {`Orden ${index + 1}`}
                 </Link>
               ))
